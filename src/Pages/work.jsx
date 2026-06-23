@@ -10,6 +10,9 @@ import { motion, useScroll, useTransform, useInView } from "framer-motion";
 // muted:   #f5f5f0 @ 40–60%
 // grain, vignette, marquee, aura = same system as home
 
+
+// i need to do some 3d animations in my website. i have a 3d object /Users/a1989/Bigrip_pro/public/rock.glb its a rock object. here check these screenshots i attached it from a referance website hero section. here when user open this page that rock coming below the screen its moving while rotating theirself and finally fix center of hero and displaying text with animations. this is i want in my work page hero section. can u do this, i have a rock glb object i added it in public folferuse that and make this section exactly like this, remove current hero texts and elements and make that section exactly like this and give me back updated work.jsx file
+
 /* ============================================================
    WORKS DATA
    ============================================================ */
