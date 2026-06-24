@@ -636,7 +636,85 @@ function MediaPlaceholder({ mediaType, color }) {
   );
 }
 
-function WorkCard({ work, index }) {
+function MediaViewer({ work, onClose }) {
+  useEffect(() => {
+    if (!work) return;
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") onClose();
+    };
+
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [work, onClose]);
+
+  if (!work) return null;
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#0a0a0a]/95 px-4 py-6 md:px-8">
+      <button
+        type="button"
+        className="absolute inset-0 cursor-default"
+        aria-label="Close media viewer"
+        onClick={onClose}
+      />
+
+      <div className="relative z-10 w-full max-w-6xl">
+        <div className="mb-4 flex items-center justify-between gap-4">
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#ff3d1a]">
+              {work.mediaType}
+            </p>
+            <h3 className="mt-1 text-2xl font-black uppercase text-[#f5f5f0] md:text-4xl">
+              {work.title}
+            </h3>
+          </div>
+          <button
+            type="button"
+            className="flex h-11 w-11 items-center justify-center border border-[#f5f5f0]/20 text-[#f5f5f0] hover:border-[#ff3d1a] hover:text-[#ff3d1a]"
+            aria-label="Close media viewer"
+            onClick={onClose}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M18 6 6 18M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <div className="relative overflow-hidden border border-[#f5f5f0]/10 bg-black">
+          {work.mediaType === "video" ? (
+            <video
+              className="max-h-[76vh] w-full bg-black object-contain"
+              src={work.mediaUrl}
+              controls
+              autoPlay
+              playsInline
+            />
+          ) : (
+            <img
+              className="max-h-[76vh] w-full object-contain"
+              src={work.mediaUrl}
+              alt={work.title}
+            />
+          )}
+        </div>
+
+        {work.desc && (
+          <p className="mt-4 max-w-3xl text-sm leading-relaxed text-[#f5f5f0]/60">
+            {work.desc}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function WorkCard({ work, index, onOpen }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-60px" });
 
@@ -648,10 +726,11 @@ function WorkCard({ work, index }) {
       : "md:col-span-1 md:row-span-1 aspect-[4/3]";
 
   return (
-    <motion.a
+    <motion.button
       ref={ref}
-      href={`#work-${work.id}`}
-      className={`group relative block overflow-hidden rounded-sm border border-[#f5f5f0]/[0.08] ${spanClasses}`}
+      type="button"
+      onClick={() => work.mediaUrl && onOpen(work)}
+      className={`group relative block overflow-hidden rounded-sm border border-[#f5f5f0]/[0.08] text-left ${work.mediaUrl ? "cursor-pointer" : "cursor-default"} ${spanClasses}`}
       initial={{ opacity: 0, y: 28 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, delay: (index % 4) * 0.08, ease: [0.16, 1, 0.3, 1] }}
@@ -734,13 +813,14 @@ function WorkCard({ work, index }) {
           <path d="M7 17L17 7M7 7h10v10" />
         </svg>
       </div>
-    </motion.a>
+    </motion.button>
   );
 }
 
 function WorksGridSection({ works, loading, error }) {
   const headerRef = useRef(null);
   const headerInView = useInView(headerRef, { once: true, margin: "-60px" });
+  const [activeWork, setActiveWork] = useState(null);
 
   return (
     <section id="works-grid" className="relative w-full bg-[#0a0a0a] py-24 md:py-32 px-6 md:px-12 overflow-hidden">
@@ -810,10 +890,17 @@ function WorksGridSection({ works, loading, error }) {
       {!loading && !error && works.length > 0 && (
         <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 auto-rows-[260px] gap-3 md:gap-4">
           {works.map((work, i) => (
-            <WorkCard key={`${work.id}-${i}`} work={work} index={i} />
+            <WorkCard
+              key={`${work.id}-${i}`}
+              work={work}
+              index={i}
+              onOpen={setActiveWork}
+            />
           ))}
         </div>
       )}
+
+      <MediaViewer work={activeWork} onClose={() => setActiveWork(null)} />
     </section>
   );
 }
