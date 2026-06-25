@@ -256,38 +256,39 @@ function StarField() {
 }
 
 /* ============================================================
-   BACKGROUND ASTEROIDS — small procedural rocks (low-poly,
-   displaced icosahedrons) tumbling slowly at varying depths,
-   so the scene reads as a real asteroid field, not one rock
-   floating alone. Purely generated geometry — no extra assets.
+   BACKGROUND ASTEROIDS — small clones of the same rock.glb model
+   used for the hero rock, scattered and tumbling slowly at varying
+   depths, so the scene reads as a real asteroid field with consistent
+   rock detail throughout (not procedural placeholder geometry).
    ============================================================ */
 function MiniAsteroid({ position, scale, speed, tilt, seed }) {
   const ref = useRef(null);
+  const { scene } = useGLTF("/rock.glb");
 
-  const geometry = useMemo(() => {
-    const geo = new THREE.IcosahedronGeometry(1, 1);
-    const posAttr = geo.attributes.position;
-    // simple deterministic pseudo-random displacement per vertex,
-    // seeded so each asteroid has a stable, unique craggy shape
+  // Clone the same rock model used for the hero asteroid, normalized to a
+  // consistent unit size so the `scale` prop behaves predictably per-instance.
+  const clonedScene = useMemo(() => {
+    const clone = scene.clone(true);
+    const box = new THREE.Box3().setFromObject(clone);
+    const size = new THREE.Vector3();
+    box.getSize(size);
+    const center = new THREE.Vector3();
+    box.getCenter(center);
+    clone.position.sub(center);
+    const maxDim = Math.max(size.x, size.y, size.z) || 1;
+    clone.scale.setScalar(1 / maxDim);
+
+    // slight per-instance random extra rotation (seeded) so identical
+    // clones don't all show the exact same facets toward the camera
     let s = seed;
     const rand = () => {
       s = (s * 9301 + 49297) % 233280;
       return s / 233280;
     };
-    for (let i = 0; i < posAttr.count; i++) {
-      const v = new THREE.Vector3(
-        posAttr.getX(i),
-        posAttr.getY(i),
-        posAttr.getZ(i)
-      );
-      const n = v.clone().normalize();
-      const bump = 0.78 + rand() * 0.36;
-      v.copy(n.multiplyScalar(bump));
-      posAttr.setXYZ(i, v.x, v.y, v.z);
-    }
-    geo.computeVertexNormals();
-    return geo;
-  }, [seed]);
+    clone.rotation.set(rand() * Math.PI * 2, rand() * Math.PI * 2, rand() * Math.PI * 2);
+
+    return clone;
+  }, [scene, seed]);
 
   useFrame((state, delta) => {
     if (!ref.current) return;
@@ -296,23 +297,24 @@ function MiniAsteroid({ position, scale, speed, tilt, seed }) {
   });
 
   return (
-    <mesh ref={ref} position={position} scale={scale} rotation={[tilt, tilt * 0.6, 0]} geometry={geometry}>
-      <meshStandardMaterial color="#3a332e" roughness={0.95} metalness={0.05} />
-    </mesh>
+    <group ref={ref} position={position} scale={scale} rotation={[tilt, tilt * 0.6, 0]}>
+      <primitive object={clonedScene} />
+    </group>
   );
 }
 
 function BackgroundAsteroids() {
   // hand-placed so they sit clearly away from the hero rock and headline,
   // scattered at different depths/sizes for parallax + scale variety
+  // sizes grouped into clear small / medium / large tiers
   const rocks = useMemo(
     () => [
-      { position: [-6.2, 2.4, -9], scale: 0.55, speed: 0.12, tilt: 0.4, seed: 17 },
-      { position: [6.8, 1.2, -7], scale: 0.4, speed: 0.18, tilt: 1.1, seed: 42 },
-      { position: [-5.5, -2.6, -6], scale: 0.32, speed: 0.22, tilt: 2.0, seed: 8 },
-      { position: [7.5, -1.8, -11], scale: 0.65, speed: 0.09, tilt: 0.8, seed: 73 },
-      { position: [-8.5, 0.2, -13], scale: 0.45, speed: 0.14, tilt: 1.6, seed: 29 },
-      { position: [4.2, 3.4, -14], scale: 0.3, speed: 0.2, tilt: 0.3, seed: 55 },
+      { position: [-6.2, 2.4, -9], scale: 2.6, speed: 0.12, tilt: 0.4, seed: 17 }, // large
+      { position: [6.8, 1.2, -7], scale: 1.9, speed: 0.18, tilt: 1.1, seed: 42 }, // medium
+      { position: [-5.5, -2.6, -6], scale: 1.5, speed: 0.22, tilt: 2.0, seed: 8 }, // small
+      { position: [7.5, -1.8, -11], scale: 3.1, speed: 0.09, tilt: 0.8, seed: 73 }, // large
+      { position: [-8.5, 0.2, -13], scale: 2.1, speed: 0.14, tilt: 1.6, seed: 29 }, // medium
+      { position: [4.2, 3.4, -14], scale: 1.4, speed: 0.2, tilt: 0.3, seed: 55 }, // small
     ],
     []
   );
@@ -451,7 +453,7 @@ function HeroSection({ projectCount = 0 }) {
   const [rockSettled, setRockSettled] = useState(false);
 
   return (
-    <section className="relative w-full h-screen min-h-[640px] bg-[#0a0a0a] overflow-hidden flex flex-col" style={{ height: "100dvh", minHeight: "640px" }}>
+    <section className="relative w-full h-screen min-h-[640px] bg-[#1c1c1c] overflow-hidden flex flex-col" style={{ height: "100dvh", minHeight: "640px" }}>
       {/* ── Background layer ── */}
       <div className="absolute inset-0 pointer-events-none">
         {/* central nebula glow — sits right behind the asteroid, pure CSS
@@ -469,7 +471,7 @@ function HeroSection({ projectCount = 0 }) {
         <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage:"repeating-linear-gradient(0deg,#fff 0px,#fff 1px,transparent 1px,transparent 3px)" }}/>
         <svg className="absolute inset-0 w-full h-full opacity-[0.05] mix-blend-overlay"><filter id="gh"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(#gh)"/></svg>
         {/* vignette */}
-        <div className="absolute inset-0" style={{ background:"radial-gradient(ellipse at center,transparent 28%,rgba(10,10,10,0.88) 100%)" }}/>
+        <div className="absolute inset-0" style={{ background:"radial-gradient(ellipse at center,transparent 28%,rgba(28,28,28,0.78) 100%)" }}/>
       </div>
 
       {/* ── Big bg WORKS word ── */}
