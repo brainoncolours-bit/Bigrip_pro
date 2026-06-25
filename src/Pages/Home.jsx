@@ -3,7 +3,7 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useGLTF, Environment, ContactShadows } from "@react-three/drei";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { motion, AnimatePresence, useScroll, useTransform, useSpring, useInView, motionValue, useMotionValue } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform, useSpring, useInView, useVelocity, motionValue, useMotionValue } from "framer-motion";
 import * as THREE from "three";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -537,20 +537,11 @@ function Eyebrow({ children, delay = 0 }) {
   );
 }
 
-/* ── SECTION A: FIELD SPECS ── */
-const FIELD_SPECS = [
-  { stat: "20K MM",   label: "Waterproof Rating", copy: "Sealed seams hold up through sustained rain and full submersion." },
-  { stat: "-30°C",    label: "Cold Rated",         copy: "Insulated lining engineered to perform in sub-zero exposure." },
-  { stat: "640G",     label: "Pack Weight",         copy: "Compresses down to fit in a daypack without adding bulk." },
-  { stat: "LIFETIME", label: "Warranty",            copy: "Built to be repaired, not replaced — we stand behind every seam." },
-];
-
-/* Animated counter */
+/* Animated counter — still used by StatsSection below */
 function AnimatedStat({ value, isInView, delay = 0 }) {
   const [display, setDisplay] = useState("0");
   useEffect(() => {
     if (!isInView) return;
-    // Extract numeric part and suffix
     const match = value.match(/^([0-9]+)(.*)$/);
     if (!match) { setDisplay(value); return; }
     const end = parseInt(match[1]);
@@ -572,77 +563,115 @@ function AnimatedStat({ value, isInView, delay = 0 }) {
   return <>{display}</>;
 }
 
-function FieldSpecCard({ s, i }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-40px" });
+/* ============================================================
+   SECTION A: FIELD SPECS — continuous marquee cards
+   Two rows of medium-sized rounded cards. Row 1 always drifts
+   left, row 2 always drifts right — a constant, infinite CSS
+   marquee that never depends on scroll position or scroll speed.
+   Self-contained: data, cards, and section all live here together.
+   ============================================================ */
 
+const FIELD_SPEC_CARDS_ROW_1 = [
+  { eyebrow: "FW26",     title: "ROCK JACKET",   tone: "ember" },
+  { eyebrow: "FW26",     title: "TERRAIN SHELL", tone: "dark"  },
+  { eyebrow: "DETAIL",   title: "HARDWARE",      tone: "ember" },
+];
+
+const FIELD_SPEC_CARDS_ROW_2 = [
+  { eyebrow: "CAMPAIGN", title: "ROCKSTAR",   tone: "ember" },
+  { eyebrow: "FW26",     title: "FIELD TEST", tone: "dark"  },
+  { eyebrow: "LIMITED",  title: "EMBER RUN",  tone: "ember" },
+];
+
+/* halftone dot texture shared by every card */
+function CardHalftone() {
   return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 40 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.7, delay: i * 0.12, ease: [0.16, 1, 0.3, 1] }}
-      className={`group relative py-10 sm:px-8 border-t border-t-[#f5f5f0]/10${i > 0 ? " sm:border-l sm:border-l-[#f5f5f0]/10" : ""} cursor-default`}
-    >
-      {/* hover glow flood */}
-      <motion.div
-        className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-        style={{ background: "radial-gradient(ellipse at 30% 50%, rgba(255,61,26,0.08) 0%, transparent 70%)" }}
-      />
-      {/* scan line that sweeps on hover */}
-      <div className="absolute left-0 right-0 top-0 h-px bg-[#ff3d1a]/0 group-hover:bg-[#ff3d1a]/60 transition-all duration-500 origin-left" style={{ boxShadow: "0 0 8px rgba(255,61,26,0.5)" }} />
+    <div
+      className="absolute inset-0 opacity-[0.16] mix-blend-overlay pointer-events-none"
+      style={{ backgroundImage: "radial-gradient(circle,#000 1px,transparent 1px)", backgroundSize: "6px 6px" }}
+    />
+  );
+}
 
-      <Eyebrow delay={i * 0.12 + 0.1}>Spec</Eyebrow>
-      <div
-        className="text-4xl md:text-5xl font-black leading-none mb-3 text-[#ff3d1a]"
-        style={{ textShadow: "0 0 24px rgba(255,61,26,0.35)" }}
+function FieldSpecCard({ eyebrow, title, tone }) {
+  const isEmber = tone === "ember";
+  return (
+    <div
+      className="relative flex-shrink-0 w-[200px] sm:w-[230px] md:w-[260px] h-[96px] md:h-[108px] rounded-[20px] overflow-hidden flex flex-col justify-center px-5 md:px-6 select-none"
+      style={{
+        background: isEmber
+          ? "linear-gradient(135deg,#3a1206 0%,#c83a18 45%,#ff5a26 100%)"
+          : "linear-gradient(135deg,#0c0c0c 0%,#1a1410 55%,#2a1c12 100%)",
+        boxShadow: isEmber
+          ? "0 8px 28px rgba(255,61,26,0.22)"
+          : "0 8px 28px rgba(0,0,0,0.38)",
+      }}
+    >
+      <CardHalftone />
+      <span
+        className="relative z-10 text-[9px] tracking-[0.28em] uppercase font-semibold mb-1"
+        style={{ color: isEmber ? "rgba(10,5,2,0.55)" : "rgba(255,90,40,0.7)" }}
       >
-        <AnimatedStat value={s.stat} isInView={isInView} delay={i * 0.12 + 0.2} />
+        {eyebrow}
+      </span>
+      <h3
+        className="relative z-10 text-xl md:text-2xl font-black uppercase leading-none"
+        style={{
+          letterSpacing: "-0.01em",
+          color: isEmber ? "#170a04" : "rgba(255,120,70,0.85)",
+        }}
+      >
+        {title}
+      </h3>
+    </div>
+  );
+}
+
+/* one continuously-drifting row — pure CSS keyframe marquee.
+   Always running, direction locked, completely independent of
+   scroll position or scroll speed. */
+function FieldSpecRow({ cards, direction = 1, duration = 32 }) {
+  /* duplicate the cards so the strip loops seamlessly at -50% translate */
+  const loop = [...cards, ...cards];
+  return (
+    <div className="overflow-hidden w-full">
+      <div
+        className="field-spec-track flex gap-3 md:gap-4 will-change-transform"
+        style={{
+          animation: `${direction === 1 ? "fieldSpecDriftLeft" : "fieldSpecDriftRight"} ${duration}s linear infinite`,
+        }}
+      >
+        {loop.map((c, i) => (
+          <FieldSpecCard key={`${c.title}-${i}`} {...c} />
+        ))}
       </div>
-      <h4 className="text-sm font-bold uppercase tracking-[0.06em] text-[#f5f5f0]/90 mb-2">{s.label}</h4>
-      <p className="text-[13px] leading-relaxed text-[#f5f5f0]/50 max-w-[240px]">{s.copy}</p>
-    </motion.div>
+    </div>
   );
 }
 
 function FieldSpecsSection() {
-  const sectionRef = useRef(null);
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
-  const headerY = useTransform(scrollYProgress, [0, 1], ["-6%", "6%"]);
-  const lineWidth = useTransform(scrollYProgress, [0.1, 0.5], ["0%", "100%"]);
-
   return (
-    <DarkBackdrop className="py-20 md:py-28 border-t border-[#f5f5f0]/[0.06]" auraColor="rgba(255,61,26,0.11)">
-      <div ref={sectionRef} className="max-w-6xl mx-auto px-6 md:px-12">
-        {/* Parallax header block */}
-        <motion.div style={{ y: headerY }}>
-          <Eyebrow>Field Specs</Eyebrow>
-          <SplitReveal
-            text="Built for the terrain that breaks everything else."
-            className="text-4xl md:text-6xl font-black uppercase leading-[0.95] text-[#f5f5f0]"
-            style={{ letterSpacing: "-0.01em" }}
-          />
-          <motion.p
-            className="mt-5 text-sm md:text-base text-[#f5f5f0]/50 max-w-xl leading-relaxed"
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.8, delay: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
-          >
-            Every panel, seam, and pull is tested past the point most shells quit.
-          </motion.p>
-        </motion.div>
+    <section
+      className="relative w-full overflow-hidden bg-[#0a0a0a] py-16 md:py-20 border-t border-[#f5f5f0]/[0.06]"
+    >
+      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at center,transparent 30%,rgba(10,10,10,0.9) 100%)" }} />
+      <div className="absolute inset-0 opacity-[0.04] pointer-events-none" style={{ backgroundImage: "repeating-linear-gradient(0deg,#fff 0px,#fff 1px,transparent 1px,transparent 3px)" }} />
 
-        {/* Animated divider line */}
-        <div className="mt-12 mb-4 h-px w-full overflow-hidden bg-[#f5f5f0]/[0.06]">
-          <motion.div className="h-full bg-gradient-to-r from-[#ff3d1a] to-transparent" style={{ width: lineWidth }} />
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-          {FIELD_SPECS.map((s, i) => <FieldSpecCard key={s.label} s={s} i={i} />)}
-        </div>
+      <div className="relative z-10 flex flex-col gap-3 md:gap-4">
+        {/* row 1 — always drifts left, forever */}
+        <FieldSpecRow cards={FIELD_SPEC_CARDS_ROW_1} direction={1} duration={30} />
+        {/* row 2 — always drifts right, forever */}
+        <FieldSpecRow cards={FIELD_SPEC_CARDS_ROW_2} direction={-1} duration={30} />
       </div>
-    </DarkBackdrop>
+
+      <style>{`
+        @keyframes fieldSpecDriftLeft{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+        @keyframes fieldSpecDriftRight{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+        @media(prefers-reduced-motion:reduce){
+          .field-spec-track{animation:none!important}
+        }
+      `}</style>
+    </section>
   );
 }
 
@@ -768,58 +797,94 @@ function SelectedWorksSection() {
 
 /* ── SECTION C: JOURNAL / FIELD NOTES ── */
 const JOURNAL = [
-  { title: "Why seam tape matters more than waterproofing rating",         tag: "Construction", read: "4 min", date: "Jan 2026" },
-  { title: "Cold-weather layering: the myth of the single shell",          tag: "Field Guide",  read: "6 min", date: "Dec 2025" },
-  { title: "Zip pull metallurgy — what separates field gear from fashion", tag: "Hardware",     read: "3 min", date: "Nov 2025" },
-  { title: "The cuff system: why most jackets fail at the wrist",          tag: "Detail Study", read: "5 min", date: "Oct 2025" },
+  { title: "Why seam tape matters more than waterproofing rating",          tag: "Construction",     read: "4 min", date: "Jan 2026" },
+  { title: "Cold-weather layering: the myth of the single shell",           tag: "Field Guide",      read: "6 min", date: "Dec 2025" },
+  { title: "Zip pull metallurgy — what separates field gear from fashion",  tag: "Hardware",         read: "3 min", date: "Nov 2025" },
+  { title: "The cuff system: why most jackets fail at the wrist",           tag: "Detail Study",     read: "5 min", date: "Oct 2025" },
+  { title: "Breathability vs waterproofing: the trade-off nobody tells you",tag: "Material Science", read: "5 min", date: "Aug 2025" },
 ];
 
-function JournalRow({ j, i }) {
+/* each row grows wider than the last as it reveals */
+const RIBBON_WIDTHS = [60, 70, 80, 90, 100];
+
+/* a single ribbon: flips open from the left (scaleX), a light sweep
+   travels across it while it opens, then the text fades in on top.
+   Triggered independently per-row as it scrolls into view. */
+function JournalRibbon({ j, i }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-40px" });
-  const [hovered, setHovered] = useState(false);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const widthPercent = RIBBON_WIDTHS[i] ?? 100;
+  const isEmber = i % 2 === 0;
 
   return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, x: -40, filter: "blur(6px)" }}
-      animate={isInView ? { opacity: 1, x: 0, filter: "blur(0px)" } : {}}
-      transition={{ duration: 0.65, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
-      className="group flex items-center gap-6 p-4 sm:px-6 rounded-[40px] sm:rounded-full bg-[#111]/40 hover:bg-[#141414] border border-[#f5f5f0]/[0.07] hover:border-[#ff3d1a]/30 transition-all duration-300 cursor-pointer relative overflow-hidden"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
-      {/* sweep glow on hover */}
-      <AnimatePresence>
-        {hovered && (
-          <motion.div
-            className="absolute inset-0 pointer-events-none"
-            initial={{ opacity: 0, x: "-100%" }}
-            animate={{ opacity: 1, x: "0%" }}
-            exit={{ opacity: 0, x: "100%" }}
-            transition={{ duration: 0.5 }}
-            style={{ background: "linear-gradient(90deg, transparent, rgba(255,61,26,0.06), transparent)" }}
-          />
-        )}
-      </AnimatePresence>
+    <div ref={ref} className="relative h-[64px] md:h-[76px] w-full">
+      {/* the ribbon — opens left to right, locked to its own width */}
+      <motion.div
+        className="absolute left-0 top-0 h-full rounded-full overflow-hidden"
+        style={{
+          width: `${widthPercent}%`,
+          transformOrigin: "left center",
+          background: isEmber
+            ? "linear-gradient(90deg,#ff5a26 0%,#c83a18 55%,#3a1206 100%)"
+            : "linear-gradient(90deg,#2a1c12 0%,#1a1410 55%,#0c0c0c 100%)",
+          boxShadow: isEmber ? "0 10px 34px rgba(255,61,26,0.22)" : "0 10px 34px rgba(0,0,0,0.4)",
+        }}
+        initial={{ scaleX: 0 }}
+        animate={isInView ? { scaleX: 1 } : {}}
+        transition={{ duration: 0.85, ease: [0.76, 0, 0.24, 1] }}
+      >
+        {/* halftone texture, matches the rest of the site */}
+        <div
+          className="absolute inset-0 opacity-[0.14] mix-blend-overlay"
+          style={{ backgroundImage: "radial-gradient(circle,#000 1px,transparent 1px)", backgroundSize: "6px 6px" }}
+        />
+        {/* light sweep travelling across as the ribbon opens */}
+        <motion.div
+          className="absolute inset-y-0 w-1/3 pointer-events-none"
+          style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent)" }}
+          initial={{ x: "-120%" }}
+          animate={isInView ? { x: "220%" } : {}}
+          transition={{ duration: 0.95, delay: 0.05, ease: "easeOut" }}
+        />
+      </motion.div>
 
-      <div className="w-10 h-10 rounded-full bg-[#ff3d1a]/10 border border-[#ff3d1a]/20 flex items-center justify-center flex-shrink-0 group-hover:bg-[#ff3d1a]/20 transition-all duration-300 group-hover:scale-110">
-        <span className="text-[#ff3d1a] text-xs font-black">{String(i + 1).padStart(2, "0")}</span>
-      </div>
-      <div className="flex-1 min-w-0">
-        <p className="text-[#f5f5f0]/90 text-sm md:text-base font-semibold truncate">{j.title}</p>
-      </div>
-      <span className="hidden sm:block text-[10px] tracking-[0.3em] uppercase text-[#ff3d1a]/70 font-semibold px-3 py-1 rounded-full border border-[#ff3d1a]/20 flex-shrink-0">{j.tag}</span>
-      <div className="text-[#f5f5f0]/30 text-xs flex-shrink-0 text-right hidden md:block">
-        <div>{j.read} read</div>
-        <div>{j.date}</div>
-      </div>
-      <motion.span
-        className="text-[#f5f5f0]/30 group-hover:text-[#ff3d1a] transition-colors duration-300 flex-shrink-0"
-        animate={hovered ? { x: 3, y: -3 } : { x: 0, y: 0 }}
-        transition={{ duration: 0.2 }}
-      >↗</motion.span>
-    </motion.div>
+      {/* text reveals on top of the ribbon, just after it opens */}
+      <motion.div
+        className="relative z-10 h-full flex items-center gap-4 md:gap-6 px-6 md:px-9"
+        initial={{ opacity: 0, x: -24 }}
+        animate={isInView ? { opacity: 1, x: 0 } : {}}
+        transition={{ duration: 0.55, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <div
+          className={`w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center flex-shrink-0 border ${
+            isEmber ? "bg-[#170a04]/15 border-[#170a04]/25" : "bg-[#ff3d1a]/10 border-[#ff3d1a]/20"
+          }`}
+        >
+          <span className={`text-xs font-black ${isEmber ? "text-[#170a04]" : "text-[#ff3d1a]"}`}>
+            {String(i + 1).padStart(2, "0")}
+          </span>
+        </div>
+
+        <p className={`flex-1 min-w-0 truncate text-sm md:text-base font-semibold ${isEmber ? "text-[#170a04]" : "text-[#f5f5f0]/90"}`}>
+          {j.title}
+        </p>
+
+        <span
+          className={`hidden sm:block text-[10px] tracking-[0.3em] uppercase font-semibold px-3 py-1 rounded-full flex-shrink-0 border ${
+            isEmber ? "border-[#170a04]/25 text-[#170a04]/70" : "border-[#ff3d1a]/20 text-[#ff3d1a]/70"
+          }`}
+        >
+          {j.tag}
+        </span>
+
+        <div className={`hidden md:block text-xs flex-shrink-0 text-right ${isEmber ? "text-[#170a04]/60" : "text-[#f5f5f0]/30"}`}>
+          <div>{j.read} read</div>
+          <div>{j.date}</div>
+        </div>
+
+        <span className={`flex-shrink-0 ${isEmber ? "text-[#170a04]/70" : "text-[#f5f5f0]/30"}`}>↗</span>
+      </motion.div>
+    </div>
   );
 }
 
@@ -841,7 +906,7 @@ function JournalSection() {
       </motion.div>
 
       <div ref={sectionRef} className="max-w-6xl mx-auto px-6 md:px-12 relative z-10">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-14">
           <div>
             <Eyebrow>Field Notes</Eyebrow>
             <SplitReveal
@@ -871,8 +936,8 @@ function JournalSection() {
           </motion.button>
         </div>
 
-        <div className="flex flex-col gap-3">
-          {JOURNAL.map((j, i) => <JournalRow key={j.title} j={j} i={i} />)}
+        <div className="flex flex-col gap-5 md:gap-6">
+          {JOURNAL.map((j, i) => <JournalRibbon key={j.title} j={j} i={i} />)}
         </div>
       </div>
     </DarkBackdrop>
@@ -1074,8 +1139,8 @@ export default function Home() {
     <main className="bg-[#0a0a0a]">
       <JacketScene />
       <FieldSpecsSection />
+       <JournalSection />
       <SelectedWorksSection />
-      <JournalSection />
       <StatsSection />
       <ContactSection />
     </main>
