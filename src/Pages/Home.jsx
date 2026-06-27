@@ -34,12 +34,21 @@ const FIELD_SPEC_CARDS_ROW_2 = [
   { eyebrow:"FW26",     title:"FIELD TEST", tone:"dark"  },
   { eyebrow:"LIMITED",  title:"EMBER RUN",  tone:"ember" },
 ];
-const WORKS = [
-  { title:"Shell Construction", sub:"Material Study",     span:"md:col-span-7", aspect:"aspect-[16/9]", bg:"from-[#1a0a05] to-[#0a0a0a]" },
-  { title:"Hardware Detail",    sub:"Component Close-up", span:"md:col-span-5", aspect:"aspect-[4/3]",  bg:"from-[#060a10] to-[#0a0a0a]" },
-  { title:"Back Panel Yoke",    sub:"Structural Layout",  span:"md:col-span-5", aspect:"aspect-[4/3]",  bg:"from-[#080510] to-[#0a0a0a]" },
-  { title:"Cuff & Seal System", sub:"Closure Tech",       span:"md:col-span-7", aspect:"aspect-[16/9]", bg:"from-[#0a0805] to-[#0a0a0a]" },
+
+// ── Essay Lines: string array (Doc 1 style) ──
+const ESSAY_LINES = [
+  "A neural-AI interface built on the",
+  "architecture of the human nervous",
+  "system. SynapseX translates synaptic",
+  "activity into computational",
+  "intelligence. Every signal becomes",
+  "measurable, structured, and visible.",
+  "It continuously reconstructs internal",
+  "state as a dynamic neural map.",
+  "Biological noise is filtered into",
+  "actionable cognitive patterns."
 ];
+
 const JOURNAL = [
   { title:"Why seam tape matters more than waterproofing rating",           tag:"Construction",     read:"4 min", date:"Jan 2026" },
   { title:"Cold-weather layering: the myth of the single shell",            tag:"Field Guide",      read:"6 min", date:"Dec 2025" },
@@ -517,70 +526,7 @@ function FieldSpecsSection() {
   );
 }
 
-/* ── Section B: Selected Works ── */
-function WorkCard({ title, sub, span, aspect, bg, index }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once:true, margin:"-60px" });
-  const { scrollYProgress } = useScroll({ target:ref, offset:["start end","end start"] });
-  const imageY = useTransform(scrollYProgress, [0,1], ["-8%","8%"]);
-  const variants = {
-    hidden: { opacity:0,y:50,clipPath:"inset(0 0 100% 0)" },
-    visible: { opacity:1,y:0,clipPath:"inset(0 0 0% 0)",transition:{ duration:0.9,delay:index*0.1,ease:[0.16,1,0.3,1] } },
-  };
-  return (
-    <motion.div ref={ref} variants={variants} initial="hidden" animate={isInView?"visible":"hidden"} className={`group relative ${span} rounded-3xl overflow-hidden border border-[#f5f5f0]/[0.07] bg-[#111] cursor-pointer`}>
-      <div className={`${aspect} overflow-hidden relative`}>
-        <motion.div className={`absolute inset-[-10%] bg-gradient-to-br ${bg} flex items-end`} style={{ y:imageY }}>
-          <div className="absolute inset-0 opacity-20 mix-blend-multiply" style={{ backgroundImage:"radial-gradient(circle,#000 1px,transparent 1px)",backgroundSize:"4px 4px" }}/>
-          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background:"radial-gradient(ellipse at 30% 70%,rgba(255,61,26,0.15) 0%,transparent 60%)" }}/>
-          <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#ff3d1a] to-transparent opacity-0 group-hover:opacity-80 transition-opacity duration-300" style={{ boxShadow:"0 0 12px rgba(255,61,26,0.8)" }}/>
-        </motion.div>
-        <div className="absolute inset-0 bg-[#0a0a0a]/70 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-400 z-10"/>
-        <div className="absolute bottom-6 left-6 right-6 z-20 flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
-          <span className="h-px w-4 bg-[#ff3d1a]"/>
-          <span className="text-xs tracking-[0.25em] uppercase text-[#ff3d1a] font-semibold">{sub}</span>
-          <span className="text-sm font-black uppercase text-[#f5f5f0] ml-2">{title}</span>
-        </div>
-        <div className="absolute bottom-6 left-6 right-6 z-20 group-hover:opacity-0 transition-opacity duration-300">
-          <p className="text-[11px] tracking-[0.3em] uppercase text-[#f5f5f0]/40 mb-1">{sub}</p>
-          <h3 className="text-lg md:text-xl font-black uppercase text-[#f5f5f0]" style={{ letterSpacing:"-0.01em" }}>{title}</h3>
-        </div>
-      </div>
-    </motion.div>
-  );
-}
-
-function SelectedWorksSection() {
-  const sectionRef = useRef(null);
-  const { scrollYProgress } = useScroll({ target:sectionRef, offset:["start end","end start"] });
-  const decorY = useTransform(scrollYProgress, [0,1], ["-15%","15%"]);
-  return (
-    <DarkBackdrop className="py-20 md:py-28 border-t border-[#f5f5f0]/[0.06]" auraColor="rgba(255,80,20,0.08)">
-      <motion.div className="absolute inset-x-0 top-1/2 -translate-y-1/2 pointer-events-none select-none overflow-hidden" style={{ y:decorY }}>
-        <div className="font-black uppercase text-[#ff3d1a]/[0.04] whitespace-nowrap text-[clamp(5rem,14vw,12rem)] leading-none" style={{ letterSpacing:"-0.04em" }}>SELECTED WORK</div>
-      </motion.div>
-      <div ref={sectionRef} className="max-w-6xl mx-auto px-6 md:px-12 relative z-10">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-          <div>
-            <Eyebrow>Selected Work</Eyebrow>
-            <SplitReveal text="Featured details" className="text-4xl md:text-6xl font-black uppercase leading-[0.95]" style={{ letterSpacing:"-0.01em" }}/>
-            <motion.p className="mt-4 text-sm text-[#f5f5f0]/50 max-w-md leading-relaxed" initial={{ opacity:0,y:12 }} whileInView={{ opacity:1,y:0 }} viewport={{ once:true,margin:"-60px" }} transition={{ duration:0.7,delay:0.5 }}>
-              A close look at the construction that makes every Rock Jacket worth its name.
-            </motion.p>
-          </div>
-          <motion.button className="hidden md:inline-flex items-center gap-2 px-6 py-3 rounded-full border border-[#f5f5f0]/10 text-xs uppercase tracking-[0.2em] text-[#f5f5f0]/60 hover:border-[#ff3d1a] hover:text-[#ff3d1a] transition-all duration-300" initial={{ opacity:0,x:20 }} whileInView={{ opacity:1,x:0 }} viewport={{ once:true }} transition={{ duration:0.6,delay:0.4 }} whileHover={{ scale:1.04 }}>
-            View all <span>↗</span>
-          </motion.button>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-5 md:gap-6">
-          {WORKS.map((w,i) => <WorkCard key={w.title} {...w} index={i}/>)}
-        </div>
-      </div>
-    </DarkBackdrop>
-  );
-}
-
-/* ── Section C: Journal ── */
+/* ── Section B: Journal ── */
 function useIsDesktop() {
   const [isDesktop, setIsDesktop] = useState(false);
   useEffect(() => {
@@ -693,6 +639,169 @@ function JournalSection() {
   );
 }
 
+/* ── Section C: Essay / Manifesto ── */
+
+function EssayLine({ line, index, scrollYProgress, total }) {
+  // Each line gets its own reveal window along the scroll. Lines brighten and
+  // sharpen as they're reached, then STAY fully lit permanently afterward —
+  // no fade-out, no dimming once revealed (matches reference behavior).
+  const step = 1 / total;
+  const start = Math.max(0, index * step * 0.78);
+  const end = Math.min(1, start + step * 0.7);
+
+  const opacity = useTransform(scrollYProgress, [start, end], [0.16, 1]);
+  const blur = useTransform(scrollYProgress, [start, end], [5, 0]);
+  const glowStrength = useTransform(scrollYProgress, [start, end], [0, 1]);
+
+  const filter = useTransform(blur, (b) => `blur(${b}px)`);
+  const textShadow = useTransform(
+    glowStrength,
+    (g) => `0px 0px ${3 + g * 14}px rgba(255,140,90,${0.1 + g * 0.5}), 0px 0px ${8 + g * 22}px rgba(255,61,26,${g * 0.4})`
+  );
+  const color = useTransform(glowStrength, (g) => {
+    const r = Math.round(180 + g * 75);
+    const gC = Math.round(160 + g * 85);
+    const b = Math.round(150 + g * 90);
+    return `rgb(${r},${gC},${b})`;
+  });
+
+  return (
+    <motion.p
+      className="text-center font-mono italic w-full m-0 leading-[1.3] sm:leading-[1.35]"
+      style={{
+        opacity,
+        filter,
+        textShadow,
+        color,
+        fontSize: "clamp(0.85rem, 2.6vw, 2.1rem)",
+        willChange: "opacity, filter",
+      }}
+    >
+      {line}
+    </motion.p>
+  );
+}
+
+function EssaySection() {
+  const scrollRef = useRef(null);
+  const scrollHeight = `calc(100vh + ${ESSAY_LINES.length * 42}vh)`;
+
+  const { scrollYProgress } = useScroll({
+    target: scrollRef,
+    offset: ["start start", "end end"],
+  });
+
+  const auraOpacity = useTransform(scrollYProgress, [0, 0.4, 0.8, 1], [0.18, 0.4, 0.32, 0.18]);
+  const grainX = useTransform(scrollYProgress, [0, 1], ["0%", "-3%"]);
+  // Smooth gentle zoom only — no rotation, so a cover-sized image never reveals
+  // empty edges or stutters (that was the source of the rough rotation motion).
+  const bgScale = useTransform(scrollYProgress, [0, 1], [1, 1.12]);
+  const vignetteShift = useTransform(scrollYProgress, [0, 1], ["60%", "42%"]);
+
+  return (
+    <div
+      ref={scrollRef}
+      className="relative w-full border-t border-[#f5f5f0]/[0.06]"
+      style={{ height: scrollHeight, background: "#060404" }}
+    >
+      {/* Sticky full-screen viewport panel */}
+      <div className="sticky top-0 left-0 w-full h-screen min-h-screen overflow-hidden">
+
+        {/* bg.png — full-bleed, smooth zoom only */}
+        <motion.div
+          className="absolute inset-0 pointer-events-none"
+          style={{ scale: bgScale, willChange: "transform" }}
+        >
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: "url('/bg.png')",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat",
+              filter: "grayscale(0.4) brightness(0.85) contrast(1.15) saturate(1.4)",
+            }}
+          />
+          {/* Ember color wash — overlay so the rays stay bright underneath the tint */}
+          <div
+            className="absolute inset-0 mix-blend-overlay"
+            style={{ background: "radial-gradient(ellipse at center, rgba(255,90,30,0.55) 0%, rgba(255,61,26,0.35) 45%, rgba(40,10,2,0.6) 100%)" }}
+          />
+        </motion.div>
+
+        {/* Animated ember aura pulse, intensifies mid-scroll */}
+        <motion.div
+          className="absolute pointer-events-none"
+          style={{
+            width: "95vw", height: "95vw", borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(255,61,26,0.35) 0%, rgba(180,30,5,0.16) 40%, transparent 70%)",
+            filter: "blur(70px)", top: "50%", left: "50%",
+            transform: "translate(-50%,-50%)",
+            opacity: auraOpacity,
+          }}
+        />
+
+        {/* Drifting secondary embers for extra depth */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute aura-pulse-1" style={{ width: "45vw", height: "45vw", borderRadius: "50%", background: "radial-gradient(circle, rgba(255,90,40,0.16) 0%, transparent 70%)", bottom: "-10vw", left: "-8vw", filter: "blur(40px)" }} />
+          <div className="absolute aura-pulse-2" style={{ width: "38vw", height: "38vw", borderRadius: "50%", background: "radial-gradient(circle, rgba(255,61,26,0.14) 0%, transparent 70%)", top: "-8vw", right: "-6vw", filter: "blur(36px)" }} />
+        </div>
+
+        {/* Vignette so text stays legible over the image at every breakpoint */}
+        <motion.div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: useTransform(
+              vignetteShift,
+              (v) => `radial-gradient(ellipse at center, transparent ${v}, rgba(6,4,4,0.92) 100%)`
+            ),
+          }}
+        />
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(180deg, rgba(6,4,4,0.6) 0%, transparent 10%, transparent 90%, rgba(6,4,4,0.6) 100%)" }} />
+
+        {/* Grain */}
+        <motion.div className="absolute inset-0 opacity-[0.05] pointer-events-none" style={{ x: grainX, backgroundImage: "repeating-linear-gradient(0deg,#fff 0px,#fff 1px,transparent 1px,transparent 3px)" }} />
+        <svg className="absolute inset-0 w-full h-full opacity-[0.05] mix-blend-overlay pointer-events-none">
+          <filter id="egrain"><feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="2" stitchTiles="stitch" /></filter>
+          <rect width="100%" height="100%" filter="url(#egrain)" />
+        </svg>
+
+        {/* Eyebrow label */}
+        <div className="absolute top-[max(1.25rem,4vh)] left-1/2 -translate-x-1/2 z-10 flex items-center gap-2 pointer-events-none">
+          <span className="h-px w-6 bg-[#ff3d1a]" />
+          <span className="text-[9px] sm:text-[10px] tracking-[0.35em] uppercase text-[#ff3d1a] font-semibold">SynapseX // Manifesto</span>
+          <span className="h-px w-6 bg-[#ff3d1a]" />
+        </div>
+
+        {/* Full-screen, full-width text block — flat layout, fills the viewport like the reference */}
+        <div className="relative z-10 w-full h-full flex items-center justify-center px-3 sm:px-8 md:px-14">
+          <div className="flex flex-col gap-[0.15em] sm:gap-[0.2em] w-full max-w-[1400px]">
+            {ESSAY_LINES.map((line, i) => (
+              <EssayLine
+                key={i}
+                line={line}
+                index={i}
+                scrollYProgress={scrollYProgress}
+                total={ESSAY_LINES.length}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Scroll nudge — fades out once reading begins */}
+        <motion.div
+          className="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-none z-10"
+          style={{ opacity: useTransform(scrollYProgress, [0, 0.06], [1, 0]) }}
+        >
+          <span className="text-[10px] tracking-[0.35em] uppercase text-[#f5f5f0]/40 font-semibold">Scroll</span>
+          <motion.div className="w-px h-8 bg-gradient-to-b from-[#ff3d1a]/70 to-transparent"
+            animate={{ scaleY: [1, 0.4, 1], opacity: [0.6, 1, 0.6] }} transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }} />
+        </motion.div>
+      </div>
+    </div>
+  );
+}
+
 /* ── Section D: Stats ── */
 function StatCard({ s, i }) {
   const ref = useRef(null);
@@ -788,7 +897,7 @@ export default function Home() {
       <JacketScene/>
       <FieldSpecsSection/>
       <JournalSection/>
-      <SelectedWorksSection/>
+      <EssaySection/>
       <StatsSection/>
       <ContactSection/>
     </main>
