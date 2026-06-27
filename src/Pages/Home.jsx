@@ -8,11 +8,7 @@ import * as THREE from "three";
 
 gsap.registerPlugin(ScrollTrigger);
 
-/* ============================================================
-   DATA / CONSTANTS
-   ============================================================ */
 const MODEL_SCALE = 0.6;
-
 const CAMERA_STOPS = [
   { id:"intro",      position:[0,1.5,6.5],    lookAt:[0,1.0,0],      textAnchor:[1.6,1.5,1.2],  fov:38, label:"ROCK JACKET",             spec:"Mid-poly tactical shell — built for the long haul." },
   { id:"orbit-left", position:[-4.2,1.4,4.4], lookAt:[0,1.0,0],      textAnchor:[-1.8,1.6,1.0], fov:36, label:"SHELL",                    spec:"Reinforced panel construction across the torso and shoulders." },
@@ -21,7 +17,6 @@ const CAMERA_STOPS = [
   { id:"cuff",       position:[2.4,0.7,1.4],   lookAt:[1.6,0.6,0.6],  textAnchor:[0.5,1.0,0.6],  fov:26, label:"CUFF",                    spec:"Adjustable cuff straps lock out wind and debris." },
   { id:"hero-rest",  position:[0,1.3,6.0],     lookAt:[0,1.0,0],      textAnchor:[1.7,1.4,1.0],  fov:34, label:"New Style // ROCK JACKET", spec:"Engineered for the terrain that breaks everything else." },
 ];
-
 const MARQUEE_ROWS = [
   { text:"FW26",        size:"4.5rem",  rowOpacity:0.07, duration:85, dir:1,  accent:false },
   { text:"TERRAIN",     size:"6.5rem",  rowOpacity:0.13, duration:62, dir:-1, accent:false },
@@ -29,7 +24,6 @@ const MARQUEE_ROWS = [
   { text:"ROCK JACKET", size:"6.5rem",  rowOpacity:0.13, duration:62, dir:-1, accent:false },
   { text:"FW26",        size:"4.5rem",  rowOpacity:0.07, duration:85, dir:1,  accent:false },
 ];
-
 const FIELD_SPEC_CARDS_ROW_1 = [
   { eyebrow:"FW26",     title:"ROCK JACKET",   tone:"ember" },
   { eyebrow:"FW26",     title:"TERRAIN SHELL", tone:"dark"  },
@@ -40,14 +34,12 @@ const FIELD_SPEC_CARDS_ROW_2 = [
   { eyebrow:"FW26",     title:"FIELD TEST", tone:"dark"  },
   { eyebrow:"LIMITED",  title:"EMBER RUN",  tone:"ember" },
 ];
-
 const WORKS = [
   { title:"Shell Construction", sub:"Material Study",     span:"md:col-span-7", aspect:"aspect-[16/9]", bg:"from-[#1a0a05] to-[#0a0a0a]" },
   { title:"Hardware Detail",    sub:"Component Close-up", span:"md:col-span-5", aspect:"aspect-[4/3]",  bg:"from-[#060a10] to-[#0a0a0a]" },
   { title:"Back Panel Yoke",    sub:"Structural Layout",  span:"md:col-span-5", aspect:"aspect-[4/3]",  bg:"from-[#080510] to-[#0a0a0a]" },
   { title:"Cuff & Seal System", sub:"Closure Tech",       span:"md:col-span-7", aspect:"aspect-[16/9]", bg:"from-[#0a0805] to-[#0a0a0a]" },
 ];
-
 const JOURNAL = [
   { title:"Why seam tape matters more than waterproofing rating",           tag:"Construction",     read:"4 min", date:"Jan 2026" },
   { title:"Cold-weather layering: the myth of the single shell",            tag:"Field Guide",      read:"6 min", date:"Dec 2025" },
@@ -55,19 +47,51 @@ const JOURNAL = [
   { title:"The cuff system: why most jackets fail at the wrist",            tag:"Detail Study",     read:"5 min", date:"Oct 2025" },
   { title:"Breathability vs waterproofing: the trade-off nobody tells you", tag:"Material Science", read:"5 min", date:"Aug 2025" },
 ];
-
 const STATS = [
   { n:"3",    label:"Seasons",      sub:"Refined over 3 FW collections." },
   { n:"40+",  label:"Fabric Tests", sub:"Material iterations before production." },
   { n:"100%", label:"Field-tested", sub:"Every detail proven in the terrain." },
 ];
-
 const RIBBON_WIDTHS = [60, 70, 80, 90, 100];
-const STAGE_BGS_MAP = ["Intro","Shell","Hardware","BackPanel","Cuff","HeroRest"];
+const JOURNAL_COUNT = JOURNAL.length;
+const HEADER_RESERVE = 0.18;
 
-/* ============================================================
-   HERO — BACKGROUND STAGES
-   ============================================================ */
+/* ── Stage Backgrounds ── */
+const STAGE_CSS = `
+  @keyframes stageFadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes marqueeLeft{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  @keyframes marqueeRight{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+  @keyframes auraPulse1{0%,100%{opacity:1;transform:translateX(-50%) scale(1)}50%{opacity:0.6;transform:translateX(-50%) scale(1.12)}}
+  @keyframes auraPulse2{0%,100%{opacity:1;transform:scale(1)}60%{opacity:0.5;transform:scale(1.18)}}
+  @keyframes auraPulse3{0%,100%{opacity:1;transform:scale(1)}40%{opacity:0.55;transform:scale(1.15) translateY(-4%)}}
+  @keyframes auraCore{0%,100%{opacity:1;transform:translate(-50%,-50%) scale(1)}50%{opacity:0.65;transform:translate(-50%,-50%) scale(1.28)}}
+  .aura-pulse-1{animation:auraPulse1 6s ease-in-out infinite}
+  .aura-pulse-2{animation:auraPulse2 8s ease-in-out infinite 1s}
+  .aura-pulse-3{animation:auraPulse3 7s ease-in-out infinite 2s}
+  .aura-core{animation:auraCore 5s ease-in-out infinite 0.5s}
+  @keyframes smokeRise{0%,100%{transform:scaleY(1) translateY(0);opacity:0.7}50%{transform:scaleY(1.08) translateY(-3%);opacity:1}}
+  .smoke-col{animation:smokeRise 6s ease-in-out infinite}
+  @keyframes scanPulse{0%,100%{opacity:0.5;transform:scaleX(0.7)}50%{opacity:1;transform:scaleX(1)}}
+  .scan-bar{animation:scanPulse 4s ease-in-out infinite}
+  @keyframes redColFlicker{0%,100%{opacity:0.85}50%{opacity:1}75%{opacity:0.9}}
+  .red-col{animation:redColFlicker 3s ease-in-out infinite}
+  @keyframes beamDrift{0%,100%{transform:translateX(0) skewX(-8deg)}50%{transform:translateX(2vw) skewX(-8deg)}}
+  .beam-slash{transform:skewX(-8deg);animation:beamDrift 7s ease-in-out infinite}
+  @keyframes lightningFlashA{0%,100%{opacity:0}41%{opacity:0}41.5%{opacity:1}42.5%{opacity:0.15}43.5%{opacity:0.85}44.5%{opacity:0}70%{opacity:0}70.6%{opacity:0.9}71.2%{opacity:0}}
+  @keyframes lightningFlashB{0%,100%{opacity:0}18%{opacity:0}18.6%{opacity:0.85}19.4%{opacity:0.1}20%{opacity:0.7}20.8%{opacity:0}82%{opacity:0}82.5%{opacity:0.8}83%{opacity:0}}
+  @keyframes boltFlickerA{0%,100%{opacity:0}41%{opacity:0}41.5%{opacity:1}42.5%{opacity:0.15}43.5%{opacity:0.85}44.5%{opacity:0}70%{opacity:0}70.6%{opacity:0.9}71.2%{opacity:0}}
+  @keyframes boltFlickerB{0%,100%{opacity:0}18%{opacity:0}18.6%{opacity:0.85}19.4%{opacity:0.1}20%{opacity:0.7}20.8%{opacity:0}82%{opacity:0}82.5%{opacity:0.8}83%{opacity:0}}
+  .lightning-flash-a{animation:lightningFlashA 10s ease-out infinite}
+  .lightning-flash-b{animation:lightningFlashB 13s ease-out infinite 2.4s}
+  .bolt-a{animation:boltFlickerA 10s ease-out infinite}
+  .bolt-b{animation:boltFlickerB 13s ease-out infinite 2.4s}
+  @media(prefers-reduced-motion:reduce){
+    .marquee-row-anim,.aura-pulse-1,.aura-pulse-2,.aura-pulse-3,.aura-core,
+    .smoke-col,.scan-bar,.red-col,.beam-slash,
+    .lightning-flash-a,.lightning-flash-b,.bolt-a,.bolt-b{animation:none!important;opacity:0!important}
+  }
+`;
+
 function MarqueeRow({ text, size, rowOpacity, duration, dir, accent }) {
   const content = `${text}  •  `.repeat(14);
   return (
@@ -115,14 +139,10 @@ function BgIntro() {
 function BgShell() {
   return (
     <div className="absolute inset-0 bg-[#080c10] overflow-hidden">
-      {[15,32,50,68,82].map((x,i) => (
-        <div key={i} className="absolute bottom-0 smoke-col" style={{ left:`${x}%`,width:`${8+i*2}vw`,height:"100%",background:`radial-gradient(ellipse at 50% 100%,rgba(${180+i*10},${200+i*5},255,${0.07+i*0.015}) 0%,transparent 70%)`,filter:"blur(18px)",animationDelay:`${i*0.7}s` }}/>
-      ))}
+      {[15,32,50,68,82].map((x,i) => <div key={i} className="absolute bottom-0 smoke-col" style={{ left:`${x}%`,width:`${8+i*2}vw`,height:"100%",background:`radial-gradient(ellipse at 50% 100%,rgba(${180+i*10},${200+i*5},255,${0.07+i*0.015}) 0%,transparent 70%)`,filter:"blur(18px)",animationDelay:`${i*0.7}s` }}/>)}
       <div className="absolute inset-0" style={{ background:"linear-gradient(180deg,rgba(8,12,16,0.2) 0%,transparent 40%,rgba(8,12,16,0.6) 100%)" }}/>
       <div className="absolute inset-0 pointer-events-none" style={{ background:"radial-gradient(ellipse 120% 80% at 50% 110%,rgba(255,61,26,0.14) 0%,transparent 60%)" }}/>
-      {[20,45,70].map((y,i) => (
-        <div key={i} className="absolute w-full scan-bar" style={{ top:`${y}%`,height:"1px",background:`linear-gradient(90deg,transparent 0%,rgba(255,61,26,${0.18+i*0.06}) 50%,transparent 100%)`,animationDelay:`${i*1.2}s` }}/>
-      ))}
+      {[20,45,70].map((y,i) => <div key={i} className="absolute w-full scan-bar" style={{ top:`${y}%`,height:"1px",background:`linear-gradient(90deg,transparent 0%,rgba(255,61,26,${0.18+i*0.06}) 50%,transparent 100%)`,animationDelay:`${i*1.2}s` }}/>)}
       <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage:"repeating-linear-gradient(0deg,#fff 0px,#fff 1px,transparent 1px,transparent 3px)" }}/>
       <svg className="absolute inset-0 w-full h-full opacity-[0.06] mix-blend-overlay"><filter id="grain2"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(#grain2)"/></svg>
     </div>
@@ -132,12 +152,8 @@ function BgShell() {
 function BgHardware() {
   return (
     <div className="absolute inset-0 bg-[#050505] overflow-hidden">
-      {[12,26,40,54,68,82,95].map((x,i) => (
-        <div key={i} className="absolute top-0 bottom-0 red-col" style={{ left:`${x}%`,width:i%2===0?"2px":"1px",background:`linear-gradient(180deg,transparent 0%,rgba(255,${30+i*8},20,${0.7+i*0.04}) 30%,rgba(255,61,26,0.9) 60%,transparent 100%)`,filter:"blur(2px)",boxShadow:`0 0 ${8+i*4}px rgba(255,61,26,${0.4+i*0.04})`,animationDelay:`${i*0.18}s` }}/>
-      ))}
-      {[20,55,80].map((x,i) => (
-        <div key={i} className="absolute top-0 bottom-0" style={{ left:`${x}%`,width:"18vw",background:`radial-gradient(ellipse at 50% 50%,rgba(255,40,10,${0.09+i*0.02}) 0%,transparent 70%)`,filter:"blur(20px)" }}/>
-      ))}
+      {[12,26,40,54,68,82,95].map((x,i) => <div key={i} className="absolute top-0 bottom-0 red-col" style={{ left:`${x}%`,width:i%2===0?"2px":"1px",background:`linear-gradient(180deg,transparent 0%,rgba(255,${30+i*8},20,${0.7+i*0.04}) 30%,rgba(255,61,26,0.9) 60%,transparent 100%)`,filter:"blur(2px)",boxShadow:`0 0 ${8+i*4}px rgba(255,61,26,${0.4+i*0.04})`,animationDelay:`${i*0.18}s` }}/>)}
+      {[20,55,80].map((x,i) => <div key={i} className="absolute top-0 bottom-0" style={{ left:`${x}%`,width:"18vw",background:`radial-gradient(ellipse at 50% 50%,rgba(255,40,10,${0.09+i*0.02}) 0%,transparent 70%)`,filter:"blur(20px)" }}/>)}
       <div className="absolute inset-0" style={{ background:"radial-gradient(ellipse at center,transparent 30%,rgba(5,5,5,0.92) 100%)" }}/>
       <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage:"repeating-linear-gradient(0deg,#fff 0px,#fff 1px,transparent 1px,transparent 3px)" }}/>
       <svg className="absolute inset-0 w-full h-full opacity-[0.05] mix-blend-overlay"><filter id="grain3"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(#grain3)"/></svg>
@@ -152,8 +168,7 @@ function BgBackPanel() {
       <div className="absolute inset-0 flex flex-col justify-evenly overflow-hidden">
         {Array.from({length:8},(_,i) => words[i%words.length]).map((w,i) => (
           <div key={i} className="overflow-hidden whitespace-nowrap">
-            <div className="inline-block font-black uppercase select-none text-[clamp(2.5rem,6vw,5rem)]"
-              style={{ letterSpacing:"-0.01em",color:"rgba(255,61,26,0.55)",animation:`${i%2===0?"marqueeLeft":"marqueeRight"} ${50+i*8}s linear infinite` }}>{`${w}  ·  `.repeat(10)}</div>
+            <div className="inline-block font-black uppercase select-none text-[clamp(2.5rem,6vw,5rem)]" style={{ letterSpacing:"-0.01em",color:"rgba(255,61,26,0.55)",animation:`${i%2===0?"marqueeLeft":"marqueeRight"} ${50+i*8}s linear infinite` }}>{`${w}  ·  `.repeat(10)}</div>
           </div>
         ))}
       </div>
@@ -180,9 +195,7 @@ function BgCuff() {
 function BgHeroRest() {
   return (
     <div className="absolute inset-0 bg-[#060404] overflow-hidden">
-      {[-30,-10,10,30,50].map((x,i) => (
-        <div key={i} className="absolute top-0 bottom-0 beam-slash" style={{ left:`${x}%`,width:"12vw",background:`linear-gradient(105deg,transparent 0%,rgba(255,61,26,${0.04+i*0.015}) 50%,transparent 100%)`,filter:"blur(6px)",animationDelay:`${i*0.3}s` }}/>
-      ))}
+      {[-30,-10,10,30,50].map((x,i) => <div key={i} className="absolute top-0 bottom-0 beam-slash" style={{ left:`${x}%`,width:"12vw",background:`linear-gradient(105deg,transparent 0%,rgba(255,61,26,${0.04+i*0.015}) 50%,transparent 100%)`,filter:"blur(6px)",animationDelay:`${i*0.3}s` }}/>)}
       <div className="absolute aura-core" style={{ width:"70vw",height:"70vw",borderRadius:"50%",background:"radial-gradient(circle,rgba(255,61,26,0.22) 0%,rgba(255,80,20,0.08) 45%,transparent 70%)",top:"50%",left:"50%",transform:"translate(-50%,-50%)",filter:"blur(20px)" }}/>
       <div className="absolute aura-pulse-1" style={{ width:"40vw",height:"40vw",borderRadius:"50%",background:"radial-gradient(circle,rgba(255,100,30,0.14) 0%,transparent 65%)",bottom:"-15vw",right:"10vw",filter:"blur(18px)" }}/>
       <div className="absolute inset-0 mix-blend-screen pointer-events-none">
@@ -197,54 +210,12 @@ function BgHeroRest() {
 
 const STAGE_BGS = [BgIntro, BgShell, BgHardware, BgBackPanel, BgCuff, BgHeroRest];
 
-const STAGE_CSS = `
-  @keyframes stageFadeIn{from{opacity:0}to{opacity:1}}
-  @keyframes marqueeLeft{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-  @keyframes marqueeRight{from{transform:translateX(-50%)}to{transform:translateX(0)}}
-  @keyframes auraPulse1{0%,100%{opacity:1;transform:translateX(-50%) scale(1)}50%{opacity:0.6;transform:translateX(-50%) scale(1.12)}}
-  @keyframes auraPulse2{0%,100%{opacity:1;transform:scale(1)}60%{opacity:0.5;transform:scale(1.18)}}
-  @keyframes auraPulse3{0%,100%{opacity:1;transform:scale(1)}40%{opacity:0.55;transform:scale(1.15) translateY(-4%)}}
-  @keyframes auraCore{0%,100%{opacity:1;transform:translate(-50%,-50%) scale(1)}50%{opacity:0.65;transform:translate(-50%,-50%) scale(1.28)}}
-  .aura-pulse-1{animation:auraPulse1 6s ease-in-out infinite}
-  .aura-pulse-2{animation:auraPulse2 8s ease-in-out infinite 1s}
-  .aura-pulse-3{animation:auraPulse3 7s ease-in-out infinite 2s}
-  .aura-core{animation:auraCore 5s ease-in-out infinite 0.5s}
-  @keyframes smokeRise{0%,100%{transform:scaleY(1) translateY(0);opacity:0.7}50%{transform:scaleY(1.08) translateY(-3%);opacity:1}}
-  .smoke-col{animation:smokeRise 6s ease-in-out infinite}
-  @keyframes scanPulse{0%,100%{opacity:0.5;transform:scaleX(0.7)}50%{opacity:1;transform:scaleX(1)}}
-  .scan-bar{animation:scanPulse 4s ease-in-out infinite}
-  @keyframes redColFlicker{0%,100%{opacity:0.85}50%{opacity:1}75%{opacity:0.9}}
-  .red-col{animation:redColFlicker 3s ease-in-out infinite}
-  @keyframes beamDrift{0%,100%{transform:translateX(0) skewX(-8deg)}50%{transform:translateX(2vw) skewX(-8deg)}}
-  .beam-slash{transform:skewX(-8deg);animation:beamDrift 7s ease-in-out infinite}
-  @keyframes lightningFlashA{0%,100%{opacity:0}41%{opacity:0}41.5%{opacity:1}42.5%{opacity:0.15}43.5%{opacity:0.85}44.5%{opacity:0}70%{opacity:0}70.6%{opacity:0.9}71.2%{opacity:0}}
-  @keyframes lightningFlashB{0%,100%{opacity:0}18%{opacity:0}18.6%{opacity:0.85}19.4%{opacity:0.1}20%{opacity:0.7}20.8%{opacity:0}82%{opacity:0}82.5%{opacity:0.8}83%{opacity:0}}
-  @keyframes boltFlickerA{0%,100%{opacity:0}41%{opacity:0}41.5%{opacity:1}42.5%{opacity:0.15}43.5%{opacity:0.85}44.5%{opacity:0}70%{opacity:0}70.6%{opacity:0.9}71.2%{opacity:0}}
-  @keyframes boltFlickerB{0%,100%{opacity:0}18%{opacity:0}18.6%{opacity:0.85}19.4%{opacity:0.1}20%{opacity:0.7}20.8%{opacity:0}82%{opacity:0}82.5%{opacity:0.8}83%{opacity:0}}
-  .lightning-flash-a{animation:lightningFlashA 10s ease-out infinite}
-  .lightning-flash-b{animation:lightningFlashB 13s ease-out infinite 2.4s}
-  .bolt-a{animation:boltFlickerA 10s ease-out infinite}
-  .bolt-b{animation:boltFlickerB 13s ease-out infinite 2.4s}
-  @media(prefers-reduced-motion:reduce){
-    .marquee-row-anim,.aura-pulse-1,.aura-pulse-2,.aura-pulse-3,.aura-core,
-    .smoke-col,.scan-bar,.red-col,.beam-slash,
-    .lightning-flash-a,.lightning-flash-b,.bolt-a,.bolt-b{animation:none!important;opacity:0!important}
-  }
-`;
-
 function StageBackground({ stopIndex }) {
   const Bg = STAGE_BGS[stopIndex] || BgIntro;
-  return (
-    <div className="absolute inset-0 z-0" key={stopIndex} style={{ animation:"stageFadeIn 0.9s ease forwards" }}>
-      <Bg/>
-      <style>{STAGE_CSS}</style>
-    </div>
-  );
+  return <div className="absolute inset-0 z-0" key={stopIndex} style={{ animation:"stageFadeIn 0.9s ease forwards" }}><Bg/><style>{STAGE_CSS}</style></div>;
 }
 
-/* ============================================================
-   HERO — 3D SCENE COMPONENTS
-   ============================================================ */
+/* ── 3D Scene ── */
 function EmberParticles({ count=220 }) {
   const points = useRef();
   const [positions, speeds] = useMemo(() => {
@@ -328,14 +299,6 @@ function PlaceholderJacket({ isFloating }) {
   );
 }
 
-function JacketHoverZone({ onEnter, onLeave }) {
-  return (
-    <mesh position={[0,1.0,0]} scale={[MODEL_SCALE*2.2,MODEL_SCALE*2.8,MODEL_SCALE*1.6]} onPointerEnter={onEnter} onPointerLeave={onLeave}>
-      <boxGeometry args={[1,1,1]}/><meshBasicMaterial transparent opacity={0} depthWrite={false}/>
-    </mesh>
-  );
-}
-
 class ModelErrorBoundary extends Component {
   constructor(p) { super(p); this.state = { hasError:false }; }
   static getDerivedStateFromError() { return { hasError:true }; }
@@ -352,7 +315,9 @@ function JacketWithFallback({ isFloating, onHoverEnter, onHoverLeave }) {
           <Suspense fallback={null}><JacketModel isFloating={isFloating}/></Suspense>
         </ModelErrorBoundary>
       )}
-      <JacketHoverZone onEnter={onHoverEnter} onLeave={onHoverLeave}/>
+      <mesh position={[0,1.0,0]} scale={[MODEL_SCALE*2.2,MODEL_SCALE*2.8,MODEL_SCALE*1.6]} onPointerEnter={onHoverEnter} onPointerLeave={onHoverLeave}>
+        <boxGeometry args={[1,1,1]}/><meshBasicMaterial transparent opacity={0} depthWrite={false}/>
+      </mesh>
     </>
   );
 }
@@ -426,22 +391,13 @@ function JacketScene() {
   );
 }
 
-/* ============================================================
-   SHARED SCROLL ANIMATION UTILITIES
-   ============================================================ */
+/* ── Shared Scroll Utilities ── */
 function ParallaxLayer({ children, speed=0.3, className="" }) {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target:ref, offset:["start end","end start"] });
   const y = useTransform(scrollYProgress, [0,1], [`${-speed*100}px`,`${speed*100}px`]);
   const smoothY = useSpring(y, { stiffness:60, damping:20 });
   return <motion.div ref={ref} style={{ y:smoothY }} className={className}>{children}</motion.div>;
-}
-
-function ParallaxX({ children, speed=0.15, className="" }) {
-  const ref = useRef(null);
-  const { scrollYProgress } = useScroll({ target:ref, offset:["start end","end start"] });
-  const x = useTransform(scrollYProgress, [0,1], [`${-speed*200}px`,`${speed*200}px`]);
-  return <motion.div ref={ref} style={{ x }} className={className}>{children}</motion.div>;
 }
 
 function SplitReveal({ text, className="", delay=0, tag="h2" }) {
@@ -472,17 +428,7 @@ function ScanReveal({ children, delay=0 }) {
   );
 }
 
-function ScrollAura({ top, left, right, bottom, size="60vw", color="rgba(255,61,26,0.12)", blur="40px", speed=0.2 }) {
-  const ref = useRef(null);
-  const { scrollYProgress } = useScroll({ target:ref, offset:["start end","end start"] });
-  const y = useTransform(scrollYProgress, [0,1], [`${-speed*80}px`,`${speed*80}px`]);
-  const scale = useTransform(scrollYProgress, [0,0.5,1], [0.9,1.1,0.95]);
-  return (
-    <motion.div ref={ref} className="absolute pointer-events-none" style={{ top,left,right,bottom,width:size,height:size,y,scale,borderRadius:"50%",background:`radial-gradient(circle, ${color} 0%, transparent 70%)`,filter:`blur(${blur})` }}/>
-  );
-}
-
-function DarkBackdrop({ children, className="", auraPos="50% 80%", auraColor="rgba(255,61,26,0.09)" }) {
+function DarkBackdrop({ children, className="", auraColor="rgba(255,61,26,0.09)" }) {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target:ref, offset:["start end","end start"] });
   const auraScale = useTransform(scrollYProgress, [0,0.5,1], [0.85,1.15,0.9]);
@@ -529,19 +475,13 @@ function AnimatedStat({ value, isInView, delay=0 }) {
   return <>{display}</>;
 }
 
-/* ============================================================
-   SECTION A: FIELD SPECS
-   ============================================================ */
-function CardHalftone() {
-  return <div className="absolute inset-0 opacity-[0.16] mix-blend-overlay pointer-events-none" style={{ backgroundImage:"radial-gradient(circle,#000 1px,transparent 1px)",backgroundSize:"6px 6px" }}/>;
-}
-
+/* ── Section A: Field Specs ── */
 function FieldSpecCard({ eyebrow, title, tone }) {
   const isEmber = tone==="ember";
   return (
     <div className="relative flex-shrink-0 w-[200px] sm:w-[230px] md:w-[260px] h-[96px] md:h-[108px] rounded-[20px] overflow-hidden flex flex-col justify-center px-5 md:px-6 select-none"
       style={{ background:isEmber?"linear-gradient(135deg,#3a1206 0%,#c83a18 45%,#ff5a26 100%)":"linear-gradient(135deg,#0c0c0c 0%,#1a1410 55%,#2a1c12 100%)",boxShadow:isEmber?"0 8px 28px rgba(255,61,26,0.22)":"0 8px 28px rgba(0,0,0,0.38)" }}>
-      <CardHalftone/>
+      <div className="absolute inset-0 opacity-[0.16] mix-blend-overlay pointer-events-none" style={{ backgroundImage:"radial-gradient(circle,#000 1px,transparent 1px)",backgroundSize:"6px 6px" }}/>
       <span className="relative z-10 text-[9px] tracking-[0.28em] uppercase font-semibold mb-1" style={{ color:isEmber?"rgba(10,5,2,0.55)":"rgba(255,90,40,0.7)" }}>{eyebrow}</span>
       <h3 className="relative z-10 text-xl md:text-2xl font-black uppercase leading-none" style={{ letterSpacing:"-0.01em",color:isEmber?"#170a04":"rgba(255,120,70,0.85)" }}>{title}</h3>
     </div>
@@ -577,9 +517,7 @@ function FieldSpecsSection() {
   );
 }
 
-/* ============================================================
-   SECTION B: SELECTED WORKS
-   ============================================================ */
+/* ── Section B: Selected Works ── */
 function WorkCard({ title, sub, span, aspect, bg, index }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once:true, margin:"-60px" });
@@ -642,17 +580,7 @@ function SelectedWorksSection() {
   );
 }
 
-/* ============================================================
-   SECTION C: JOURNAL / FIELD NOTES
-   ============================================================ */
-
-const JOURNAL_COUNT = JOURNAL.length; // 5
-
-/*
- * useIsDesktop — returns true when window width >= 768px (Tailwind's md breakpoint).
- * Starts as false on SSR / before mount so hydration is safe.
- * Updates on resize so breakpoint transitions work correctly.
- */
+/* ── Section C: Journal ── */
 function useIsDesktop() {
   const [isDesktop, setIsDesktop] = useState(false);
   useEffect(() => {
@@ -665,274 +593,99 @@ function useIsDesktop() {
   return isDesktop;
 }
 
-/*
- * RibbonRow
- *
- * Desktop (md+):
- *   The background pill and the row content are BOTH driven exclusively by the
- *   `revealed` prop, which comes from JournalScrollDriver.  No useInView at all
- *   on desktop — so items are fully invisible until scroll reaches them.
- *
- * Mobile (<md):
- *   useInView fires once when the row scrolls into view normally.
- *   The `revealed` prop is ignored on mobile.
- *
- * The key fix: we never mix the two triggers. On desktop `revealed` is the
- * only source of truth; on mobile `mobileInView` is the only source of truth.
- */
 function RibbonRow({ j, i, revealed, widthPercent }) {
   const isDesktop = useIsDesktop();
-
-  // Mobile-only scroll-into-view trigger (ignored on desktop)
   const mobileRef = useRef(null);
   const mobileInView = useInView(mobileRef, { once: true, margin: "-40px" });
-
-  // The single boolean that drives ALL animation for this row
   const isVisible = isDesktop ? revealed : mobileInView;
-
   const isEmber  = i % 2 === 0;
   const numCol   = isEmber ? "text-[#170a04]" : "text-[#ff3d1a]";
   const txtCol   = isEmber ? "text-[#170a04]" : "text-[#f5f5f0]/90";
   const metaCol  = isEmber ? "text-[#170a04]/60" : "text-[#f5f5f0]/30";
   const tagCol   = isEmber ? "border-[#170a04]/25 text-[#170a04]/70" : "border-[#ff3d1a]/20 text-[#ff3d1a]/70";
   const arrowCol = isEmber ? "text-[#170a04]/70" : "text-[#f5f5f0]/30";
-  const bg       = isEmber
-    ? "linear-gradient(90deg,#ff5a26 0%,#c83a18 55%,#3a1206 100%)"
-    : "linear-gradient(90deg,#2a1c12 0%,#1a1410 55%,#0c0c0c 100%)";
+  const bg       = isEmber ? "linear-gradient(90deg,#ff5a26 0%,#c83a18 55%,#3a1206 100%)" : "linear-gradient(90deg,#2a1c12 0%,#1a1410 55%,#0c0c0c 100%)";
   const shadow   = isEmber ? "0 10px 34px rgba(255,61,26,0.22)" : "0 10px 34px rgba(0,0,0,0.4)";
-
   return (
     <div ref={mobileRef} className="relative w-full">
-
-      {/* ── Background pill — mobile uses rounded-2xl, desktop uses rounded-full ── */}
-      <div
-        className="absolute inset-0 md:left-0 md:top-0 md:h-full"
-        style={{ width: isDesktop ? `${widthPercent}%` : "100%" }}
-      >
-        <motion.div
-          className="absolute inset-0 overflow-hidden"
-          style={{
-            transformOrigin: "left center",
-            background: bg,
-            boxShadow: shadow,
-            borderRadius: isDesktop ? "9999px" : "1rem",
-          }}
-          initial={{ scaleX: 0 }}
-          animate={{ scaleX: isVisible ? 1 : 0 }}
-          transition={{ duration: isDesktop ? 0.55 : 0.85, ease: [0.76, 0, 0.24, 1] }}
-        >
-          {/* Halftone texture */}
-          <div
-            className="absolute inset-0 opacity-[0.14] mix-blend-overlay"
-            style={{ backgroundImage: "radial-gradient(circle,#000 1px,transparent 1px)", backgroundSize: "6px 6px" }}
-          />
-          {/* Shimmer — only plays when bar opens */}
-          <motion.div
-            className="absolute inset-y-0 w-1/3 pointer-events-none"
-            style={{ background: "linear-gradient(90deg,transparent,rgba(255,255,255,0.45),transparent)" }}
-            initial={{ x: "-120%" }}
-            animate={isVisible ? { x: "220%" } : { x: "-120%" }}
-            transition={{ duration: 0.9, ease: "easeOut" }}
-          />
+      <div className="absolute inset-0 md:left-0 md:top-0 md:h-full" style={{ width: isDesktop ? `${widthPercent}%` : "100%" }}>
+        <motion.div className="absolute inset-0 overflow-hidden" style={{ transformOrigin:"left center",background:bg,boxShadow:shadow,borderRadius:isDesktop?"9999px":"1rem" }}
+          initial={{ scaleX:0 }} animate={{ scaleX:isVisible?1:0 }} transition={{ duration:isDesktop?0.55:0.85,ease:[0.76,0,0.24,1] }}>
+          <div className="absolute inset-0 opacity-[0.14] mix-blend-overlay" style={{ backgroundImage:"radial-gradient(circle,#000 1px,transparent 1px)",backgroundSize:"6px 6px" }}/>
+          <motion.div className="absolute inset-y-0 w-1/3 pointer-events-none" style={{ background:"linear-gradient(90deg,transparent,rgba(255,255,255,0.45),transparent)" }}
+            initial={{ x:"-120%" }} animate={isVisible?{ x:"220%" }:{ x:"-120%" }} transition={{ duration:0.9,ease:"easeOut" }}/>
         </motion.div>
       </div>
-
-      {/* ── Row content ── */}
-      <motion.div
-        className="relative z-10 flex items-center gap-3 sm:gap-4 md:gap-6 px-4 sm:px-6 md:px-9 py-3 sm:py-0 sm:h-[68px] md:h-[76px]"
-        initial={{ opacity: 0, x: -20 }}
-        animate={isVisible ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
-        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-      >
-        {/* Index badge */}
-        <div className={`w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center flex-shrink-0 border ${isEmber ? "bg-[#170a04]/15 border-[#170a04]/25" : "bg-[#ff3d1a]/10 border-[#ff3d1a]/20"}`}>
-          <span className={`text-[10px] sm:text-xs font-black ${numCol}`}>{String(i + 1).padStart(2, "0")}</span>
+      <motion.div className="relative z-10 flex items-center gap-3 sm:gap-4 md:gap-6 px-4 sm:px-6 md:px-9 py-3 sm:py-0 sm:h-[68px] md:h-[76px]"
+        initial={{ opacity:0,x:-20 }} animate={isVisible?{ opacity:1,x:0 }:{ opacity:0,x:-20 }} transition={{ duration:0.4,ease:[0.16,1,0.3,1] }}>
+        <div className={`w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center flex-shrink-0 border ${isEmber?"bg-[#170a04]/15 border-[#170a04]/25":"bg-[#ff3d1a]/10 border-[#ff3d1a]/20"}`}>
+          <span className={`text-[10px] sm:text-xs font-black ${numCol}`}>{String(i+1).padStart(2,"0")}</span>
         </div>
-        {/* Title + tag */}
         <div className="flex-1 min-w-0 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 md:gap-4">
           <p className={`min-w-0 text-xs sm:text-sm md:text-base font-semibold leading-snug line-clamp-2 sm:line-clamp-1 sm:truncate ${txtCol}`}>{j.title}</p>
           <span className={`self-start sm:self-auto flex-shrink-0 text-[9px] sm:text-[10px] tracking-[0.25em] sm:tracking-[0.3em] uppercase font-semibold px-2 sm:px-3 py-0.5 sm:py-1 rounded-full border ${tagCol}`}>{j.tag}</span>
         </div>
-        {/* Read + date */}
-        <div className={`hidden md:block text-xs flex-shrink-0 text-right ${metaCol}`}>
-          <div>{j.read} read</div>
-          <div>{j.date}</div>
-        </div>
+        <div className={`hidden md:block text-xs flex-shrink-0 text-right ${metaCol}`}><div>{j.read} read</div><div>{j.date}</div></div>
         <span className={`flex-shrink-0 text-sm ${arrowCol}`}>↗</span>
       </motion.div>
     </div>
   );
 }
 
-/*
- * JournalScrollDriver
- *
- * Maps scroll progress → how many ribbons should be revealed.
- *
- * The scroll range is split into:
- *   [0 → 0.18]   "Header pause" — section is pinned, title is readable, zero ribbons shown.
- *   [0.18 → 1]   Ribbons reveal one by one as the user scrolls.
- *
- * This is fully reversible: scroll back up and ribbons disappear.
- * Math.round() gives a crisp snap — each ribbon flips at the halfway point
- * of its own budget slice.
- */
-const HEADER_RESERVE = 0.18;
-
 function JournalScrollDriver({ scrollYProgress, children }) {
   const count = JOURNAL_COUNT;
-
-  const visibleCount = useTransform(
-    scrollYProgress,
-    [HEADER_RESERVE, 1],
-    [0, count],
-    { clamp: true }
-  );
-
+  const visibleCount = useTransform(scrollYProgress, [HEADER_RESERVE, 1], [0, count], { clamp: true });
   const [revealed, setRevealed] = useState(() => Array(count).fill(false));
-
   useEffect(() => {
-    // Fire once immediately with the current value (handles back-navigation)
     const current = visibleCount.get();
     setRevealed(Array(count).fill(false).map((_, idx) => idx < Math.round(current)));
-
     const unsub = visibleCount.on("change", (v) => {
       setRevealed(Array(count).fill(false).map((_, idx) => idx < Math.round(v)));
     });
     return unsub;
   }, [visibleCount, count]);
-
   return children(revealed);
 }
 
-/*
- * JournalSection
- *
- * Outer div is the scroll container (600 vh total):
- *   100 vh  = the pinned panel itself (1 viewport)
- *   100 vh  = header-pause budget (HEADER_RESERVE × 600vh ≈ 108vh)
- *   5×80 vh = 400 vh scroll budget for 5 ribbons (80vh each)
- *   Total   = 600 vh
- *
- * The sticky panel pins immediately when its top edge hits the viewport top,
- * and unpins when the outer div's bottom exits the viewport bottom.
- *
- * Layout: justify-start + pt so the title clears any top navbar and is
- * never clipped on initial pin.
- */
 function JournalSection() {
   const scrollRef = useRef(null);
-
-  const { scrollYProgress } = useScroll({
-    target: scrollRef,
-    offset: ["start start", "end end"],
-  });
-
-  const bgTextX = useTransform(scrollYProgress, [0, 1], ["8%", "-8%"]);
-
+  const { scrollYProgress } = useScroll({ target:scrollRef, offset:["start start","end end"] });
+  const bgTextX = useTransform(scrollYProgress, [0,1], ["8%","-8%"]);
   return (
-    <div
-      ref={scrollRef}
-      className="relative bg-[#0a0a0a] border-t border-[#f5f5f0]/[0.06]"
-      style={{ height: "calc(100vh + 100vh + 5 * 80vh)" }}
-    >
-      {/* Sticky panel — pins at top, stays for full 600vh scroll */}
+    <div ref={scrollRef} className="relative bg-[#0a0a0a] border-t border-[#f5f5f0]/[0.06]" style={{ height:"calc(100vh + 100vh + 5 * 80vh)" }}>
       <div className="sticky top-0 h-screen overflow-hidden">
-
-        {/* Background layer */}
         <div className="absolute inset-0 bg-[#0a0a0a]">
-          <div
-            className="absolute pointer-events-none"
-            style={{
-              width: "80vw", height: "80vw", borderRadius: "50%",
-              background: "radial-gradient(circle, rgba(255,61,26,0.07) 0%, transparent 70%)",
-              filter: "blur(50px)", top: "50%", left: "50%",
-              transform: "translate(-50%, -50%)",
-            }}
-          />
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{ background: "radial-gradient(ellipse at center,transparent 30%,rgba(10,10,10,0.92) 100%)" }}
-          />
-          <div
-            className="absolute inset-0 opacity-[0.04]"
-            style={{ backgroundImage: "repeating-linear-gradient(0deg,#fff 0px,#fff 1px,transparent 1px,transparent 3px)" }}
-          />
-          <svg className="absolute inset-0 w-full h-full opacity-[0.04] mix-blend-overlay pointer-events-none">
-            <filter id="jgrain">
-              <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch"/>
-            </filter>
-            <rect width="100%" height="100%" filter="url(#jgrain)"/>
-          </svg>
+          <div className="absolute pointer-events-none" style={{ width:"80vw",height:"80vw",borderRadius:"50%",background:"radial-gradient(circle, rgba(255,61,26,0.07) 0%, transparent 70%)",filter:"blur(50px)",top:"50%",left:"50%",transform:"translate(-50%, -50%)" }}/>
+          <div className="absolute inset-0 pointer-events-none" style={{ background:"radial-gradient(ellipse at center,transparent 30%,rgba(10,10,10,0.92) 100%)" }}/>
+          <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage:"repeating-linear-gradient(0deg,#fff 0px,#fff 1px,transparent 1px,transparent 3px)" }}/>
+          <svg className="absolute inset-0 w-full h-full opacity-[0.04] mix-blend-overlay pointer-events-none"><filter id="jgrain"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(#jgrain)"/></svg>
         </div>
-
-        {/* Drifting watermark text */}
-        <motion.div
-          className="absolute right-0 top-1/4 pointer-events-none select-none overflow-hidden"
-          style={{ x: bgTextX }}
-        >
-          <div
-            className="font-black uppercase text-[#f5f5f0]/[0.025] whitespace-nowrap text-[clamp(4rem,10vw,9rem)]"
-            style={{ letterSpacing: "-0.03em" }}
-          >
-            FIELD NOTES
-          </div>
+        <motion.div className="absolute right-0 top-1/4 pointer-events-none select-none overflow-hidden" style={{ x:bgTextX }}>
+          <div className="font-black uppercase text-[#f5f5f0]/[0.025] whitespace-nowrap text-[clamp(4rem,10vw,9rem)]" style={{ letterSpacing:"-0.03em" }}>FIELD NOTES</div>
         </motion.div>
-
-        {/* Main content — top-aligned so title never clips behind navbar */}
         <div className="relative z-10 h-full flex flex-col pt-[max(4.5rem,9vh)] pb-10">
           <div className="max-w-6xl mx-auto px-6 md:px-12 w-full flex flex-col h-full">
-
-            {/* Header — visible the moment section pins, before any ribbon animates */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 md:mb-14 flex-shrink-0">
               <div>
                 <Eyebrow>Field Notes</Eyebrow>
-                <SplitReveal
-                  text="Recent thoughts"
-                  className="text-4xl md:text-6xl font-black uppercase leading-[0.95] text-[#f5f5f0]"
-                  style={{ letterSpacing: "-0.01em" }}
-                />
-                <motion.p
-                  className="mt-4 text-sm text-[#f5f5f0]/50 max-w-md leading-relaxed"
-                  initial={{ opacity: 0, y: 12 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-60px" }}
-                  transition={{ duration: 0.7, delay: 0.45 }}
-                >
+                <SplitReveal text="Recent thoughts" className="text-4xl md:text-6xl font-black uppercase leading-[0.95] text-[#f5f5f0]" style={{ letterSpacing:"-0.01em" }}/>
+                <motion.p className="mt-4 text-sm text-[#f5f5f0]/50 max-w-md leading-relaxed" initial={{ opacity:0,y:12 }} whileInView={{ opacity:1,y:0 }} viewport={{ once:true,margin:"-60px" }} transition={{ duration:0.7,delay:0.45 }}>
                   Technical writing on materials, construction, and why the details matter out there.
                 </motion.p>
               </div>
-              <motion.button
-                className="hidden md:inline-flex items-center gap-2 px-6 py-3 rounded-full border border-[#f5f5f0]/10 text-xs uppercase tracking-[0.2em] text-[#f5f5f0]/60 hover:border-[#ff3d1a] hover:text-[#ff3d1a] transition-all duration-300"
-                initial={{ opacity: 0, x: 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-                whileHover={{ scale: 1.04 }}
-              >
+              <motion.button className="hidden md:inline-flex items-center gap-2 px-6 py-3 rounded-full border border-[#f5f5f0]/10 text-xs uppercase tracking-[0.2em] text-[#f5f5f0]/60 hover:border-[#ff3d1a] hover:text-[#ff3d1a] transition-all duration-300" initial={{ opacity:0,x:20 }} whileInView={{ opacity:1,x:0 }} viewport={{ once:true }} transition={{ duration:0.6,delay:0.4 }} whileHover={{ scale:1.04 }}>
                 View all <span>↗</span>
               </motion.button>
             </div>
-
-            {/* Ribbon list — all invisible until scroll drives them in */}
             <div className="flex-1 flex flex-col justify-center">
               <JournalScrollDriver scrollYProgress={scrollYProgress}>
                 {(revealed) => (
                   <div className="flex flex-col gap-4 md:gap-5">
-                    {JOURNAL.map((j, i) => (
-                      <RibbonRow
-                        key={j.title}
-                        j={j}
-                        i={i}
-                        revealed={revealed[i]}
-                        widthPercent={RIBBON_WIDTHS[i] ?? 100}
-                      />
-                    ))}
+                    {JOURNAL.map((j,i) => <RibbonRow key={j.title} j={j} i={i} revealed={revealed[i]} widthPercent={RIBBON_WIDTHS[i]??100}/>)}
                   </div>
                 )}
               </JournalScrollDriver>
             </div>
-
           </div>
         </div>
       </div>
@@ -940,9 +693,7 @@ function JournalSection() {
   );
 }
 
-/* ============================================================
-   SECTION D: STATS
-   ============================================================ */
+/* ── Section D: Stats ── */
 function StatCard({ s, i }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once:true, margin:"-60px" });
@@ -978,22 +729,18 @@ function StatsSection() {
   );
 }
 
-/* ============================================================
-   SECTION E: CONTACT / FOOTER
-   ============================================================ */
+/* ── Section E: Contact / Footer ── */
 function ContactSection() {
   const marqueeRef = useRef();
   const sectionRef = useRef(null);
   const { scrollYProgress } = useScroll({ target:sectionRef, offset:["start end","end start"] });
   const ctaY = useTransform(scrollYProgress, [0,1], ["6%","-6%"]);
   const auraScale = useTransform(scrollYProgress, [0,0.5,1], [0.7,1.2,0.9]);
-
   useEffect(() => {
     if (!marqueeRef.current) return;
     const ctx = gsap.context(() => { gsap.to(marqueeRef.current, { xPercent:-50,duration:40,ease:"none",repeat:-1 }); });
     return () => ctx.revert();
   }, []);
-
   return (
     <DarkBackdrop className="pt-20 md:pt-28 pb-10 border-t border-[#f5f5f0]/[0.06] overflow-hidden" auraColor="rgba(255,61,26,0.12)">
       <motion.div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none" style={{ width:"60vw",height:"60vw",borderRadius:"50%",background:"radial-gradient(circle, rgba(255,61,26,0.15) 0%, transparent 70%)",filter:"blur(40px)",scale:auraScale }}/>
@@ -1035,9 +782,6 @@ function ContactSection() {
   );
 }
 
-/* ============================================================
-   PAGE ROOT
-   ============================================================ */
 export default function Home() {
   return (
     <main className="bg-[#0a0a0a]">
