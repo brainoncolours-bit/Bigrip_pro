@@ -1,495 +1,301 @@
-import React, { useState, useRef } from 'react';
-import { motion, useScroll, useTransform, useVelocity, useSpring } from 'framer-motion';
+import { useRef, useEffect } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-// --- STAGGERED BOTTOM-TO-TOP MASK REVEAL ---
-const ImageClipReveal = ({ src, alt, aspect = "aspect-[3/4]", delay = 0 }) => (
-  <div className={`relative overflow-hidden w-full ${aspect} bg-[#F4F4F4]`}>
-    <motion.div
-      className="w-full h-full origin-bottom"
-      initial={{ clipPath: "polygon(0 100%, 100% 100%, 100% 100%, 0 100%)", scale: 1.05 }}
-      whileInView={{ clipPath: "polygon(0 0%, 100% 0%, 100% 100%, 0 100%)", scale: 1 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={{ 
-        clipPath: { duration: 1.3, ease: [0.16, 1, 0.3, 1], delay },
-        scale: { duration: 1.6, ease: [0.16, 1, 0.3, 1], delay }
-      }}
-    >
-      <img src={src} alt={alt} className="w-full h-full object-cover grayscale contrast-[102%]" />
-    </motion.div>
-  </div>
-);
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
-export default function ZaraImmersiveScale() {
-  const { scrollYProgress } = useScroll();
-  
-  // Kinetic layout offsets for Section 3
-  const leftColY = useTransform(scrollYProgress, [0.1, 0.6], ["0px", "-100px"]);
-  const rightColY = useTransform(scrollYProgress, [0.1, 0.6], ["0px", "100px"]);
+/* ==========================================
+   ULTRA-HIGH DENSITY EDITORIAL SERVICES MEDIA
+   ========================================== */
+const ASSETS = {
+  serviceVideo1: "6HBxWrmI8OU", // Narrative Architecture
+  serviceVideo2: "9Wd_A8e8TqM", // Chromatic Grading & Finish
+  serviceVideo3: "s1x4u5QBbXM", // Fashion & Silhouette Capture
+  serviceVideo4: "6HBxWrmI8OU", // Sound Design & Sonic Textures
+};
 
-  // --- STRICT SECTIONAL ANCHOR REFS ---
-  const interstice1Ref = useRef(null);
-  const section2Ref = useRef(null);
-  const section3Ref = useRef(null);
-  const section4Ref = useRef(null);
-  const section5Ref = useRef(null);
-  const interstice2Ref = useRef(null);
-  const section6Ref = useRef(null);
-  const section7Ref = useRef(null);
+/* ==========================================
+   PRODUCTION REUSABLE WRAPPERS
+   ========================================== */
+function SaturatedVideo({ videoId, opacity = "opacity-100" }) {
+  return (
+    <div className="absolute inset-0 w-full h-full overflow-hidden bg-black pointer-events-none">
+      <iframe
+        src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&playsinline=1`}
+        title="Vivid Continuum Loop"
+        className={`absolute top-1/2 left-1/2 w-[180%] h-[180%] md:w-[120%] md:h-[120%] -translate-x-1/2 -translate-y-1/2 object-cover select-none transition-opacity duration-1000 ${opacity}`}
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      />
+    </div>
+  );
+}
 
-  // ─── INTERACTIVE HOVER BANNER DATA ───
-  const bannerMovies = [
+/* ==========================================
+   SERVICES EXPERIMENTAL SECTIONS
+   ========================================= */
+
+// SECTION 1: Header Manifesto
+function ServicesHero() {
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end start"] });
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const yOffset = useTransform(scrollYProgress, [0, 0.5], ["0px", "-50px"]);
+
+  return (
+    <section ref={containerRef} className="relative w-full min-h-[80vh] bg-black overflow-hidden flex flex-col justify-between p-6 md:p-12 border-b border-neutral-900">
+      
+      
+      <motion.div style={{ opacity, y: yOffset }} className="z-10 flex flex-col items-start max-w-7xl my-auto">
+        <h1 className="text-[clamp(2.5rem,8vw,8rem)] font-thin tracking-tighter leading-[0.95] text-white uppercase font-sans break-words w-full">
+          OPERATIONAL<br />CAPABILITIES.
+        </h1>
+        <p className="text-[11px] md:text-xs tracking-[0.3em] text-neutral-400 font-light uppercase max-w-2xl mt-8 leading-relaxed">
+          We engineer raw visual weight. Below is our baseline framework for tailoring high-density digital assets, architectural fashion campaigns, and severe optical grades.
+        </p>
+      </motion.div>
+
+      <div className="w-full flex justify-between items-end z-10 font-mono text-[9px] tracking-widest text-neutral-500">
+        <span className="animate-pulse">[ DEPLOYING CORE MODULES ]</span>
+        <span>INDEXED BY VOLTAGE</span>
+      </div>
+    </section>
+  );
+}
+
+// SECTION 2: Interactive Service List Matrix (GSAP Scrubbing)
+function ServicesMatrixList() {
+  const componentRef = useRef(null);
+
+  const capabilities = [
     {
-      id: "backrooms",
-      title: "Backrooms",
-      year: "2026",
-      image: "https://www.gstatic.com/webp/gallery/1.jpg"
+      num: "01",
+      title: "CINEMATIC DIRECTION & ARCHITECTURE",
+      desc: "Full-scale visual architecture from spatial concepts to continuous tracking. Engineered using precise camera grids, high-speed shutter manipulation, and geometric alignment.",
+      metrics: ["ANAMORPHIC PIPELINES", "SPATIAL BLOCKING", "16MM / 35MM EMBEDDED ENGINE"],
+      video: ASSETS.serviceVideo1
     },
     {
-      id: "death-robin-hood",
-      title: "The Death of Robin Hood",
-      year: "2026",
-      image: "https://www.gstatic.com/webp/gallery/2.jpg"
+      num: "02",
+      title: "CHROMATIC GRADE & SPECTRAL DEPTH",
+      desc: "Micro-tonal color shifts and unforgiving color treatments engineered for low-light digital landscapes. We calibrate custom look-up profiles tailored per deployment canvas.",
+      metrics: ["LUT SPECULATION", "HIGH-GLOW CONTRAST ISOLATION", "REDUCED NOISE COMPRESSION"],
+      video: ASSETS.serviceVideo2
     },
     {
-      id: "the-invite",
-      title: "The Invite",
-      year: "2026",
-      image: "https://www.gstatic.com/webp/gallery/3.jpg"
+      num: "03",
+      title: "EDITORIAL FASHION & SILHOUETTE CAPTURE",
+      desc: "Calibrating the relationship between moving fabrics, human form, and static brutalist architecture. Tailored strictly for high-end fashion campaigns and digital runway archives.",
+      metrics: ["DRAPE/VELOCITY SYNC", "TEXTURE RETENTION ENGINE", "ASYMMETRIC FRAMING"],
+      video: ASSETS.serviceVideo3
     },
     {
-      id: "tony",
-      title: "Tony",
-      year: "2026",
-      image: "https://www.gstatic.com/webp/gallery/4.jpg"
-    },
-    {
-      id: "onslaught",
-      title: "Onslaught",
-      year: "2026",
-      image: "https://www.gstatic.com/webp/gallery/5.jpg"
-    },
-    {
-      id: "primetime",
-      title: "Primetime",
-      year: "2026",
-      image: "https://www.gstatic.com/webp/gallery/6.jpg"
+      num: "04",
+      title: "SONIC LANDSCAPES & AUDIO TEXTURING",
+      desc: "Constructing raw, industrial audio spaces that backstop visual weight. Sub-bass design, rhythmic pacing edits, and customized microtonal synthesis.",
+      metrics: ["SUB-FREQUENCY CALIBRATION", "RHYTHMIC INTERVAL SYNCHRONIZATION", "ATMOSPHERIC GAIN DESIGN"],
+      video: ASSETS.serviceVideo4
     }
   ];
 
-  const [activeMovie, setActiveMovie] = useState(bannerMovies[2]); // Defaulting to 'The Invite' context matching the screenshot
+  return (
+    <section ref={componentRef} className="w-full bg-black py-12 px-6 md:px-12 lg:px-24">
+      <div className="max-w-7xl mx-auto flex flex-col">
+        {capabilities.map((item, idx) => (
+          <div 
+            key={idx} 
+            className="group grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 py-16 border-b border-neutral-900 items-start transition-colors duration-500 hover:bg-neutral-950/40 px-2"
+          >
+            {/* Number Code */}
+            <div className="lg:col-span-1 font-mono text-[10px] md:text-xs text-neutral-600 group-hover:text-white transition-colors">
+              [{item.num} // GEN_CAP]
+            </div>
 
-  // ─── REVEAL 01 SCROLL LOGIC (First Interstice Frame) ───
-  const { scrollYProgress: s1Progress } = useScroll({
-    target: interstice1Ref,
-    offset: ["start end", "end start"]
-  });
-  const reveal01Opacity = useTransform(s1Progress, [0, 0.2, 0.6, 0.8], [0, 1, 1, 0]);
-  const reveal01Y = useTransform(s1Progress, [0, 0.2, 0.6, 0.8], [40, 0, 0, -40]);
-  const reveal01Clip = useTransform(
-    s1Progress, 
-    [0, 0.25, 0.55, 0.8], 
-    [
-      "polygon(0 100%, 100% 100%, 100% 100%, 0 100%)", 
-      "polygon(0 0%, 100% 0%, 100% 100%, 0 100%)", 
-      "polygon(0 0%, 100% 0%, 100% 100%, 0 100%)", 
-      "polygon(0 0%, 100% 0%, 100% 0%, 0 0%)"
-    ]
+            {/* Core Details */}
+            <div className="lg:col-span-6 flex flex-col space-y-4">
+              <h3 className="text-xl md:text-2xl lg:text-3xl font-extralight tracking-tight text-neutral-300 group-hover:text-white transition-colors font-sans">
+                {item.title}
+              </h3>
+              <p className="text-xs md:text-[13px] font-light text-neutral-500 leading-relaxed max-w-xl group-hover:text-neutral-400 transition-colors">
+                {item.desc}
+              </p>
+              
+              {/* Technical Tags */}
+              <div className="flex flex-wrap gap-2 pt-2">
+                {item.metrics.map((metric, mIdx) => (
+                  <span key={mIdx} className="font-mono text-[8px] md:text-[9px] tracking-wider text-neutral-600 border border-neutral-900 group-hover:border-neutral-800 group-hover:text-neutral-400 px-2 py-0.5 rounded-[1px] transition-all">
+                    {metric}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Micro Video Terminal Preview */}
+            <div className="lg:col-span-5 w-full aspect-video lg:aspect-[16/10] bg-neutral-950 border border-neutral-900 overflow-hidden relative shadow-2xl transition-all duration-700 group-hover:border-neutral-700 filter grayscale group-hover:grayscale-0">
+              <SaturatedVideo videoId={item.video} />
+              <div className="absolute inset-0 bg-black/40 group-hover:bg-transparent transition-colors duration-500 pointer-events-none" />
+              <div className="absolute bottom-2 right-2 font-mono text-[7px] text-neutral-600 group-hover:text-neutral-400 px-1 bg-black/60 backdrop-blur-sm uppercase">
+                PREVIEW_{item.num}_LIVE
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
   );
+}
 
-  // ─── REVEAL 02 SCROLL LOGIC (Section 3 Kinetic Sidebar) ───
-  const { scrollYProgress: s3Progress } = useScroll({
-    target: section3Ref,
-    offset: ["start end", "end start"]
-  });
-  const reveal02Y = useTransform(s3Progress, [0, 0.25, 0.75, 1], [100, 0, 0, -100]);
-  const reveal02Opacity = useTransform(s3Progress, [0, 0.2, 0.8, 1], [0, 0.15, 0.15, 0]);
+// SECTION 3: The Deployment Spec Sheet (Grid Specs)
+function TechnicalSpecsTable() {
+  return (
+    <section className="w-full bg-black py-20 md:py-32 px-6 md:px-12 lg:px-24 border-t border-neutral-900">
+      <div className="max-w-5xl mx-auto">
+        <span className="text-[10px] md:text-xs font-mono tracking-[0.5em] text-neutral-500 block mb-8">[03 // ACQUISITION PARAMETERS]</span>
+        <h2 className="text-2xl font-extralight tracking-tighter text-white uppercase mb-12 font-sans">DELIVERY SPECIFICATIONS</h2>
+        
+        <div className="w-full overflow-x-auto border border-neutral-950">
+          <table className="w-full text-left border-collapse font-mono text-[10px] md:text-xs text-neutral-400">
+            <thead>
+              <tr className="border-b border-neutral-900 text-neutral-500">
+                <th className="py-4 px-2 uppercase tracking-widest font-normal">MODULE SYSTEM</th>
+                <th className="py-4 px-2 uppercase tracking-widest font-normal">NATIVE ENGINE</th>
+                <th className="py-4 px-2 uppercase tracking-widest font-normal">OUTPUT STATE</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-neutral-900">
+              <tr className="hover:text-white transition-colors">
+                <td className="py-4 px-2 text-neutral-300">RAW Capture Platform</td>
+                <td className="py-4 px-2">ARRI Alexa Mini LF / RED V-Raptor XL</td>
+                <td className="py-4 px-2">ProRes 4444 XQ / 8K REDCODE RAW</td>
+              </tr>
+              <tr className="hover:text-white transition-colors">
+                <td className="py-4 px-2 text-neutral-300">Optics Mapping</td>
+                <td className="py-4 px-2">Cooke Anamorphic / Tribe7 Blackwing7</td>
+                <td className="py-4 px-2">Custom Spatial Distortion Profiles</td>
+              </tr>
+              <tr className="hover:text-white transition-colors">
+                <td className="py-4 px-2 text-neutral-300">Color Framework</td>
+                <td className="py-4 px-2">ACES workflow / DaVinci Resolve Studio</td>
+                <td className="py-4 px-2">Rec.2026 / P3 D65 Master Matrices</td>
+              </tr>
+              <tr className="hover:text-white transition-colors">
+                <td className="py-4 px-2 text-neutral-300">Spatial Mastering</td>
+                <td className="py-4 px-2">Dolby Atmos Spatial Mixing Engines</td>
+                <td className="py-4 px-2">24-bit Linear PCM Broadcast Stream</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  );
+}
 
-  // ─── REVEAL 03 MARQUEE RUNWAY LOGIC (Section 4 Runway Matrix) ───
-  const { scrollYProgress: s4Progress } = useScroll({
-    target: section4Ref,
-    offset: ["start end", "end start"]
-  });
-  const textXMarquee = useTransform(s4Progress, [0, 1], ["5%", "-35%"]);
-  const reveal03Opacity = useTransform(s4Progress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]);
-  
-  // Velocity-based structural skew
-  const scrollVelocity = useVelocity(scrollYProgress);
-  const smoothVelocity = useSpring(scrollVelocity, { damping: 50, stiffness: 300 });
-  const textSkew = useTransform(smoothVelocity, [-3, 3], [-8, 8]);
+// SECTION 4: Pipeline Operational Call To Action
+function ServicesCTA() {
+  return (
+    <section className="w-full bg-black text-white pt-24 pb-28 px-6 md:px-12 lg:px-24 border-t border-neutral-900 selection:bg-white selection:text-black">
+  <div className="max-w-6xl mx-auto space-y-12">
+    
+    {/* SYSTEM MONITOR TOP TRIM */}
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between font-mono text-[9px] tracking-[0.2em] text-neutral-600 border-b border-neutral-900 pb-3 gap-2">
+      <div className="flex items-center gap-2">
+        <span className="w-1.5 h-1.5 rounded-full bg-neutral-700 animate-pulse"></span>
+        <span>SYS_ROUTING // CRT_WALL_01</span>
+      </div>
+      <div className="flex gap-4">
+        <span>MATRIX: ACTIVE</span>
+        <span>LOCATION // STUDIO_P3</span>
+      </div>
+    </div>
 
-  // Section 05 Image & Structural Parallax Defaults
-  const { scrollYProgress: s5Progress } = useScroll({
-    target: section5Ref,
-    offset: ["start end", "end start"]
-  });
-  const imageScaleDown = useTransform(s5Progress, [0, 0.5], [1.25, 1]);
-  const textFadeUp = useTransform(s5Progress, [0, 0.4], [80, 0]);
-  const textOpacity = useTransform(s5Progress, [0, 0.35], [0, 1]);
+    {/* ULTRA-WIDE BLACKBOX VIEWPORT */}
+    <div className="relative w-full aspect-[21/9] bg-black border border-neutral-900 overflow-hidden shadow-[0_0_80px_rgba(0,0,0,1)]">
+      {/* Heavy shadow vignette masking to sink the video into the black background */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_40%,rgba(0,0,0,0.85)_100%)] pointer-events-none z-10"></div>
+      
+      <iframe 
+        className="w-full h-full opacity-90 filter brightness-90 contrast-[1.05] grayscale-[15%]"
+        src="https://www.youtube.com/embed/Sgxbx65IDeM?si=SHSHCVGWP7dutQV-" 
+        title="YouTube video player" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+        referrerPolicy="strict-origin-when-cross-origin" 
+        allowFullScreen>
+      </iframe>
+    </div>
 
-  // ─── REVEAL 04 SCROLL LOGIC (Second Interstice Frame) ───
-  const { scrollYProgress: sInterstice2 } = useScroll({
-    target: interstice2Ref,
-    offset: ["start end", "end start"]
-  });
-  const reveal04Opacity = useTransform(sInterstice2, [0, 0.2, 0.7, 0.9], [0, 1, 1, 0]);
-  const reveal04Tracking = useTransform(sInterstice2, [0, 0.4, 0.7], ["0.1em", "0.5em", "0.7em"]);
-  const reveal04Scale = useTransform(sInterstice2, [0, 0.3, 0.7, 0.9], [0.95, 1, 1, 1.05]);
+    {/* SPLIT DATA FRAME & TELEMETRY TERMINAL */}
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-4">
+      
+      {/* Left Data Column */}
+      <div className="lg:col-span-8 space-y-6">
+        <div className="space-y-2">
+          <span className="font-mono text-[9px] tracking-[0.4em] text-neutral-500 block">
+            [ INITIATING SEQUENTIAL INTERACTION ]
+          </span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extralight tracking-tighter text-white uppercase font-sans leading-none">
+            READY TO CALIBRATE YOUR SEQUENCES?
+          </h2>
+        </div>
+        
+        <p className="text-xs font-mono tracking-wide text-neutral-400 max-w-2xl leading-relaxed">
+          Connect your project core parameters with our architectural system pipeline. We accept direct inquiries for corporate assets, fashion campaigns, and feature grading frameworks.
+        </p>
 
-  // ─── REVEAL 05 SCROLL LOGIC (Section 7 Monumental Watermark) ───
-  const { scrollYProgress: s7Progress } = useScroll({
-    target: section7Ref,
-    offset: ["start end", "end start"]
-  });
-  const bgWatermarkScale = useTransform(s7Progress, [0, 1], [0.85, 1.15]);
-  const bgWatermarkOpacity = useTransform(s7Progress, [0, 0.25, 0.75, 1], [0, 0.03, 0.03, 0]);
+        {/* Technical Specification Ribbon */}
+        <div className="grid grid-cols-3 gap-2 border-t border-neutral-900 pt-6 font-mono text-[9px] text-neutral-500 tracking-wider">
+          <div>
+            <span className="text-neutral-700 block text-[8px] mb-1">01 / RESOLUTION</span>
+            <span>8K ANAMORPHIC</span>
+          </div>
+          <div>
+            <span className="text-neutral-700 block text-[8px] mb-1">02 / COLOR PROFILE</span>
+            <span>ACES MASTERING // LOG-C</span>
+          </div>
+          <div>
+            <span className="text-neutral-700 block text-[8px] mb-1">03 / TIMING</span>
+            <span>23.976 FPS // 180°</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Right Action Column */}
+      <div className="lg:col-span-4 flex lg:justify-end lg:items-end">
+        <a 
+          href="mailto:pipeline@seckrick.com" 
+          className="w-full lg:w-auto text-center px-12 py-5 bg-white text-black font-mono text-[10px] tracking-[0.3em] uppercase hover:bg-neutral-200 transition-all duration-300 rounded-[1px] hover:shadow-[0_0_50px_rgba(255,255,255,0.1)]">
+          ENGAGE PRODUCTION ROUTER
+        </a>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+  );
+}
+
+/* ==========================================
+   MAIN SERVICES PAGE COMPONENT EXPORT
+   ========================================== */
+export default function Services() {
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const systemPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+      if (systemPreference.matches) {
+        ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      }
+    }
+  }, []);
 
   return (
-    <div className="overflow-x-hidden bg-white text-black font-sans antialiased selection:bg-black selection:text-white min-h-screen relative tracking-normal font-normal">
-      
-      {/* ==================== STRUCTURAL ZARA / A24 HUD ==================== */}
-      <header className="fixed top-0 left-0 w-full h-16 sm:h-20 md:h-24 grid grid-cols-12 px-4 sm:px-6 md:px-10 items-center z-50 pointer-events-none mix-blend-difference text-white">
-        <div className="col-span-2 md:col-span-1 pointer-events-auto">
-          <button className="relative w-6 h-6 flex flex-col justify-center space-y-[6px] group">
-            <span className="w-6 h-[1px] bg-white transition-transform group-hover:rotate-45 group-hover:translate-y-[3.5px]" />
-            <span className="w-6 h-[1px] bg-white transition-transform group-hover:-rotate-45 group-hover:-translate-y-[3.5px]" />
-          </button>
-        </div>
-
-        <div className="col-span-8 md:col-span-10 text-center pointer-events-auto">
-          <a href="#" className="select-none inline-block">
-            <h1 className="text-[22px] sm:text-[28px] md:text-[36px] font-serif font-black tracking-[0.1em] uppercase leading-none scale-y-[1.02]">
-              A24
-            </h1>
-          </a>
-        </div>
-
-        <div className="col-span-2 md:col-span-1 text-right flex justify-end items-center pointer-events-auto">
-          <button className="text-white hover:opacity-70 transition-opacity">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </button>
-        </div>
-      </header>
-
-      {/* ==================== NEW SECTION 01: IMMERSIVE HOVER INTERACTIVE BANNER ==================== */}
-      <section className="relative w-full min-h-screen bg-neutral-900 overflow-hidden select-none">
-        
-        {/* Dynamic Multi-layered Background Canvas */}
-        {bannerMovies.map((movie) => (
-          <motion.div
-            key={movie.id}
-            className="absolute inset-0 w-full h-full"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: activeMovie.id === movie.id ? 1 : 0 }}
-            transition={{ duration: 0.8, ease: [0.25, 1, 0.5, 1] }}
-          >
-            <img 
-              src={movie.image} 
-              alt={movie.title} 
-              className="w-full h-full object-cover brightness-[0.65] contrast-[105%]"
-            />
-          </motion.div>
-        ))}
-
-        {/* Foreground Content Interface Overlay */}
-        <div className="absolute inset-0 z-20 w-full h-full flex flex-col justify-end p-4 sm:p-6 md:p-12 pb-16 md:pb-20">
-          <div className="max-w-4xl tracking-tight">
-            {bannerMovies.map((movie) => {
-              const isActive = activeMovie.id === movie.id;
-              return (
-                <div 
-                  key={movie.id}
-                  className="relative group py-1 cursor-pointer w-fit"
-                  onMouseEnter={() => setActiveMovie(movie)}
-                >
-                  <div className="flex items-start flex-wrap gap-2">
-                    <h2 className={`text-3xl sm:text-4xl md:text-[74px] font-sans font-bold tracking-tight leading-[1.05] transition-all duration-300 ${
-                      isActive ? 'text-white font-medium' : 'text-neutral-400/60 hover:text-neutral-200'
-                    }`}>
-                      {movie.title}
-                    </h2>
-                    <span className={`text-[9px] font-mono ml-2 mt-2 font-normal ${
-                      isActive ? 'text-white' : 'text-neutral-500'
-                    }`}>
-                      {movie.year}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Floating Downward Navigation Signifier */}
-        <div className="absolute bottom-6 right-8 z-30 pointer-events-none opacity-80 mix-blend-difference text-white">
-          <span className="text-xl font-light">↓</span>
-        </div>
-      </section>
-
-      {/* ─── BRAND REVEAL 01: SEAMLESS BOUNDED CLIP-MASK RUNWAY ─── */}
-      <div ref={interstice1Ref} className="w-full bg-white px-4 sm:px-6 md:px-10 overflow-hidden py-16 sm:py-20 md:py-24 border-t border-neutral-100 mix-blend-difference">
-        <motion.div 
-          style={{ opacity: reveal01Opacity, y: reveal01Y, clipPath: reveal01Clip }}
-          className="text-[11px] font-mono tracking-[1.8em] text-black uppercase text-center will-change-transform font-bold pl-[1.8em]"
-        >
-          SIKRICK STUDIO DESIGN SYSTEM V.4
-        </motion.div>
-      </div>
-
-      {/* ==================== SECTION 02: STRUCTURAL DROPDOWN NAV MATRIX ==================== */}
-      <section ref={section2Ref} className="w-full bg-white px-4 sm:px-6 md:px-10 py-20 sm:py-24 md:py-32 border-t border-neutral-100 grid grid-cols-1 gap-8 md:grid-cols-12 items-start">
-        <div className="md:col-span-2">
-          <span className="text-[10px] font-medium tracking-wider uppercase block text-black">NEW COLLECTION</span>
-          <span className="text-[8px] font-mono text-neutral-400 block mt-1">SYSTEM_EDITION_V4</span>
-        </div>
-
-        <div className="md:col-span-3 space-y-6">
-          <div>
-            <span className="text-neutral-400 block mb-2 font-mono text-[9px]">|01 // ACTUALIZACIÓN</span>
-            <div className="space-y-1 uppercase font-semibold text-xs tracking-wide">
-              <a href="#" className="block text-black hover:opacity-60">THE NEW COAT</a>
-              <a href="#" className="block text-neutral-400 hover:text-black">THE SUMMER CAPSULE</a>
-              <a href="#" className="block text-neutral-400 hover:text-black">BENITO ANTONIO</a>
-            </div>
-          </div>
-        </div>
-
-        <div className="md:col-span-4 space-y-1 uppercase text-[11px] font-normal tracking-wide text-neutral-400">
-          <span className="text-neutral-400 block mb-3 font-mono text-[9px]">|02 // CATEGORÍAS</span>
-          <a href="#" className="block text-black">LINO</a>
-          <a href="#" className="block hover:text-black transition-colors">VESTIDOS</a>
-          <a href="#" className="block hover:text-black transition-colors">TOPS | BODIES</a>
-          <a href="#" className="block hover:text-black transition-colors">CAMISETAS</a>
-          <a href="#" className="block hover:text-black transition-colors">CAMISAS</a>
-          <a href="#" className="block hover:text-black transition-colors">PUNTO</a>
-          <a href="#" className="block hover:text-black transition-colors">SHORTS | BERMUDAS</a>
-          <a href="#" className="block hover:text-black transition-colors">PANTALONES</a>
-          <a href="#" className="block hover:text-black transition-colors">JEANS</a>
-          <a href="#" className="block hover:text-black transition-colors">FALDAS</a>
-          <a href="#" className="block hover:text-black transition-colors">BLAZERS</a>
-          <a href="#" className="block hover:text-black transition-colors">LENCERÍA</a>
-        </div>
-      </section>
-
-      {/* ==================== SECTION 03: INTERLOCKING PARALLAX MATRIX ==================== */}
-      <section ref={section3Ref} className="w-full bg-[#FAF9F5] py-24 sm:py-28 md:py-40 px-4 sm:px-6 md:px-10 relative overflow-hidden">
-        
-        {/* ─── BRAND REVEAL 02: ISOLATED ZONE BOUNDED SIDEBAR ─── */}
-        <motion.div 
-          style={{ y: reveal02Y, opacity: reveal02Opacity }}
-          className="absolute right-12 top-1/4 hidden md:block select-none z-0 pointer-events-none will-change-transform"
-        >
-          <span className="font-serif font-black tracking-tighter text-[8vw] leading-none block uppercase text-black rotate-90 origin-center select-none">
-            Sikrick
-          </span>
-        </motion.div>
-
-        <div className="w-full grid grid-cols-1 md:grid-cols-12 gap-12 items-center relative z-10">
-          <motion.div style={{ y: leftColY }} className="md:col-span-4 md:col-start-2 space-y-4">
-            <ImageClipReveal 
-              src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=80" 
-              alt="Editorial Dynamic Landscape"
-              aspect="aspect-[3/4]"
-              delay={0.1}
-            />
-            <div className="text-[9px] uppercase tracking-normal text-black font-medium">
-              [FRAME_04 / MONOLITHIC]
-            </div>
-          </motion.div>
-
-          <motion.div style={{ y: rightColY }} className="md:col-span-4 md:col-start-8 space-y-4 pt-0 md:pt-16">
-            <ImageClipReveal 
-              src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=1200&q=80" 
-              alt="Editorial High Saturation Frame"
-              aspect="aspect-[2/3]"
-              delay={0.25}
-            />
-            <div className="text-[9px] uppercase tracking-normal text-neutral-400 text-right">
-              [FRAME_05 / EXT_CONCRETE]
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ==================== SECTION 04: KINETIC VELOCITY MARQUEE ==================== */}
-      <section ref={section4Ref} className="w-full bg-white py-20 sm:py-24 md:py-32 overflow-hidden border-b border-neutral-100 whitespace-nowrap">
-        <motion.div 
-          style={{ x: textXMarquee, skewX: textSkew, opacity: reveal03Opacity }} 
-          className="inline-block text-[11vw] sm:text-[9vw] font-serif font-black uppercase tracking-[-0.06em] leading-none text-black select-none will-change-transform"
-        >
-          SIKRICK • COLLECCIÓN DE CONTRALUZ • CRUDE STUDIO ARCHIVE REMIX • SIKRICK • COLLECCIÓN DE CONTRALUZ • CRUDE STUDIO ARCHIVE REMIX •
-        </motion.div>
-        <div className="px-4 sm:px-6 md:px-10 grid grid-cols-1 md:grid-cols-12 gap-4 mt-6">
-          <div className="md:col-span-3 md:col-start-9 text-[9px] font-mono tracking-tighter text-neutral-400 uppercase">
-            <span>// ADAPTIVE BEHAVIOR REGISTERED UNDER VELOCITY MATRIX</span>
-          </div>
-        </div>
-      </section>
-
-      {/* ==================== SECTION 05: ASYMMETRIC MONO REVEAL & INVERSE PIN ==================== */}
-      <section ref={section5Ref} className="w-full bg-white py-20 sm:py-24 md:py-32 px-4 sm:px-6 md:px-10 grid grid-cols-1 gap-8 md:grid-cols-12 md:gap-12 items-start relative">
-        <div className="md:col-span-4 md:sticky md:top-24 space-y-8 z-10">
-          <div>
-            <span className="text-[10px] font-mono text-black block mb-4">03 / MANIFESTO ELEVACIÓN</span>
-            <motion.h3 
-              style={{ y: textFadeUp, opacity: textOpacity }}
-              className="text-4xl md:text-5xl font-serif tracking-tight leading-[1.05]"
-            >
-              The structural weights are completely omitted, allowing raw fabric edges to interact with spatial air current.
-            </motion.h3>
-          </div>
-          <div className="text-[11px] text-neutral-500 max-w-xs leading-relaxed font-light">
-            Each iteration acts as an isolated monolithic volume. Subversive proportions meet delicate, deliberate linear stitch lines.
-          </div>
-        </div>
-
-        <div className="md:col-span-7 md:col-start-6 overflow-hidden relative">
-          <motion.div style={{ scale: imageScaleDown }} className="w-full h-full origin-center">
-            <ImageClipReveal 
-              src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=1600&q=90" 
-              alt="Tailored Minimal Canvas Monolith"
-              aspect="aspect-[4/5]"
-            />
-          </motion.div>
-          <div className="mt-4 flex justify-between font-mono text-[9px] text-neutral-400">
-            <span>[PIECE // 9283-A]</span>
-            <span>MODEL COMPOSITION OUTSIDE RAW MATRIX</span>
-          </div>
-        </div>
-      </section>
-
-      {/* ─── BRAND REVEAL 04: STRUCTURAL BOUNDED KERN EXPANSION INTERSTICE ─── */}
-      <div ref={interstice2Ref} className="w-full bg-white py-20 sm:py-24 md:py-32 overflow-hidden border-t border-neutral-100 flex justify-center items-center">
-        <motion.span 
-          style={{ opacity: reveal04Opacity, letterSpacing: reveal04Tracking, scale: reveal04Scale }}
-          className="text-3xl md:text-5xl font-serif uppercase font-light text-black origin-center will-change-transform"
-        >
-          SIKRICK
-        </motion.span>
-      </div>
-
-      {/* ==================== SECTION 06: MULTI-COLUMN TRIPLE STAGGER INDEX ==================== */}
-      <section ref={section6Ref} className="w-full bg-[#FAF9F5] py-20 sm:py-24 md:py-32 px-4 sm:px-6 md:px-10 border-t border-b border-neutral-200/60">
-        <div className="mb-16">
-          <span className="text-[9px] font-mono text-neutral-400 uppercase block">SYSTEMATIC GRID SEQUENCE // EDITIONS</span>
-        </div>
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-3 md:gap-12">
-          
-          <div className="space-y-6">
-            <ImageClipReveal 
-              src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1200&q=80" 
-              alt="Sequence Plate 01" 
-              aspect="aspect-[3/4]"
-              delay={0.0}
-            />
-            <div className="flex justify-between items-start">
-              <span className="text-xs uppercase font-bold tracking-wide">01 / ESTRUCTURA DE LINO</span>
-              <span className="text-[9px] font-mono text-neutral-400 mt-0.5">EDIT.01</span>
-            </div>
-          </div>
-
-          <div className="space-y-6 md:translate-y-12">
-            <ImageClipReveal 
-              src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1200&q=80" 
-              alt="Sequence Plate 02" 
-              aspect="aspect-[3/4]"
-              delay={0.15}
-            />
-            <div className="flex justify-between items-start">
-              <span className="text-xs uppercase font-bold tracking-wide">02 / SILUETA FLUIDA</span>
-              <span className="text-[9px] font-mono text-neutral-400 mt-0.5">EDIT.02</span>
-            </div>
-          </div>
-
-          <div className="space-y-6 md:translate-y-24">
-            <ImageClipReveal 
-              src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&w=1200&q=80" 
-              alt="Sequence Plate 03" 
-              aspect="aspect-[3/4]"
-              delay={0.3}
-            />
-            <div className="flex justify-between items-start">
-              <span className="text-xs uppercase font-bold tracking-wide">03 / SASTRERÍA ASIMÉTRICA</span>
-              <span className="text-[9px] font-mono text-neutral-400 mt-0.5">EDIT.03</span>
-            </div>
-          </div>
-
-        </div>
-        <div className="h-24 hidden md:block" />
-      </section>
-
-      {/* ==================== SECTION 07: OPAQUE RADIAL TYPOGRAPHIC OVERLAY ==================== */}
-      <section ref={section7Ref} className="w-full bg-white py-24 sm:py-32 md:py-40 px-4 sm:px-6 md:px-10 flex flex-col justify-center items-center text-center relative overflow-hidden">
-        <motion.div 
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-120px" }}
-          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-          className="max-w-3xl space-y-8 z-10"
-        >
-          <span className="text-[9px] font-mono tracking-widest text-neutral-400 uppercase block">// EPÍLOGO DE MARCA</span>
-          <h2 className="text-4xl sm:text-5xl md:text-7xl font-serif tracking-tighter leading-none text-black font-black">
-            AUTONOMOUS <br />
-            <span className="italic font-normal font-serif text-neutral-400">DESIGN SYMMETRY</span>
-          </h2>
-          <div className="w-16 h-[1px] bg-black mx-auto my-6" />
-          <p className="text-xs md:text-sm text-neutral-500 font-light max-w-md mx-auto leading-relaxed normal-case">
-            An exploration of spatial balance and absolute material honesty. Built explicitly for the uncompromised modern landscape.
-          </p>
-        </motion.div>
-        
-        <motion.div 
-          style={{ scale: bgWatermarkScale, opacity: bgWatermarkOpacity }}
-          className="absolute inset-0 flex justify-center items-center pointer-events-none select-none will-change-transform z-0"
-        >
-          <div className="text-[38vw] font-serif font-bold text-black tracking-tighter uppercase">Sikrick</div>
-        </motion.div>
-      </section>
-
-      {/* ==================== STRUCTURAL EDITORIAL FOOTER ==================== */}
-      <footer className="bg-white border-t border-black/10 pt-16 sm:pt-20 md:pt-24 pb-12 px-4 sm:px-6 md:px-10 text-[11px] font-normal text-neutral-500">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-end pb-16">
-          <div className="md:col-span-9">
-            <h2 className="text-[14vw] font-serif font-black text-black tracking-[-0.12em] leading-[0.75] uppercase select-none scale-y-[1.05] origin-bottom">
-              Sikrick
-            </h2>
-          </div>
-          <div className="md:col-span-3 md:text-right font-mono text-[9px] text-neutral-400 uppercase tracking-widest">
-            OPERATIONAL_NODE // 2026
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 pt-12 border-t border-neutral-100">
-          <div className="space-y-3">
-            <span className="text-black font-semibold text-[10px] tracking-wider uppercase block">NEWSLETTER DE SUBSCRIPCIÓN</span>
-            <div className="relative w-full max-w-xs border-b border-black pb-1">
-              <input 
-                type="text" 
-                placeholder="EMAIL ADDRESS" 
-                className="w-full bg-transparent focus:outline-none text-[10px] uppercase text-black placeholder-neutral-300 tracking-widest"
-              />
-            </div>
-          </div>
-          <div className="flex flex-col space-y-1">
-            <span className="text-black font-semibold text-[10px] tracking-wider uppercase block mb-1">AYUDA</span>
-            <a href="#" className="hover:text-black transition-colors">PRODUCTOS Y TALLAS</a>
-            <a href="#" className="hover:text-black transition-colors">ENVÍOS Y ENTREGAS</a>
-            <a href="#" className="hover:text-black transition-colors">CAMBIOS Y DEVOLUCIONES</a>
-          </div>
-          <div className="flex flex-col space-y-1 md:items-end">
-            <span className="text-black font-semibold text-[10px] tracking-wider uppercase block mb-1">POLÍTICAS</span>
-            <a href="#" className="hover:text-black transition-colors">COOKIES CONFIGURATION</a>
-            <a href="#" className="hover:text-black transition-colors">TERMS OF SALE</a>
-          </div>
-        </div>
-
-        <div className="mt-16 pt-6 border-t border-neutral-100 flex flex-col md:flex-row justify-between text-[9px] text-neutral-400 font-mono tracking-normal uppercase gap-4">
-          <span>© 2026 Sikrick NETWORK ACTIONS. ALL SYSTEMS STABLE.</span>
-          <span>[INDEX_V.4.26_COMPLIANT]</span>
-        </div>
-      </footer>
-
+    <div className="bg-black text-white overflow-x-hidden selection:bg-white selection:text-black antialiased">
+      <ServicesHero />
+      <ServicesMatrixList />
+      <TechnicalSpecsTable />
+      <ServicesCTA />
     </div>
   );
 }

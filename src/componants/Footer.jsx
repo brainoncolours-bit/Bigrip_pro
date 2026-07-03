@@ -1,110 +1,62 @@
-import React from 'react';
+import React from "react";
 
-const Footer = () => {
+export default function MinimalCinemaFooter() {
   return (
-    <footer className="w-full bg-black text-white text-[11px] tracking-[0.18em] font-light antialiased overflow-hidden select-none">
-      
-      {/* Top Bar: Call to Action + Top Social Links */}
-      <div className="mx-auto max-w-7xl px-8 pt-12 pb-16 flex flex-col md:flex-row md:justify-between gap-8 border-b border-white/10">
-        <div className="flex flex-col gap-3 max-w-xs">
-          <span className="text-white/40 uppercase leading-relaxed">
-            DROP US A LINE, AND WE'LL GET IN TOUCH!
-          </span>
-          <a 
-            href="#call" 
-            className="text-white uppercase underline underline-offset-4 hover:text-white/70 transition-colors duration-300"
-          >
-            SCHEDULE A CALL
-          </a>
-        </div>
-
-        {/* Dynamic Social Navigation Grid */}
-        <div className="flex flex-wrap gap-x-8 gap-y-3 pt-1">
-          {['DRIBBBLE', 'BEHANCE', 'LINKEDIN', 'X (TWITTER)', 'INSTAGRAM', 'FACEBOOK', 'YOUTUBE'].map((social) => (
-            <a 
-              key={social} 
-              href={`https://${social.toLowerCase().replace(/[\s()]/g, '')}.com`}
-              target="_blank"
-              rel="noreferrer"
-              className="text-white/50 hover:text-white transition-colors duration-300 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1px] after:bg-white hover:after:w-full after:transition-all after:duration-300 pb-1"
-            >
-              {social}
-            </a>
-          ))}
-        </div>
-      </div>
-
-      {/* Large Email Anchor Panel */}
-      <div className="mx-auto max-w-7xl px-8 py-16">
-        <div className="w-full text-right md:text-left">
-          <a 
-            href="mailto:hello@SECKRICK.com" 
-            className="group inline-flex items-center gap-4 text-3xl sm:text-5xl md:text-6xl font-normal tracking-normal text-white border-b border-white/20 pb-4 hover:border-white transition-colors duration-500"
-          >
-            <span className="break-all uppercase">HELLO@SECKRICK.COM</span>
-            <span className="transform group-hover:translate-x-2 group-hover:-translate-y-2 transition-transform duration-300 ease-out text-2xl sm:text-4xl">
-              ↗
-            </span>
-          </a>
-        </div>
-      </div>
-
-      {/* Directory & Metadata Information Grid */}
-      <div className="mx-auto max-w-7xl px-8 pb-20 grid grid-cols-1 md:grid-cols-12 gap-12 items-start text-white/50">
+    <footer className="w-full bg-black text-white border-t border-zinc-900 pt-24 pb-12 font-sans selection:bg-white selection:text-black">
+      <div className="max-w-7xl mx-auto px-8">
         
-        {/* Office Address / Coordinates */}
-        <div className="md:col-span-5 flex flex-col gap-4 max-w-sm leading-relaxed uppercase text-[10px] tracking-[0.2em]">
-          <span className="text-white">+44 7463615117</span>
-          <p className="text-white/40">
-            LYTCHETT HOUSE, 13 FREELAND PARK, WAREHAM ROAD, POLE DORSET, BH16 6FA
-          </p>
+        {/* Main Interface Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 items-start pb-16 mb-12 border-b border-zinc-900">
+          
+          {/* Column 1: Studio Profile */}
+          <div className="space-y-4">
+            <div className="flex items-center space-x-3 text-[10px] font-mono tracking-[0.4em] text-zinc-500">
+              <span>// SYSTEM_READY</span>
+              <div className="w-1.5 h-1.5 rounded-full bg-zinc-700" />
+            </div>
+            
+            <h3 className="text-xl font-extralight tracking-[0.2em] uppercase text-zinc-100">
+              KINETIC <span className="font-light text-white font-mono text-sm opacity-40">/ FRAME</span>
+            </h3>
+            
+            <p className="text-xs text-zinc-400 font-light max-w-xs leading-relaxed">
+              Boutique production asset management. Crafting high-contrast structural cinematography, commercial optics, and offline editing arrays.
+            </p>
+          </div>
+
+          {/* Column 2: Static Camera Metadata */}
+          <div className="space-y-2 font-mono md:justify-self-center">
+            <div className="text-[9px] uppercase tracking-widest text-zinc-600">// CONFIGURATION</div>
+            <div className="text-xs font-light tracking-widest text-zinc-400 space-y-1.5">
+              <div>CAPTURE // 8K RED RAW</div>
+              <div>ASPECT // 2.39:1 ANAMORPHIC</div>
+              <div>TIMECODE // 00:00:20:26</div>
+            </div>
+          </div>
+
+          {/* Column 3: Navigation Directory */}
+          <div className="flex flex-col space-y-3 font-mono text-xs tracking-widest text-zinc-400 md:items-end">
+            <div className="text-[9px] tracking-widest text-zinc-600 uppercase mb-1">// INDEX</div>
+            <a href="#showreel" className="hover:text-white transition-colors duration-200">[ CINEMATIC_REEL ]</a>
+            <a href="#narratives" className="hover:text-white transition-colors duration-200">[ ARCHIVED_WORKS ]</a>
+            <a href="#contact" className="hover:text-white transition-colors duration-200">[ HELLO_STUDIO ]</a>
+          </div>
+
         </div>
 
-        {/* Directory Links 1 */}
-        <div className="md:col-span-3 flex flex-col gap-3">
-          {['WORKS', 'EXPERTISE', 'ABOUT', 'INSIGHTS'].map((item) => (
-            <a key={item} href={`#${item.toLowerCase()}`} className="hover:text-white hover:translate-x-1 transition-all duration-300 inline-block w-fit">
-              {item}
-            </a>
-          ))}
+        {/* Lower Meta Bar */}
+        <div className="flex flex-col sm:flex-row justify-between items-center text-[10px] text-zinc-500 font-mono tracking-[0.25em] gap-4">
+          <div className="flex items-center gap-4">
+            <span>ISO 400</span>
+            <span className="text-zinc-800">•</span>
+            <span>SHUTTER 180°</span>
+            <span className="text-zinc-800">•</span>
+            <span>5600K</span>
+          </div>
+          <div className="text-zinc-600">© 2026 KINETIC FRAME STUDIO. ALL RIGHTS RESERVED.</div>
         </div>
 
-        {/* Directory Links 2 */}
-        <div className="md:col-span-4 flex flex-col gap-3">
-          {['CAREERS', 'CONTACT'].map((item) => (
-            <a key={item} href={`#${item.toLowerCase()}`} className="hover:text-white hover:translate-x-1 transition-all duration-300 inline-block w-fit">
-              {item}
-            </a>
-          ))}
-        </div>
       </div>
-
-      {/* Clean Legal / Copyright Bottom Notch */}
-      <div className="mx-auto max-w-7xl px-8 py-6 border-t border-white/5 flex flex-col sm:flex-row sm:justify-between gap-4 text-[9px] text-white/30 tracking-[0.25em]">
-        <span>© ALL RIGHTS RESERVED. SECKRICK 2026</span>
-        <div className="flex items-center gap-1">
-          <span>LET'S MAKE YOUR IDEAS TO LIFE</span>
-          <span className="text-white/50 animate-pulse">🤍</span>
-        </div>
-      </div>
-
-      {/* CONTINUOUS MOTION: Massive Infinite Typographic Banner (Replacing the Neon Green Bar) */}
-      <div className="w-full bg-white text-black py-6 sm:py-10 whitespace-nowrap overflow-hidden select-none border-t border-white/10">
-      
-        <div className="inline-block animate-[marquee_25s_linear_infinite] text-[18vw] font-bold tracking-tighter leading-none uppercase select-none">
-          SECKRICK • SECKRICK • SECKRICK • SECKRICK •&nbsp;
-        </div>
-      </div>
-
-      {/* Structural Marquee Keyframe Injection */}
-      <style>{`
-        @keyframes marquee {
-          0% { transform: translateX(0%); }
-          100% { transform: translateX(-100%); }
-        }
-      `}</style>
     </footer>
   );
-};
-
-export default Footer;
+}
