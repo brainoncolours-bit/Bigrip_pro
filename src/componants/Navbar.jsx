@@ -1,105 +1,111 @@
 import { NavLink } from "react-router-dom";
-import { useRef, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 const links = [
   { to: "/", label: "Home" },
   { to: "/work", label: "Work" },
+  { to: "/seckric", label: "Seckrick" },
+  { to: "/contact", label: "Contact" },
 ];
 
-const Navbar = () => {
+const Navbar = ({ mode = "dark" }) => {
   const [scrolled, setScrolled] = useState(false);
-  const logoRef = useRef(null);
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 12);
+    const onScroll = () => setScrolled(window.scrollY > 20);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const handleLogoMove = (e) => {
-    const rect = logoRef.current.getBoundingClientRect();
-    const relX = (e.clientX - rect.left) / rect.width - 0.5;
-    const relY = (e.clientY - rect.top) / rect.height - 0.5;
-    setTilt({ x: relX * 14, y: relY * -10 });
-  };
+  const isDark = mode === "dark";
 
-  const resetLogo = () => setTilt({ x: 0, y: 0 });
+  // Dynamic colors that stay razor thin and high contrast
+  const textColor = isDark ? "text-white" : "text-black";
+  const borderColor = isDark ? "border-white/10" : "border-black/10";
+  const activeColor = "text-orange-500"; 
 
   return (
     <header
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
-        scrolled
-          ? "bg-black/70 backdrop-blur-md shadow-[0_1px_0_0_rgba(255,255,255,0.08)]"
+      className={`fixed top-0 left-0 w-full z-60 transition-all duration-700 ease-out ${
+        scrolled 
+          ? isDark ? "bg-black/40 backdrop-blur-md" : "bg-white/40 backdrop-blur-md"
           : "bg-transparent"
       }`}
     >
-      <nav className="flex items-center justify-between px-8 py-5">
-        {/* Wordmark */}
-        <div
-          ref={logoRef}
-          onMouseMove={handleLogoMove}
-          onMouseLeave={resetLogo}
-          className="relative select-none cursor-default"
-          style={{ perspective: "400px" }}
-        >
-          <span
-            className="block text-2xl font-black uppercase tracking-tight text-white transition-transform duration-150 ease-out"
-            style={{
-              fontFamily: "'Arial Narrow', 'Helvetica Neue', sans-serif",
-              transform: `rotate(-3deg) skewX(-3deg) rotateX(${tilt.y}deg) rotateY(${tilt.x}deg)`,
-              textShadow: "3px 3px 0px rgba(249,115,22,0.9)",
-            }}
-          >
-            Rock
+      {/* Micro border line at the bottom, ultra thin like luxury fashion sites */}
+      <nav className={`flex items-baseline justify-between px-6 py-3 border-b ${borderColor} transition-colors duration-500`}>
+        
+        {/* Zara-Style Overlapping Editorial Wordmark */}
+        <div className="select-none tracking-[-0.08em] font-black transform scale-y-110 leading-none">
+          <span className={`text-xl uppercase ${textColor} transition-colors duration-500`}>
+            Seckrick
           </span>
         </div>
 
-        {/* Links */}
-        <ul className="flex items-center gap-10">
+        {/* Tiny Minimal Links (desktop) */}
+        <ul className="hidden md:flex items-center gap-8 lowercase text-[11px] tracking-[0.15em]">
           {links.map(({ to, label }) => (
             <li key={to}>
-              <NavLink to={to} className="group relative block py-1">
+              <NavLink to={to} className="relative block py-1" onClick={() => setOpen(false)}>
                 {({ isActive }) => (
-                  <>
-                    <span
-                      className={`text-sm font-semibold uppercase tracking-wide transition-colors duration-300 ${
-                        isActive
-                          ? "text-orange-500"
-                          : "text-white group-hover:text-orange-400"
-                      }`}
-                    >
-                      {label}
-                    </span>
-
-                    {/* Hand-drawn underline — draws in on hover, stays drawn when active */}
-                    <svg
-                      className="absolute -bottom-1 left-0 w-full h-2.5 overflow-visible"
-                      viewBox="0 0 100 10"
-                      preserveAspectRatio="none"
-                    >
-                      <path
-                        d="M2,6 C20,2 35,8 50,4 C65,1 80,7 98,4"
-                        fill="none"
-                        stroke="#f97316"
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                        pathLength="1"
-                        className={`transition-all duration-300 ease-out ${
-                          isActive
-                            ? "[stroke-dashoffset:0] opacity-100"
-                            : "[stroke-dashoffset:1] opacity-0 group-hover:[stroke-dashoffset:0] group-hover:opacity-100"
-                        }`}
-                        style={{ strokeDasharray: 1 }}
-                      />
-                    </svg>
-                  </>
+                  <span
+                    className={`font-light transition-colors duration-300 ${
+                      isActive
+                        ? activeColor
+                        : `${textColor} opacity-60 hover:opacity-100`
+                    }`}
+                  >
+                    {label}
+                  </span>
                 )}
               </NavLink>
             </li>
           ))}
         </ul>
+
+        {/* Mobile hamburger */}
+        <div className="md:hidden flex items-center">
+          <button
+            aria-label="Toggle menu"
+            onClick={() => setOpen((v) => !v)}
+            className={`p-2 rounded inline-flex items-center justify-center ${textColor}`}
+          >
+            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              {open ? (
+                <path d="M18 6L6 18M6 6l12 12" />
+              ) : (
+                <path d="M3 12h18M3 6h18M3 18h18" />
+              )}
+            </svg>
+          </button>
+        </div>
+
+        {/* Mobile menu overlay */}
+        {open && (
+          <div className="fixed inset-0 z-70 bg-black/60 backdrop-blur-sm md:hidden">
+            <div className="absolute top-0 right-0 p-6">
+              <button aria-label="Close menu" onClick={() => setOpen(false)} className="p-2 text-white">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <nav className="h-full flex items-center justify-center">
+              <ul className="flex flex-col items-center gap-6 text-white lowercase text-lg tracking-wider">
+                {links.map(({ to, label }) => (
+                  <li key={to}>
+                    <NavLink to={to} onClick={() => setOpen(false)} className={({ isActive }) => `block py-2 ${isActive ? 'text-orange-400' : 'text-white/90'}`}>
+                      {label}
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </div>
+        )}
       </nav>
     </header>
   );
