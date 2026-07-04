@@ -197,7 +197,7 @@ function Section6LineVideoReveal() {
   const containerRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start end", "end start"] });
   const lineWidth = useTransform(scrollYProgress, [0.1, 0.45], ["0%", "100%"]);
-  const lineHeight = useTransform(scrollYProgress, [0.45, 0.75], ["2px", "100%"]);
+  const lineHeight = useTransform(scrollYProgress, [0.45, 0.75], ["0%", "100%"]);
   const opacity = useTransform(scrollYProgress, [0.5, 0.7], [0, 1]);
 
   return (
@@ -206,9 +206,9 @@ function Section6LineVideoReveal() {
         <span>[06 // HORIZONTAL EXPANSION]</span>
         <span>STREAM IDENTITY ACTIVE</span>
       </div>
-      <div className="w-full max-w-5xl flex items-center justify-center aspect-video relative">
-        <motion.div style={{ width: lineWidth, height: lineHeight }} className="bg-neutral-800 relative overflow-hidden will-change-[width,height] flex items-center justify-center rounded-[1px] shadow-2xl w-full h-full">
-          <motion.div style={{ opacity }} className="absolute w-full h-full inset-0">
+      <div className="w-full max-w-5xl aspect-video relative overflow-hidden">
+        <motion.div style={{ width: lineWidth, height: lineHeight }} className="absolute inset-x-0 bottom-0 bg-neutral-800 overflow-hidden will-change-[width,height] shadow-2xl">
+          <motion.div style={{ opacity }} className="absolute inset-0 w-full h-full">
             <SaturatedVideo videoId={ASSETS.cinematicClip3} />
           </motion.div>
         </motion.div>
