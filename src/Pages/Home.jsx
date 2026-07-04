@@ -52,13 +52,9 @@ function Section1Hero() {
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
   return (
-    <section ref={containerRef} className="relative w-full h-screen bg-black overflow-hidden flex flex-col justify-between p-6 md:p-12">
+    <section ref={containerRef} className="relative w-full h-screen bg-black overflow-hidden flex flex-col p-6 md:p-12">
       <SaturatedVideo videoId={ASSETS.heroVideo} opacity="opacity-100" />
-      {/* <div className="w-full flex justify-between items-start z-10 text-[9px] md:text-[10px] tracking-[0.3em] md:tracking-[0.4em] text-neutral-400 font-mono gap-4">
-        <motion.span style={{ opacity }}>[ STUDIO SYSTEM v4.26 ]</motion.span>
-        <motion.span style={{ opacity }} className="text-right">TOKYO // PARIS // NYC</motion.span>
-      </div> */}
-      <motion.div style={{ scale: textScale, opacity }} className="z-10 flex flex-col items-start max-w-7xl my-auto md:my-0">
+      <motion.div style={{ scale: textScale, opacity }} className="z-10 flex flex-col items-start max-w-7xl mt-auto">
         <h1 className="text-[clamp(2.2rem,7.5vw,9rem)] font-extralight tracking-tighter leading-[0.9] text-white uppercase font-sans break-words w-full">
           Seckrick Productions
         </h1>
