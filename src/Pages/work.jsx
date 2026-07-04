@@ -52,7 +52,7 @@ function MassiveHeroSection() {
         [ SYSTEM ARCHIVE COLLECTION ]
       </div>
       
-      <h1 className="text-[clamp(4.5rem,15vw,13rem)] font-sans font-thin uppercase tracking-tighter text-white z-10 select-none text-center leading-none drop-shadow-2xl">
+      <h1 className="text-[clamp(3rem,12vw,13rem)] font-sans font-thin uppercase tracking-tighter text-white z-10 select-none text-center leading-none drop-shadow-2xl px-4 break-words w-full">
         Done deals.
       </h1>
 
@@ -344,7 +344,7 @@ export default function Work() {
   }, []);
 
   return (
-    <main className="bg-black min-h-screen text-white antialiased selection:bg-white selection:text-black">
+    <main className="bg-black min-h-screen text-white antialiased selection:bg-white selection:text-black overflow-x-hidden">
       <MassiveHeroSection />
       <EditorialIntroSection />
       <WorksGridSection works={works} loading={loading} error={error} />

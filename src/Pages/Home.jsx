@@ -25,7 +25,7 @@ function SaturatedVideo({ videoId, opacity = "opacity-100" }) {
       <iframe
         src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&playsinline=1`}
         title="Vivid Continuum Loop"
-        className={`absolute top-1/2 left-1/2 w-[180%] h-[180%] md:w-[120%] md:h-[120%] -translate-x-1/2 -translate-y-1/2 object-cover select-none transition-opacity duration-1000 ${opacity}`}
+        className={`absolute top-1/2 left-1/2 w-[140%] h-[140%] sm:w-[120%] sm:h-[120%] -translate-x-1/2 -translate-y-1/2 object-cover select-none transition-opacity duration-1000 ${opacity}`}
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
       />
     </div>
@@ -287,7 +287,7 @@ function Section10AsymmetricBlock() {
     <section ref={blockRef} className="w-full min-h-screen bg-black py-16 md:py-24 px-6 md:px-12 lg:px-24 border-b border-neutral-900 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center overflow-hidden">
       <div className="lg:col-span-4 flex flex-col space-y-4 md:space-y-6">
         <span className="font-mono text-[10px] md:text-xs text-neutral-400 tracking-[0.4em]">[10 // DYNAMIC GRID OVERLAY]</span>
-        <h3 className="text-2xl md:text-3xl lg:text-5xl font-extralight tracking-tighter text-white uppercase font-sans leading-none">
+        <h3 className="text-2xl md:text-3xl lg:text-5xl font-extralight tracking-tighter text-white uppercase font-sans leading-none break-words">
           ASYMMETRIC<br className="hidden lg:block"/> DISPLACEMENT
         </h3>
       </div>
@@ -472,7 +472,7 @@ function Section15TerminalFooter() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 mb-20 md:mb-32">
           <div className="lg:col-span-8 flex flex-col items-start space-y-6 md:space-y-10">
             <span className="font-mono text-[8px] md:text-[9px] tracking-[0.3em] md:tracking-[0.4em] text-neutral-400">[15 // MASTER OUTFLOW TERMINAL]</span>
-            <h2 className="text-2xl sm:text-4xl lg:text-6xl font-extralight tracking-tighter text-white uppercase leading-[1.05] md:leading-[0.98] max-w-2xl font-sans">
+            <h2 className="text-2xl sm:text-4xl lg:text-6xl font-extralight tracking-tighter text-white uppercase leading-[1.05] md:leading-[0.98] max-w-2xl font-sans break-words">
               EXECUTE PROJECT CORES &amp; SYNC CHROMATIC CHANNELS.
             </h2>
             <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto pt-2">
