@@ -32,14 +32,6 @@ function SaturatedVideo({ videoId, opacity = "opacity-100" }) {
   );
 }
 
-function ReactiveColorText({ children }) {
-  return (
-    <span className="animate-pulse duration-[3500ms] ease-in-out text-neutral-400 hover:text-white transition-colors cursor-default">
-      {children}
-    </span>
-  );
-}
-
 /* ==========================================
    THE 15 EXPERIMENTAL CINEMATIC SECTIONS
    ========================================= */
@@ -75,12 +67,38 @@ function Section1Hero() {
 
 // SECTION 2: Dynamic Typographic Threshold
 function Section2Threshold() {
+  const containerRef = useRef(null);
+  const words = "We construct optical weight. Every sequence is structured through clean geometry, micro-tonal color shifts, and unforgiving silhouettes tailored for alternative digital landscapes.".split(" ");
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: 1.5,
+        }
+      });
+
+      tl.to(".manifesto-word", {
+        color: "#ffffff",
+        duration: 0.5,
+        stagger: 0.5,
+        ease: "power2.out",
+      });
+    }, containerRef);
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section className="w-full min-h-[40vh] bg-black flex items-center px-6 sm:px-12 md:px-24 py-16 md:py-24 border-y border-neutral-900">
+    <section ref={containerRef} className="w-full min-h-[40vh] bg-black flex items-center px-6 sm:px-12 md:px-24 py-16 md:py-24 border-y border-neutral-900">
       <div className="max-w-5xl">
         <span className="text-[10px] md:text-xs font-mono tracking-[0.5em] text-neutral-500 block mb-6 md:mb-8">[02 / MANIFESTO MATRIX]</span>
-        <h2 className="text-xl sm:text-2xl md:text-5xl font-extralight tracking-tight text-neutral-400 leading-snug font-sans">
-          We construct <ReactiveColorText>optical weight</ReactiveColorText>. Every sequence is structured through clean geometry, micro-tonal color shifts, and <ReactiveColorText>unforgiving silhouettes</ReactiveColorText> tailored for alternative digital landscapes.
+        <h2 className="text-xl sm:text-2xl md:text-5xl font-extralight tracking-tight leading-snug font-sans">
+          {words.map((word, i) => (
+            <span key={i} className="manifesto-word text-neutral-700">{word}{i < words.length - 1 ? "\u00A0" : ""}</span>
+          ))}
         </h2>
       </div>
     </section>
