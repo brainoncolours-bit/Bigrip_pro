@@ -24,22 +24,27 @@ const Navbar = ({ mode = "dark" }) => {
   // Dynamic colors that stay razor thin and high contrast
   const textColor = isDark ? "text-white" : "text-black";
   const borderColor = isDark ? "border-white/10" : "border-black/10";
-  const activeColor = "text-orange-500"; 
+  const activeColor = "text-orange-500";
 
   return (
     <header
       className={`fixed top-0 left-0 w-full z-60 transition-all duration-700 ease-out ${
-        scrolled 
-          ? isDark ? "bg-black/40 backdrop-blur-md" : "bg-white/40 backdrop-blur-md"
+        scrolled
+          ? isDark
+            ? "bg-black/40 backdrop-blur-md"
+            : "bg-white/40 backdrop-blur-md"
           : "bg-transparent"
       }`}
     >
       {/* Micro border line at the bottom, ultra thin like luxury fashion sites */}
-      <nav className={`flex items-baseline justify-between px-6 py-3 border-b ${borderColor} transition-colors duration-500`}>
-        
+      <nav
+        className={`flex items-baseline justify-between px-6 py-3 border-b ${borderColor} transition-colors duration-500`}
+      >
         {/* Zara-Style Overlapping Editorial Wordmark */}
         <div className="select-none tracking-[-0.08em] font-black transform scale-y-110 leading-none">
-          <span className={`text-xl uppercase ${textColor} transition-colors duration-500`}>
+          <span
+            className={`text-xl uppercase ${textColor} transition-colors duration-500`}
+          >
             Seckrick
           </span>
         </div>
@@ -48,10 +53,14 @@ const Navbar = ({ mode = "dark" }) => {
         <ul className="hidden md:flex items-center gap-8 lowercase text-[11px] tracking-[0.15em]">
           {links.map(({ to, label }) => (
             <li key={to}>
-              <NavLink to={to} className="relative block py-1" onClick={() => setOpen(false)}>
+              <NavLink
+                to={to}
+                className="relative block py-1"
+                onClick={() => setOpen(false)}
+              >
                 {({ isActive }) => (
                   <span
-                    className={`font-light transition-colors duration-300 ${
+                    className={`font-light transition-colors duration-300 uppercase ${
                       isActive
                         ? activeColor
                         : `${textColor} opacity-60 hover:opacity-100`
@@ -72,7 +81,17 @@ const Navbar = ({ mode = "dark" }) => {
             onClick={() => setOpen((v) => !v)}
             className={`p-2 rounded inline-flex items-center justify-center ${textColor}`}
           >
-            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              aria-hidden="true"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               {open ? (
                 <path d="M18 6L6 18M6 6l12 12" />
               ) : (
@@ -86,8 +105,21 @@ const Navbar = ({ mode = "dark" }) => {
         {open && (
           <div className="fixed inset-0 z-70 bg-black/60 backdrop-blur-sm md:hidden">
             <div className="absolute top-0 right-0 p-6">
-              <button aria-label="Close menu" onClick={() => setOpen(false)} className="p-2 text-white">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <button
+                aria-label="Close menu"
+                onClick={() => setOpen(false)}
+                className="p-2 text-white"
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
                   <path d="M18 6L6 18M6 6l12 12" />
                 </svg>
               </button>
@@ -97,7 +129,13 @@ const Navbar = ({ mode = "dark" }) => {
               <ul className="flex flex-col items-center gap-6 text-white lowercase text-lg tracking-wider">
                 {links.map(({ to, label }) => (
                   <li key={to}>
-                    <NavLink to={to} onClick={() => setOpen(false)} className={({ isActive }) => `block py-2 ${isActive ? 'text-orange-400' : 'text-white/90'}`}>
+                    <NavLink
+                      to={to}
+                      onClick={() => setOpen(false)}
+                      className={({ isActive }) =>
+                        `block py-2 ${isActive ? "text-orange-400" : "text-white/90"}`
+                      }
+                    >
                       {label}
                     </NavLink>
                   </li>
