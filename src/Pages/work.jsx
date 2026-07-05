@@ -37,7 +37,7 @@ function MassiveHeroSection() {
       <div className="absolute inset-0 z-0 pointer-events-none w-full h-full">
         <iframe 
           className="w-full h-full scale-[1.35] object-cover" 
-          src="https://www.youtube.com/embed/FWIJr42Ezfw?si=Ij-D2UqTmXMLU02s&autoplay=1&mute=1&loop=1&playlist=FWIJr42Ezfw&controls=0&modestbranding=1&rel=0&iv_load_policy=3" 
+          src="https://www.youtube.com/embed/FWIJr42Ezfw?si=Ij-D2UqTmXMLU02s&autoplay=1&mute=1&loop=1&playlist=FWIJr42Ezfw&controls=0&modestbranding=1&rel=0&iv_load_policy=3&playsinline=1" 
           title="YouTube video player" 
           frameBorder="0" 
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 

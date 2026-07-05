@@ -36,7 +36,7 @@ export default function MultiSectionContactPage() {
             src="https://www.youtube.com/embed/szdbKz5CyhA?autoplay=1&mute=1&loop=1&playlist=szdbKz5CyhA&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1"
             title="Structural Context Loop"
             className="absolute top-1/2 left-1/2 w-[180%] h-[180%] md:w-[130%] md:h-[130%] -translate-x-1/2 -translate-y-1/2 object-cover grayscale contrast-[1.12]"
-            allow="autoplay; encrypted-media"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           />
         </motion.div>
 

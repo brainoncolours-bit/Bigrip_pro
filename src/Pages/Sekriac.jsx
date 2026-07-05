@@ -218,7 +218,7 @@ function ServicesCTA() {
       
       <iframe 
         className="w-full h-full opacity-90 filter brightness-90 contrast-[1.05] grayscale-[15%]"
-        src="https://www.youtube.com/embed/Sgxbx65IDeM?si=SHSHCVGWP7dutQV-" 
+        src="https://www.youtube.com/embed/Sgxbx65IDeM?si=SHSHCVGWP7dutQV-&autoplay=1&mute=1&loop=1&playlist=Sgxbx65IDeM&controls=0&modestbranding=1&rel=0&iv_load_policy=3&playsinline=1" 
         title="YouTube video player" 
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
         referrerPolicy="strict-origin-when-cross-origin" 
