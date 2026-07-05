@@ -26,7 +26,7 @@ export default function AdminLogin() {
       return;
     }
 
-    navigate("/admin/works");
+    navigate("/admin/dashboard");
   }
 
   return (

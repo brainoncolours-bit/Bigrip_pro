@@ -1,33 +1,44 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { supabase } from "../lib/supabaseClient";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-/* ==========================================
-   ULTRA-HIGH DENSITY EDITORIAL MEDIA ARCHIVE
-   ========================================== */
 const ASSETS = {
   heroVideo: "6HBxWrmI8OU",
   cinematicClip2: "9Wd_A8e8TqM",
   cinematicClip3: "s1x4u5QBbXM"
 };
 
-/* ==========================================
-   PRODUCTION REUSABLE WRAPPERS
-   ========================================== */
-function SaturatedVideo({ videoId, opacity = "opacity-100" }) {
+function SaturatedVideo({ mediaUrl, fallbackVideoId, opacity = "opacity-100" }) {
+  const [videoError, setVideoError] = useState(false);
+  const videoId = mediaUrl && !videoError ? null : fallbackVideoId;
   return (
     <div className="absolute inset-0 w-full h-full overflow-hidden bg-black pointer-events-none">
-      <iframe
-        src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&playsinline=1`}
-        title="Vivid Continuum Loop"
-        className={`absolute top-1/2 left-1/2 w-[140%] h-[140%] sm:w-[120%] sm:h-[120%] -translate-x-1/2 -translate-y-1/2 object-cover select-none transition-opacity duration-1000 ${opacity}`}
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-      />
+      {mediaUrl && !videoError ? (
+        <video
+          src={mediaUrl}
+          autoPlay
+          muted
+          loop
+          playsInline
+          onError={() => setVideoError(true)}
+          className={`absolute top-1/2 left-1/2 w-[140%] h-[140%] sm:w-[120%] sm:h-[120%] -translate-x-1/2 -translate-y-1/2 object-cover select-none transition-opacity duration-1000 ${opacity}`}
+        />
+      ) : videoId ? (
+        <iframe
+          src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&playsinline=1`}
+          title="Vivid Continuum Loop"
+          className={`absolute top-1/2 left-1/2 w-[140%] h-[140%] sm:w-[120%] sm:h-[120%] -translate-x-1/2 -translate-y-1/2 object-cover select-none transition-opacity duration-1000 ${opacity}`}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        />
+      ) : (
+        <div className="absolute inset-0 bg-black" />
+      )}
     </div>
   );
 }
@@ -37,7 +48,7 @@ function SaturatedVideo({ videoId, opacity = "opacity-100" }) {
    ========================================= */
 
 // SECTION 1: Pre-flight Brand Identity Landing
-function Section1Hero() {
+function Section1Hero({ mediaUrl, fallbackVideoId }) {
   const containerRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end start"] });
   const textScale = useTransform(scrollYProgress, [0, 1], [1, 0.95]);
@@ -45,7 +56,7 @@ function Section1Hero() {
 
   return (
     <section ref={containerRef} className="relative w-full h-screen bg-black overflow-hidden flex flex-col p-6 md:p-12">
-      <SaturatedVideo videoId={ASSETS.heroVideo} opacity="opacity-100" />
+      <SaturatedVideo mediaUrl={mediaUrl} fallbackVideoId={fallbackVideoId} opacity="opacity-100" />
       <motion.div style={{ scale: textScale, opacity }} className="z-10 flex flex-col items-start max-w-7xl mt-auto">
         <h1 className="text-[clamp(2.2rem,7.5vw,9rem)] font-extralight tracking-tighter leading-[0.9] text-white uppercase font-sans break-words w-full">
           Seckrick Productions
@@ -106,7 +117,7 @@ function Section2Threshold() {
 }
 
 // SECTION 3: The Expanding Aperture Frame
-function Section3Aperture() {
+function Section3Aperture({ mediaUrl, fallbackVideoId }) {
   const containerRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start end", "end start"] });
   const frameWidth = useTransform(scrollYProgress, [0, 0.6], ["85%", "100%"]);
@@ -115,7 +126,7 @@ function Section3Aperture() {
   return (
     <div ref={containerRef} className="relative w-full h-[80vh] md:h-[120vh] bg-black flex items-center justify-center overflow-hidden">
       <motion.div style={{ width: frameWidth, height: "100%", borderRadius: frameRadius }} className="relative overflow-hidden will-change-transform bg-neutral-900">
-        <SaturatedVideo videoId={ASSETS.heroVideo} opacity="opacity-100" />
+        <SaturatedVideo mediaUrl={mediaUrl} fallbackVideoId={fallbackVideoId} opacity="opacity-100" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none" />
         <div className="absolute bottom-6 left-6 md:bottom-12 md:left-12 z-10 font-mono text-[9px] md:text-[10px] tracking-[0.4em] text-white">[ 03 // APERTURE EXPOSURE CAPTURE ]</div>
       </motion.div>
@@ -124,7 +135,7 @@ function Section3Aperture() {
 }
 
 // SECTION 4: THE DOUBLE-LAYER CHROMATIC MATTE REVEAL
-function Section4ChromaticMatte() {
+function Section4ChromaticMatte({ slowMediaUrl, slowFallback, fastMediaUrl, fastFallback }) {
   const triggerRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: triggerRef, offset: ["start end", "end start"] });
   const yParallaxFast = useTransform(scrollYProgress, [0, 1], ["-10%", "10%"]);
@@ -139,12 +150,12 @@ function Section4ChromaticMatte() {
       <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative">
         <div className="lg:col-span-7 aspect-[4/5] lg:aspect-[16/10] overflow-hidden bg-neutral-950 border border-neutral-800 relative w-full">
           <motion.div style={{ y: yParallaxSlow }} className="absolute top-0 left-0 w-full h-[115%]">
-            <SaturatedVideo videoId={ASSETS.cinematicClip3} />
+            <SaturatedVideo mediaUrl={slowMediaUrl} fallbackVideoId={slowFallback} />
           </motion.div>
         </div>
         <div className="lg:col-span-5 aspect-[3/4] w-full max-w-[280px] lg:max-w-[340px] overflow-hidden bg-neutral-950 border border-neutral-800 relative lg:-translate-x-24 lg:translate-y-16 shadow-[0_0_60px_rgba(255,255,255,0.05)] z-10 mx-auto lg:mx-0">
           <motion.div style={{ y: yParallaxFast }} className="absolute top-0 left-0 w-full h-[120%]">
-            <SaturatedVideo videoId={ASSETS.heroVideo} />
+            <SaturatedVideo mediaUrl={fastMediaUrl} fallbackVideoId={fastFallback} />
           </motion.div>
         </div>
       </div>
@@ -193,7 +204,7 @@ function Section5VividMarquee() {
 }
 
 // SECTION 6: THE EXPANDING HORIZONTAL LINE INTERCEPT
-function Section6LineVideoReveal() {
+function Section6LineVideoReveal({ mediaUrl, fallbackVideoId }) {
   const containerRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start end", "end start"] });
   const lineWidth = useTransform(scrollYProgress, [0.1, 0.45], ["0%", "100%"]);
@@ -209,7 +220,7 @@ function Section6LineVideoReveal() {
       <div className="w-full max-w-5xl aspect-video relative overflow-hidden">
         <motion.div style={{ width: lineWidth, height: lineHeight }} className="absolute inset-x-0 bottom-0 bg-neutral-800 overflow-hidden will-change-[width,height] shadow-2xl">
           <motion.div style={{ opacity }} className="absolute inset-0 w-full h-full">
-            <SaturatedVideo videoId={ASSETS.cinematicClip3} />
+            <SaturatedVideo mediaUrl={mediaUrl} fallbackVideoId={fallbackVideoId} />
           </motion.div>
         </motion.div>
       </div>
@@ -221,22 +232,22 @@ function Section6LineVideoReveal() {
 }
 
 // SECTION 7: VIVID TRIPLE-STILL GRID INTERLOCK
-function Section7VividMatrix() {
+function Section7VividMatrix({ videoUrls = [], fallbackVideoIds = [] }) {
   return (
     <section className="w-full bg-black py-20 md:py-32 px-6 md:px-12 lg:px-16 border-b border-neutral-900">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-4 lg:gap-6">
         <div className="flex flex-col justify-between p-4 md:p-6 border border-neutral-800 aspect-[3/4] bg-neutral-950 relative overflow-hidden group shadow-[0_0_30px_rgba(255,255,255,0.02)]">
-          <SaturatedVideo videoId={ASSETS.heroVideo} />
+          <SaturatedVideo mediaUrl={videoUrls[0]} fallbackVideoId={fallbackVideoIds[0]} />
           <span className="font-mono text-[9px] md:text-[10px] text-white z-10 bg-black/40 p-1 rounded backdrop-blur-sm self-start">[ VAL_01 / RADIANCE ]</span>
           <span className="font-mono text-[8px] md:text-[9px] text-neutral-400 text-right z-10 bg-black/40 p-1 rounded backdrop-blur-sm self-end">CORE SPECTRUM METRIC</span>
         </div>
         <div className="flex flex-col justify-between p-4 md:p-6 border border-neutral-800 aspect-[3/4] bg-neutral-950 relative overflow-hidden group md:translate-y-8 lg:translate-y-12 shadow-[0_0_30px_rgba(255,255,255,0.02)]">
-          <SaturatedVideo videoId={ASSETS.cinematicClip2} />
+          <SaturatedVideo mediaUrl={videoUrls[1]} fallbackVideoId={fallbackVideoIds[1]} />
           <span className="font-mono text-[9px] md:text-[10px] text-white z-10 bg-black/40 p-1 rounded backdrop-blur-sm self-start">[ VAL_02 / VIBRANCY ]</span>
           <span className="font-mono text-[8px] md:text-[9px] text-neutral-400 text-right z-10 bg-black/40 p-1 rounded backdrop-blur-sm self-end">CHROMATIC CORRECTION</span>
         </div>
         <div className="flex flex-col justify-between p-4 md:p-6 border border-neutral-800 aspect-[3/4] bg-neutral-950 relative overflow-hidden group shadow-[0_0_30px_rgba(255,255,255,0.02)]">
-          <SaturatedVideo videoId={ASSETS.cinematicClip3} />
+          <SaturatedVideo mediaUrl={videoUrls[2]} fallbackVideoId={fallbackVideoIds[2]} />
           <span className="font-mono text-[9px] md:text-[10px] text-white z-10 bg-black/40 p-1 rounded backdrop-blur-sm self-start">[ VAL_03 / SATURATE ]</span>
           <span className="font-mono text-[8px] md:text-[9px] text-neutral-400 text-right z-10 bg-black/40 p-1 rounded backdrop-blur-sm self-end">COLOR CONVERSION INIT</span>
         </div>
@@ -246,7 +257,7 @@ function Section7VividMatrix() {
 }
 
 // SECTION 8: FULL-BLEED SATURATED PARALLAX REEL REVEAL
-function Section8VideoIntercept() {
+function Section8VideoIntercept({ mediaUrl, fallbackVideoId }) {
   const containerRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start end", "end start"] });
   const scaleHero = useTransform(scrollYProgress, [0, 1], [1.1, 1]);
@@ -254,7 +265,7 @@ function Section8VideoIntercept() {
   return (
     <section ref={containerRef} className="w-full h-[60vh] md:h-screen bg-black overflow-hidden relative border-b border-neutral-900 flex items-center justify-center">
       <motion.div style={{ scale: scaleHero }} className="absolute inset-0 w-full h-full">
-        <SaturatedVideo videoId={ASSETS.cinematicClip2} opacity="opacity-100" />
+        <SaturatedVideo mediaUrl={mediaUrl} fallbackVideoId={fallbackVideoId} opacity="opacity-100" />
       </motion.div>
       <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black pointer-events-none opacity-40 mix-blend-multiply" />
       <div className="z-10 text-center font-mono text-[8px] md:text-[10px] tracking-[0.4em] md:tracking-[0.6em] text-white bg-black/50 px-3 py-2 backdrop-blur-sm rounded max-w-[90%] break-words">
@@ -265,11 +276,11 @@ function Section8VideoIntercept() {
 }
 
 // SECTION 9: HIGH-GLOW CINEMATIC SPECTRUM FOCAL WALL
-function Section9VividFocus() {
+function Section9VividFocus({ mediaUrl, fallbackVideoId }) {
   return (
     <section className="w-full min-h-[60vh] md:min-h-screen bg-black flex items-center justify-center py-16 md:py-24 px-6 border-b border-neutral-900">
       <div className="w-full max-w-5xl aspect-video relative border border-neutral-800 bg-neutral-950 overflow-hidden shadow-[0_0_60px_rgba(255,255,255,0.05)]">
-        <SaturatedVideo videoId={ASSETS.cinematicClip3} />
+        <SaturatedVideo mediaUrl={mediaUrl} fallbackVideoId={fallbackVideoId} />
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10 pointer-events-none" />
         <div className="absolute top-4 left-4 md:top-8 md:left-8 font-mono text-[8px] md:text-[10px] tracking-[0.3em] md:tracking-[0.4em] text-white bg-black/40 px-2 py-1 backdrop-blur-sm rounded">[ 09 // SPECTRUM INTENSITY FIELD ]</div>
       </div>
@@ -278,7 +289,7 @@ function Section9VividFocus() {
 }
 
 // SECTION 10: ALTERNATIVE GEOMETRIC BLOCK OVERLAY
-function Section10AsymmetricBlock() {
+function Section10AsymmetricBlock({ mediaUrl, fallbackVideoId }) {
   const blockRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: blockRef, offset: ["start end", "end start"] });
   const xOffset = useTransform(scrollYProgress, [0, 1], ["-10%", "5%"]);
@@ -293,7 +304,7 @@ function Section10AsymmetricBlock() {
       </div>
       <div className="lg:col-span-8 relative flex items-center justify-center w-full">
         <div className="w-full aspect-[16/10] overflow-hidden bg-neutral-950 border border-neutral-800 relative z-10">
-          <SaturatedVideo videoId={ASSETS.heroVideo} />
+          <SaturatedVideo mediaUrl={mediaUrl} fallbackVideoId={fallbackVideoId} />
         </div>
         <motion.div style={{ x: xOffset }} className="absolute right-0 bottom-[-40px] w-1/2 aspect-square max-w-[280px] bg-white opacity-5 filter blur-3xl rounded-full z-0 pointer-events-none" />
       </div>
@@ -409,9 +420,7 @@ function Section11TypeIntersect() {
 }
 
 // SECTION 12: CINEMATIC MULTI-ANGLE STRIP
-function Section12AngleStrip() {
-  const videoFeeds = [ASSETS.heroVideo, ASSETS.cinematicClip2, ASSETS.cinematicClip3, ASSETS.heroVideo];
-  
+function Section12AngleStrip({ videoUrls = [], fallbackVideoIds = [] }) {
   return (
     <section className="w-full bg-black py-16 md:py-28 px-6 md:px-12 lg:px-16 border-b border-neutral-900">
       <div className="max-w-7xl mx-auto flex flex-col space-y-8 md:space-y-12">
@@ -420,9 +429,9 @@ function Section12AngleStrip() {
           <span className="text-white text-right">MULTI_ANGLE_PROFILES</span>
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
-          {videoFeeds.map((videoId, idx) => (
+          {videoUrls.map((mediaUrl, idx) => (
             <div key={idx} className="group relative aspect-[3/4] overflow-hidden bg-neutral-950 border border-neutral-800">
-              <SaturatedVideo videoId={videoId} />
+              <SaturatedVideo mediaUrl={mediaUrl} fallbackVideoId={fallbackVideoIds[idx]} />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent pointer-events-none" />
               <span className="absolute bottom-3 left-3 font-mono text-[8px] md:text-[9px] text-white opacity-80 bg-black/50 px-1.5 py-0.5 rounded backdrop-blur-sm">[CAM_0{idx + 1}]</span>
             </div>
@@ -434,7 +443,7 @@ function Section12AngleStrip() {
 }
 
 // SECTION 13: THE INVERTED APERTURE MASQUE
-function Section13InvertedAperture() {
+function Section13InvertedAperture({ mediaUrl, fallbackVideoId }) {
   const scaleRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: scaleRef, offset: ["start end", "end start"] });
   const innerScale = useTransform(scrollYProgress, [0, 1], [1.1, 1]);
@@ -442,7 +451,7 @@ function Section13InvertedAperture() {
   return (
     <section ref={scaleRef} className="w-full h-[60vh] md:h-screen bg-black overflow-hidden relative border-b border-neutral-900 flex items-center justify-center">
       <motion.div style={{ scale: innerScale }} className="absolute inset-0 w-full h-full">
-        <SaturatedVideo videoId={ASSETS.cinematicClip2} />
+        <SaturatedVideo mediaUrl={mediaUrl} fallbackVideoId={fallbackVideoId} />
       </motion.div>
       <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black opacity-40 pointer-events-none" />
       <div className="absolute top-6 left-6 md:top-12 md:left-12 font-mono text-[9px] md:text-[10px] tracking-[0.4em] md:tracking-[0.5em] text-white bg-black/40 px-2.5 py-1 backdrop-blur-sm rounded">[13 // INVERTED TARGET]</div>
@@ -509,6 +518,8 @@ function Section15TerminalFooter() {
    MAIN ROOT EXPORT ENTRY COMPONENT
    ========================================== */
 export default function Home() {
+  const [videos, setVideos] = useState({});
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       const systemPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -518,21 +529,38 @@ export default function Home() {
     }
   }, []);
 
+  useEffect(() => {
+    async function loadVideos() {
+      const { data } = await supabase
+        .from("home_videos")
+        .select("*")
+        .eq("published", true)
+        .order("sort_order", { ascending: true });
+
+      if (data) {
+        const map = {};
+        data.forEach((v) => { map[v.section_key] = v.media_url; });
+        setVideos(map);
+      }
+    }
+    loadVideos();
+  }, []);
+
   return (
     <main className="bg-black text-white overflow-x-hidden selection:bg-white selection:text-black antialiased">
-      <Section1Hero />
+      <Section1Hero mediaUrl={videos.hero} fallbackVideoId={ASSETS.heroVideo} />
       <Section2Threshold />
-      <Section3Aperture />
-      <Section4ChromaticMatte />
+      <Section3Aperture mediaUrl={videos.aperture} fallbackVideoId={ASSETS.heroVideo} />
+      <Section4ChromaticMatte slowMediaUrl={videos.chromatic_matte_1} slowFallback={ASSETS.cinematicClip3} fastMediaUrl={videos.chromatic_matte_2} fastFallback={ASSETS.heroVideo} />
       <Section5VividMarquee />
-      <Section6LineVideoReveal />
-      <Section7VividMatrix />
-      <Section8VideoIntercept />
-      <Section9VividFocus />
-      <Section10AsymmetricBlock />
+      <Section6LineVideoReveal mediaUrl={videos.line_video_reveal} fallbackVideoId={ASSETS.cinematicClip3} />
+      <Section7VividMatrix videoUrls={[videos.vivid_matrix_1, videos.vivid_matrix_2, videos.vivid_matrix_3]} fallbackVideoIds={[ASSETS.heroVideo, ASSETS.cinematicClip2, ASSETS.cinematicClip3]} />
+      <Section8VideoIntercept mediaUrl={videos.video_intercept} fallbackVideoId={ASSETS.cinematicClip2} />
+      <Section9VividFocus mediaUrl={videos.vivid_focus} fallbackVideoId={ASSETS.cinematicClip3} />
+      <Section10AsymmetricBlock mediaUrl={videos.asymmetric_block} fallbackVideoId={ASSETS.heroVideo} />
       <Section11TypeIntersect />
-      <Section12AngleStrip />
-      <Section13InvertedAperture />
+      <Section12AngleStrip videoUrls={[videos.angle_strip_1, videos.angle_strip_2, videos.angle_strip_3, videos.angle_strip_4]} fallbackVideoIds={[ASSETS.heroVideo, ASSETS.cinematicClip2, ASSETS.cinematicClip3, ASSETS.heroVideo]} />
+      <Section13InvertedAperture mediaUrl={videos.inverted_aperture} fallbackVideoId={ASSETS.cinematicClip2} />
       <Section14ShutterProfile />
       <Section15TerminalFooter />
     </main>
