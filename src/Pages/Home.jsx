@@ -108,7 +108,7 @@ function Section2Threshold() {
         <span className="text-[10px] md:text-xs font-mono tracking-[0.5em] text-neutral-500 block mb-6 md:mb-8">[02 / MANIFESTO MATRIX]</span>
         <h2 className="text-xl sm:text-2xl md:text-5xl font-extralight tracking-tight leading-snug font-sans">
           {words.map((word, i) => (
-            <span key={i} className="manifesto-word text-neutral-700">{word}{i < words.length - 1 ? "\u00A0" : ""}</span>
+            <span key={i} className="manifesto-word text-neutral-700">{word}{i < words.length - 1 ? " " : ""}</span>
           ))}
         </h2>
       </div>
