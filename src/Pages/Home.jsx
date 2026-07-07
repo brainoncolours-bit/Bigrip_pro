@@ -112,16 +112,16 @@ function Section2Threshold() {
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: containerRef.current,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: 1.5,
+            start: "top 78%",
+            end: "bottom 42%",
+            scrub: 0.7,
           }
         });
 
         tl.to(words, {
           color: "#ffffff",
-          duration: 0.5,
-          stagger: 0.5,
+          duration: 0.25,
+          stagger: 0.12,
           ease: "power2.out",
         });
       });
