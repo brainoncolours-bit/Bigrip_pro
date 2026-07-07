@@ -67,20 +67,20 @@ function MassiveHeroSection() {
 // REDESIGNED: ASYMMETRIC LARGE TEXT INTRO SECTION WITH A BIG STATEMENT ASSET
 function EditorialIntroSection() {
   return (
-    <section className="w-full bg-black text-white pt-32 pb-20 px-6 md:px-12 border-b border-neutral-900">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-24">
+    <section className="w-full bg-black text-white pt-16 md:pt-32 pb-12 md:pb-20 px-6 md:px-12 border-b border-neutral-900">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 md:gap-8 items-start mb-10 md:mb-24">
         <div className="lg:col-span-4 font-mono text-[9px] tracking-[0.3em] text-neutral-500 uppercase">
           // INTRODUCTORY STATEMENT_
         </div>
         <div className="lg:col-span-8">
-          <h2 className="text-3xl md:text-5xl lg:text-6xl font-sans font-extralight tracking-tight uppercase leading-[1.1] mb-8">
+          <h2 className="text-3xl md:text-5xl lg:text-6xl font-sans font-extralight tracking-tight uppercase leading-[1.1] mb-0 md:mb-8">
             We operate at the volatile intersection of high-end commercial viability and uncompromising conceptual art direction.
           </h2>
         </div>
       </div>
 
       {/* NEW: MASSIVE FULL-BLEED MID-SECTION IMAGE */}
-      <div className="w-full h-[60vh] md:h-[80vh] bg-neutral-950 overflow-hidden relative border border-neutral-900">
+      <div className="w-full h-[42vh] md:h-[80vh] bg-neutral-950 overflow-hidden relative border border-neutral-900">
         <img 
           src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=2000&q=90" 
           alt="High fashion editorial setup" 
@@ -97,7 +97,7 @@ function EditorialIntroSection() {
 // REDESIGNED: WORKS GRID (NOW FEATURING A HIGH-IMPACT STAGGERED COLUMN LAYOUT)
 function WorkCard({ work, onOpen }) {
   return (
-    <div className="group w-full mb-16 md:mb-32 flex flex-col">
+    <div className="group w-full mb-10 md:mb-32 flex flex-col">
       <button
         type="button"
         onClick={() => work.mediaUrl && onOpen(work)}
@@ -107,9 +107,9 @@ function WorkCard({ work, onOpen }) {
       >
         {work.mediaUrl && (
           work.mediaType === "video" ? (
-            <video className="absolute inset-0 h-full w-full object-cover grayscale opacity-60 group-hover:scale-105 group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-1000 ease-out" src={work.mediaUrl} autoPlay muted loop playsInline />
+            <video className="absolute inset-0 h-full w-full object-cover opacity-100 md:grayscale md:opacity-60 md:group-hover:scale-105 md:group-hover:opacity-100 md:group-hover:grayscale-0 transition-all duration-1000 ease-out" src={work.mediaUrl} autoPlay muted loop playsInline />
           ) : (
-            <img className="absolute inset-0 h-full w-full object-cover grayscale opacity-60 group-hover:scale-105 group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-1000 ease-out" src={work.mediaUrl} alt={work.title} loading="lazy" />
+            <img className="absolute inset-0 h-full w-full object-cover opacity-100 md:grayscale md:opacity-60 md:group-hover:scale-105 md:group-hover:opacity-100 md:group-hover:grayscale-0 transition-all duration-1000 ease-out" src={work.mediaUrl} alt={work.title} loading="lazy" />
           )
         )}
         <div className="absolute top-4 left-4 font-mono text-[10px] bg-black/80 text-neutral-400 px-2 py-1 border border-neutral-800">
@@ -117,7 +117,7 @@ function WorkCard({ work, onOpen }) {
         </div>
       </button>
 
-      <div className="mt-6 flex flex-col md:flex-row md:justify-between md:items-baseline font-sans border-b border-neutral-900 pb-4">
+      <div className="mt-4 md:mt-6 flex flex-col md:flex-row md:justify-between md:items-baseline font-sans border-b border-neutral-900 pb-4">
         <div>
           <h3 className="text-2xl font-light tracking-tight text-white uppercase group-hover:text-neutral-300 transition-colors">
             {work.title}
@@ -141,8 +141,8 @@ function WorksGridSection({ works, loading, error }) {
   const [activeWork, setActiveWork] = useState(null);
 
   return (
-    <section id="production-catalogue" className="relative w-full bg-black py-12 px-6 md:px-12">
-      <div className="w-full flex justify-between items-end border-b border-neutral-900 pb-4 mb-16 md:mb-24 text-[9px] tracking-[0.3em] text-neutral-500 uppercase font-mono">
+    <section id="production-catalogue" className="relative w-full bg-black py-8 md:py-12 px-6 md:px-12">
+      <div className="w-full flex justify-between items-end border-b border-neutral-900 pb-4 mb-8 md:mb-24 text-[9px] tracking-[0.3em] text-neutral-500 uppercase font-mono">
         <div>[ CORE CATALOGUE ROSTER ]</div>
         <div>TOTAL_UNITS // {works.length || "04"}</div>
       </div>
@@ -178,7 +178,7 @@ function WorksGridSection({ works, loading, error }) {
 // NEW INTERMEDIARY SECTION: MASSIVE INTERSTITIAL FULL SCREEN EXPERIENTIAL GRAPHIC
 function InterstitialImageSection() {
   return (
-    <section className="w-full h-[70vh] md:h-screen bg-black relative overflow-hidden border-t border-b border-neutral-900">
+    <section className="w-full h-[46vh] md:h-screen bg-black relative overflow-hidden border-t border-b border-neutral-900">
       <img 
         src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&w=2000&q=90" 
         alt="Raw runway layout asset" 
@@ -198,15 +198,15 @@ function InterstitialImageSection() {
 // REDESIGNED: STUDIO MANIFESTO & SYSTEM METRICS LAYOUT
 function StudioManifesto() {
   return (
-    <section id="manifesto" className="w-full bg-black py-32 px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+    <section id="manifesto" className="w-full bg-black py-14 md:py-32 px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 items-start">
       <div className="lg:col-span-5 flex flex-col justify-center">
-        <span className="text-[9px] tracking-[0.4em] uppercase text-neutral-500 mb-6 block font-mono">
+        <span className="text-[9px] tracking-[0.4em] uppercase text-neutral-500 mb-4 md:mb-6 block font-mono">
           [ PIPELINE VISUAL ETHOS // SPEC_08 ]
         </span>
-        <h2 className="font-sans font-thin text-4xl md:text-6xl tracking-tight leading-none mb-8 text-white uppercase">
+        <h2 className="font-sans font-thin text-4xl md:text-6xl tracking-tight leading-none mb-5 md:mb-8 text-white uppercase">
           DEFINITIVE OPTICAL MANAGEMENT.
         </h2>
-        <p className="text-[13px] text-neutral-400 font-sans font-light leading-relaxed mb-8 max-w-md">
+        <p className="text-[13px] text-neutral-400 font-sans font-light leading-relaxed mb-5 md:mb-8 max-w-md">
           Operating dynamic architectural layouts in critical cultural centers, we coordinate cross-platform digital and moving media formats with creator portfolios who prioritize high-contrast depth configurations and uncompromising alignment logic.
         </p>
         <div>

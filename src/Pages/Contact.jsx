@@ -60,11 +60,11 @@ export default function MultiSectionContactPage() {
       {/* ==========================================
          SECTION 02: THE CENTRAL INPUT METRICS 
          ========================================== */}
-      <section className="w-full bg-black border-b border-neutral-900 px-6 md:px-12 py-24 md:py-36 relative">
-        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-12 max-w-7xl mx-auto items-start">
+      <section className="w-full bg-black border-b border-neutral-900 px-6 md:px-12 py-14 md:py-36 relative">
+        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 max-w-7xl mx-auto items-start">
           
           {/* Section Indicator Sidebar */}
-          <div className="col-span-12 lg:col-span-4 lg:sticky lg:top-28 flex flex-col space-y-4">
+          <div className="col-span-12 lg:col-span-4 lg:sticky lg:top-28 flex flex-col space-y-3 md:space-y-4">
             <span className="font-mono text-[10px] tracking-[0.4em] text-neutral-500 uppercase">[ SEC-02 // INTAKE PORT ]</span>
             <h2 className="text-2xl md:text-3xl font-light uppercase tracking-tight text-white leading-tight">
               Operational <br />Parameters
@@ -81,7 +81,7 @@ export default function MultiSectionContactPage() {
                 <motion.form 
                   key="form-matrix"
                   onSubmit={handleDispatch} 
-                  className="w-full flex flex-col space-y-10"
+                  className="w-full flex flex-col space-y-6 md:space-y-10"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0, y: -10 }}
@@ -138,7 +138,7 @@ export default function MultiSectionContactPage() {
                   </div>
 
                   {/* Action Link Control */}
-                  <div className="pt-4">
+                  <div className="pt-2 md:pt-4">
                     <button 
                       type="submit" 
                       className="px-12 py-4 bg-white text-black font-mono text-[10px] tracking-[0.4em] uppercase font-bold hover:bg-neutral-200 transition-colors rounded-[1px] shadow-2xl"
@@ -179,8 +179,8 @@ export default function MultiSectionContactPage() {
       {/* ==========================================
          SECTION 03: ASYMMETRICAL NETWORKS MATRIX
          ========================================== */}
-      <section className="w-full bg-neutral-950/40 px-6 md:px-12 py-24 md:py-32">
-        <div className="w-full max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 font-mono">
+      <section className="w-full bg-neutral-950/40 px-6 md:px-12 py-14 md:py-32">
+        <div className="w-full max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 font-mono">
           
           <div className="col-span-12 md:col-span-4 flex flex-col space-y-2">
             <span className="text-[10px] tracking-[0.4em] text-neutral-500 uppercase">[ SEC-03 // INDEX MATRIX ]</span>
@@ -188,7 +188,7 @@ export default function MultiSectionContactPage() {
           </div>
 
           {/* Grid column clusters containing structural address arrays */}
-          <div className="col-span-12 sm:col-span-6 md:col-span-4 grid grid-cols-1 gap-8 text-[11px] tracking-widest text-neutral-400">
+          <div className="col-span-12 sm:col-span-6 md:col-span-4 grid grid-cols-1 gap-5 md:gap-8 text-[11px] tracking-widest text-neutral-400">
             <div>
               <span className="text-neutral-700 block text-[9px] tracking-[0.3em] uppercase mb-2">[ INTENSIFIED NODES ]</span>
               <p className="hover:text-white transition-colors cursor-pointer">studio@seckrick.archive</p>

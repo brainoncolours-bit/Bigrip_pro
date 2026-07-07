@@ -1,4 +1,5 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { useEffect } from "react";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import Home from "./Pages/Home";
 import Work from "./Pages/work";
 import Sekriac from "./Pages/Sekriac";
@@ -9,6 +10,16 @@ import AdminHomeVideos from "./Pages/admin/AdminHomeVideos";
 import AdminWorks from "./Pages/admin/AdminWorks";
 import Contact from "./Pages/Contact";
 import Footer from "./componants/Footer";
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, [pathname]);
+
+  return null;
+}
 
 function AppRoutes() {
   return (
@@ -30,6 +41,7 @@ function AppRoutes() {
 export default function App() {
   return (
     <>
+      <ScrollToTop />
       <Navbar />
       <AppRoutes />
       <Footer />

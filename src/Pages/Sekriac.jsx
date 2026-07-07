@@ -45,14 +45,14 @@ function ServicesHero() {
   const yOffset = useTransform(scrollYProgress, [0, 0.5], ["0px", "-50px"]);
 
   return (
-    <section ref={containerRef} className="relative w-full min-h-[80vh] bg-black overflow-hidden flex flex-col justify-between p-6 md:p-12 border-b border-neutral-900">
+    <section ref={containerRef} className="relative w-full min-h-[62vh] md:min-h-[80vh] bg-black overflow-hidden flex flex-col justify-between p-6 md:p-12 border-b border-neutral-900">
       
       
       <motion.div style={{ opacity, y: yOffset }} className="z-10 flex flex-col items-start max-w-7xl my-auto">
         <h1 className="text-[clamp(2.5rem,8vw,8rem)] font-thin tracking-tighter leading-[0.95] text-white uppercase font-sans break-words w-full">
           OPERATIONAL<br />CAPABILITIES.
         </h1>
-        <p className="text-[11px] md:text-xs tracking-[0.3em] text-neutral-400 font-light uppercase max-w-2xl mt-8 leading-relaxed">
+        <p className="text-[11px] md:text-xs tracking-[0.3em] text-neutral-400 font-light uppercase max-w-2xl mt-5 md:mt-8 leading-relaxed">
           We engineer raw visual weight. Below is our baseline framework for tailoring high-density digital assets, architectural fashion campaigns, and severe optical grades.
         </p>
       </motion.div>
@@ -101,12 +101,12 @@ function ServicesMatrixList() {
   ];
 
   return (
-    <section ref={componentRef} className="w-full bg-black py-12 px-6 md:px-12 lg:px-24">
+    <section ref={componentRef} className="w-full bg-black py-8 md:py-12 px-6 md:px-12 lg:px-24">
       <div className="max-w-7xl mx-auto flex flex-col">
         {capabilities.map((item, idx) => (
           <div 
             key={idx} 
-            className="group grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 py-16 border-b border-neutral-900 items-start transition-colors duration-500 hover:bg-neutral-950/40 px-2"
+            className="group grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-12 py-10 md:py-16 border-b border-neutral-900 items-start transition-colors duration-500 hover:bg-neutral-950/40 px-2"
           >
             {/* Number Code */}
             <div className="lg:col-span-1 font-mono text-[10px] md:text-xs text-neutral-600 group-hover:text-white transition-colors">
@@ -150,10 +150,10 @@ function ServicesMatrixList() {
 // SECTION 3: The Deployment Spec Sheet (Grid Specs)
 function TechnicalSpecsTable() {
   return (
-    <section className="w-full bg-black py-20 md:py-32 px-6 md:px-12 lg:px-24 border-t border-neutral-900">
+    <section className="w-full bg-black py-12 md:py-32 px-6 md:px-12 lg:px-24 border-t border-neutral-900">
       <div className="max-w-5xl mx-auto">
-        <span className="text-[10px] md:text-xs font-mono tracking-[0.5em] text-neutral-500 block mb-8">[03 // ACQUISITION PARAMETERS]</span>
-        <h2 className="text-2xl font-extralight tracking-tighter text-white uppercase mb-12 font-sans">DELIVERY SPECIFICATIONS</h2>
+        <span className="text-[10px] md:text-xs font-mono tracking-[0.5em] text-neutral-500 block mb-5 md:mb-8">[03 // ACQUISITION PARAMETERS]</span>
+        <h2 className="text-2xl font-extralight tracking-tighter text-white uppercase mb-8 md:mb-12 font-sans">DELIVERY SPECIFICATIONS</h2>
         
         <div className="w-full overflow-x-auto border border-neutral-950">
           <table className="w-full text-left border-collapse font-mono text-[10px] md:text-xs text-neutral-400">
@@ -196,8 +196,8 @@ function TechnicalSpecsTable() {
 // SECTION 4: Pipeline Operational Call To Action
 function ServicesCTA() {
   return (
-    <section className="w-full bg-black text-white pt-24 pb-28 px-6 md:px-12 lg:px-24 border-t border-neutral-900 selection:bg-white selection:text-black">
-  <div className="max-w-6xl mx-auto space-y-12">
+    <section className="w-full bg-black text-white pt-12 md:pt-24 pb-14 md:pb-28 px-6 md:px-12 lg:px-24 border-t border-neutral-900 selection:bg-white selection:text-black">
+  <div className="max-w-6xl mx-auto space-y-8 md:space-y-12">
     
     {/* SYSTEM MONITOR TOP TRIM */}
     <div className="flex flex-col sm:flex-row sm:items-center justify-between font-mono text-[9px] tracking-[0.2em] text-neutral-600 border-b border-neutral-900 pb-3 gap-2">
@@ -227,10 +227,10 @@ function ServicesCTA() {
     </div>
 
     {/* SPLIT DATA FRAME & TELEMETRY TERMINAL */}
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-4">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 pt-2 md:pt-4">
       
       {/* Left Data Column */}
-      <div className="lg:col-span-8 space-y-6">
+      <div className="lg:col-span-8 space-y-5 md:space-y-6">
         <div className="space-y-2">
           <span className="font-mono text-[9px] tracking-[0.4em] text-neutral-500 block">
             [ INITIATING SEQUENTIAL INTERACTION ]

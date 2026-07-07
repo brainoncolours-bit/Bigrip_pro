@@ -83,27 +83,56 @@ function Section2Threshold() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: "top bottom",
-          end: "bottom top",
-          scrub: 1.5,
-        }
+      const words = gsap.utils.toArray(".manifesto-word");
+      const mm = gsap.matchMedia();
+
+      mm.add("(max-width: 767px)", () => {
+        gsap.set(words, { color: "#404040" });
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top 82%",
+            end: "bottom 48%",
+            scrub: 0.45,
+          }
+        });
+
+        tl.to(words, {
+          color: "#ffffff",
+          duration: 0.25,
+          stagger: 0.12,
+          ease: "power2.out",
+        });
       });
 
-      tl.to(".manifesto-word", {
-        color: "#ffffff",
-        duration: 0.5,
-        stagger: 0.5,
-        ease: "power2.out",
+      mm.add("(min-width: 768px)", () => {
+        gsap.set(words, { color: "#404040" });
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 1.5,
+          }
+        });
+
+        tl.to(words, {
+          color: "#ffffff",
+          duration: 0.5,
+          stagger: 0.5,
+          ease: "power2.out",
+        });
       });
+
+      return () => mm.revert();
     }, containerRef);
     return () => ctx.revert();
   }, []);
 
   return (
-    <section ref={containerRef} className="w-full min-h-[40vh] bg-black flex items-center px-6 sm:px-12 md:px-24 py-16 md:py-24 border-y border-neutral-900">
+    <section ref={containerRef} className="w-full min-h-[28vh] md:min-h-[40vh] bg-black flex items-center px-6 sm:px-12 md:px-24 py-10 md:py-24 border-y border-neutral-900">
       <div className="max-w-5xl">
         <span className="text-[10px] md:text-xs font-mono tracking-[0.5em] text-neutral-500 block mb-6 md:mb-8">[02 / MANIFESTO MATRIX]</span>
         <h2 className="text-xl sm:text-2xl md:text-5xl font-extralight tracking-tight leading-snug font-sans">
@@ -124,7 +153,7 @@ function Section3Aperture({ mediaUrl, fallbackVideoId }) {
   const frameRadius = useTransform(scrollYProgress, [0, 0.6], ["16px", "0px"]);
 
   return (
-    <div ref={containerRef} className="relative w-full h-[80vh] md:h-[120vh] bg-black flex items-center justify-center overflow-hidden">
+    <div ref={containerRef} className="relative w-full h-[48vh] md:h-[120vh] bg-black flex items-center justify-center overflow-hidden">
       <motion.div style={{ width: frameWidth, height: "100%", borderRadius: frameRadius }} className="relative overflow-hidden will-change-transform bg-neutral-900">
         <SaturatedVideo mediaUrl={mediaUrl} fallbackVideoId={fallbackVideoId} opacity="opacity-100" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none" />
@@ -142,7 +171,7 @@ function Section4ChromaticMatte({ slowMediaUrl, slowFallback, fastMediaUrl, fast
   const yParallaxSlow = useTransform(scrollYProgress, [0, 1], ["5%", "-5%"]);
 
   return (
-    <section ref={triggerRef} className="w-full min-h-screen bg-black flex flex-col justify-center py-16 md:py-24 px-6 md:px-12 lg:px-24 border-b border-neutral-900 relative overflow-hidden">
+    <section ref={triggerRef} className="w-full min-h-[auto] md:min-h-screen bg-black flex flex-col justify-center py-12 md:py-24 px-6 md:px-12 lg:px-24 border-b border-neutral-900 relative overflow-hidden">
       <div className="w-full flex justify-between font-mono text-[9px] md:text-[10px] tracking-[0.3em] md:tracking-[0.5em] text-neutral-400 mb-6 gap-4">
         <span>[04 // DEPTH LAYERING PROFILE]</span>
         <span className="text-white text-right">MATTE REEL: ACTIVE</span>
@@ -166,7 +195,7 @@ function Section4ChromaticMatte({ slowMediaUrl, slowFallback, fastMediaUrl, fast
 // SECTION 5: BRUTALIST NEON PULSE RUNTIME BANNER
 function Section5VividMarquee() {
   return (
-    <section className="w-full py-20 md:py-32 bg-black overflow-hidden border-b border-neutral-900 flex justify-center items-center select-none">
+    <section className="w-full py-12 md:py-32 bg-black overflow-hidden border-b border-neutral-900 flex justify-center items-center select-none">
       <style>{`
         @keyframes revealLetter {
           from {
@@ -212,7 +241,7 @@ function Section6LineVideoReveal({ mediaUrl, fallbackVideoId }) {
   const opacity = useTransform(scrollYProgress, [0.5, 0.7], [0, 1]);
 
   return (
-    <section ref={containerRef} className="w-full min-h-[100vh] md:min-h-[140vh] bg-black flex flex-col justify-center items-center px-6 relative py-12">
+    <section ref={containerRef} className="w-full min-h-[52vh] md:min-h-[140vh] bg-black flex flex-col justify-center items-center px-6 relative py-10 md:py-12">
       <div className="w-full max-w-5xl flex justify-between font-mono text-[9px] md:text-[10px] text-neutral-400 mb-4 tracking-[0.2em] md:tracking-[0.3em] gap-4">
         <span>[06 // HORIZONTAL EXPANSION]</span>
         <span>STREAM IDENTITY ACTIVE</span>
@@ -234,7 +263,7 @@ function Section6LineVideoReveal({ mediaUrl, fallbackVideoId }) {
 // SECTION 7: VIVID TRIPLE-STILL GRID INTERLOCK
 function Section7VividMatrix({ videoUrls = [], fallbackVideoIds = [] }) {
   return (
-    <section className="w-full bg-black py-20 md:py-32 px-6 md:px-12 lg:px-16 border-b border-neutral-900">
+    <section className="w-full bg-black py-12 md:py-32 px-6 md:px-12 lg:px-16 border-b border-neutral-900">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-4 lg:gap-6">
         <div className="flex flex-col justify-between p-4 md:p-6 border border-neutral-800 aspect-[3/4] bg-neutral-950 relative overflow-hidden group shadow-[0_0_30px_rgba(255,255,255,0.02)]">
           <SaturatedVideo mediaUrl={videoUrls[0]} fallbackVideoId={fallbackVideoIds[0]} />
@@ -263,7 +292,7 @@ function Section8VideoIntercept({ mediaUrl, fallbackVideoId }) {
   const scaleHero = useTransform(scrollYProgress, [0, 1], [1.1, 1]);
 
   return (
-    <section ref={containerRef} className="w-full h-[60vh] md:h-screen bg-black overflow-hidden relative border-b border-neutral-900 flex items-center justify-center">
+    <section ref={containerRef} className="w-full h-[42vh] md:h-screen bg-black overflow-hidden relative border-b border-neutral-900 flex items-center justify-center">
       <motion.div style={{ scale: scaleHero }} className="absolute inset-0 w-full h-full">
         <SaturatedVideo mediaUrl={mediaUrl} fallbackVideoId={fallbackVideoId} opacity="opacity-100" />
       </motion.div>
@@ -278,7 +307,7 @@ function Section8VideoIntercept({ mediaUrl, fallbackVideoId }) {
 // SECTION 9: HIGH-GLOW CINEMATIC SPECTRUM FOCAL WALL
 function Section9VividFocus({ mediaUrl, fallbackVideoId }) {
   return (
-    <section className="w-full min-h-[60vh] md:min-h-screen bg-black flex items-center justify-center py-16 md:py-24 px-6 border-b border-neutral-900">
+    <section className="w-full min-h-[40vh] md:min-h-screen bg-black flex items-center justify-center py-10 md:py-24 px-6 border-b border-neutral-900">
       <div className="w-full max-w-5xl aspect-video relative border border-neutral-800 bg-neutral-950 overflow-hidden shadow-[0_0_60px_rgba(255,255,255,0.05)]">
         <SaturatedVideo mediaUrl={mediaUrl} fallbackVideoId={fallbackVideoId} />
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10 pointer-events-none" />
@@ -295,7 +324,7 @@ function Section10AsymmetricBlock({ mediaUrl, fallbackVideoId }) {
   const xOffset = useTransform(scrollYProgress, [0, 1], ["-10%", "5%"]);
 
   return (
-    <section ref={blockRef} className="w-full min-h-screen bg-black py-16 md:py-24 px-6 md:px-12 lg:px-24 border-b border-neutral-900 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center overflow-hidden">
+    <section ref={blockRef} className="w-full min-h-[auto] md:min-h-screen bg-black py-12 md:py-24 px-6 md:px-12 lg:px-24 border-b border-neutral-900 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-center overflow-hidden">
       <div className="lg:col-span-4 flex flex-col space-y-4 md:space-y-6">
         <span className="font-mono text-[10px] md:text-xs text-neutral-400 tracking-[0.4em]">[10 // DYNAMIC GRID OVERLAY]</span>
         <h3 className="text-2xl md:text-3xl lg:text-5xl font-extralight tracking-tighter text-white uppercase font-sans leading-none break-words">
@@ -326,7 +355,7 @@ function Section11TypeIntersect() {
   return (
     <section 
       ref={textContainer} 
-      className="w-full py-20 md:py-32 bg-black border-b border-neutral-900 overflow-hidden flex items-center justify-center select-none relative min-h-[350px] md:min-h-[500px]"
+      className="w-full py-12 md:py-32 bg-black border-b border-neutral-900 overflow-hidden flex items-center justify-center select-none relative min-h-[260px] md:min-h-[500px]"
     >
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#141414_1px,transparent_1px),linear-gradient(to_bottom,#141414_1px,transparent_1px)] bg-[size:3rem_3rem] md:bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-60" />
 
@@ -422,8 +451,8 @@ function Section11TypeIntersect() {
 // SECTION 12: CINEMATIC MULTI-ANGLE STRIP
 function Section12AngleStrip({ videoUrls = [], fallbackVideoIds = [] }) {
   return (
-    <section className="w-full bg-black py-16 md:py-28 px-6 md:px-12 lg:px-16 border-b border-neutral-900">
-      <div className="max-w-7xl mx-auto flex flex-col space-y-8 md:space-y-12">
+    <section className="w-full bg-black py-12 md:py-28 px-6 md:px-12 lg:px-16 border-b border-neutral-900">
+      <div className="max-w-7xl mx-auto flex flex-col space-y-5 md:space-y-12">
         <div className="w-full flex justify-between items-center font-mono text-[9px] md:text-[10px] text-neutral-400 tracking-widest border-b border-neutral-900 pb-4 gap-4">
           <span>[12 // CAPTURE AXIS MAP]</span>
           <span className="text-white text-right">MULTI_ANGLE_PROFILES</span>
@@ -449,7 +478,7 @@ function Section13InvertedAperture({ mediaUrl, fallbackVideoId }) {
   const innerScale = useTransform(scrollYProgress, [0, 1], [1.1, 1]);
 
   return (
-    <section ref={scaleRef} className="w-full h-[60vh] md:h-screen bg-black overflow-hidden relative border-b border-neutral-900 flex items-center justify-center">
+    <section ref={scaleRef} className="w-full h-[42vh] md:h-screen bg-black overflow-hidden relative border-b border-neutral-900 flex items-center justify-center">
       <motion.div style={{ scale: innerScale }} className="absolute inset-0 w-full h-full">
         <SaturatedVideo mediaUrl={mediaUrl} fallbackVideoId={fallbackVideoId} />
       </motion.div>
@@ -462,7 +491,7 @@ function Section13InvertedAperture({ mediaUrl, fallbackVideoId }) {
 // SECTION 14: KINETIC SHUTTER PROFILE
 function Section14ShutterProfile() {
   return (
-    <section className="w-full min-h-[35vh] bg-black flex items-center px-6 md:px-12 lg:px-24 py-16 md:py-20 border-b border-neutral-900">
+    <section className="w-full min-h-[24vh] md:min-h-[35vh] bg-black flex items-center px-6 md:px-12 lg:px-24 py-10 md:py-20 border-b border-neutral-900">
       <div className="max-w-4xl grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 items-baseline">
         <span className="font-mono text-[10px] md:text-xs text-white lg:col-span-3 uppercase tracking-widest">[14 // SHUTTER SYNC]</span>
         <h2 className="text-lg md:text-xl lg:text-3xl font-extralight text-neutral-400 tracking-tight leading-relaxed lg:col-span-9 font-sans">
@@ -476,10 +505,10 @@ function Section14ShutterProfile() {
 // SECTION 15: CHROMATIC ARCHITECTURAL COMMAND TERMINAL
 function Section15TerminalFooter() {
   return (
-    <section className="w-full bg-black text-white pt-24 md:pt-40 pb-12 px-6 md:px-12 lg:px-20">
+    <section className="w-full bg-black text-white pt-14 md:pt-40 pb-10 md:pb-12 px-6 md:px-12 lg:px-20">
       <div className="max-w-7xl mx-auto flex flex-col justify-between h-full">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 mb-20 md:mb-32">
-          <div className="lg:col-span-8 flex flex-col items-start space-y-6 md:space-y-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 mb-12 md:mb-32">
+          <div className="lg:col-span-8 flex flex-col items-start space-y-5 md:space-y-10">
             <span className="font-mono text-[8px] md:text-[9px] tracking-[0.3em] md:tracking-[0.4em] text-neutral-400">[15 // MASTER OUTFLOW TERMINAL]</span>
             <h2 className="text-2xl sm:text-4xl lg:text-6xl font-extralight tracking-tighter text-white uppercase leading-[1.05] md:leading-[0.98] max-w-2xl font-sans break-words">
               EXECUTE PROJECT CORES &amp; SYNC CHROMATIC CHANNELS.
