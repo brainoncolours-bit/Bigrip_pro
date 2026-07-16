@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 const links = [
   { to: "/", label: "Home" },
   { to: "/work", label: "Work" },
-  { to: "/sekriac", label: "Seckrick" },
+  { to: "/sekriac", label: "SEKRICK" },
   { to: "/contact", label: "Contact" },
 ];
 
@@ -62,7 +62,7 @@ const Navbar = ({ mode = "dark" }) => {
             <span
               className={`text-xl uppercase ${textColor} transition-colors duration-500`}
             >
-              Seckrick
+              SEKRICK
             </span>
           </div>
 

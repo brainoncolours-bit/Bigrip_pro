@@ -21,7 +21,11 @@ const ASSETS = {
 /* ==========================================
    PRODUCTION REUSABLE WRAPPERS
    ========================================== */
-function SaturatedVideo({ mediaUrl, fallbackVideoId, opacity = "opacity-100" }) {
+function SaturatedVideo({
+  mediaUrl,
+  fallbackVideoId,
+  opacity = "opacity-100",
+}) {
   const [videoError, setVideoError] = useState(false);
   const videoId = mediaUrl && !videoError ? null : fallbackVideoId;
   return (
@@ -57,20 +61,31 @@ function SaturatedVideo({ mediaUrl, fallbackVideoId, opacity = "opacity-100" }) 
 // SECTION 1: Header Manifesto
 function ServicesHero() {
   const containerRef = useRef(null);
-  const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end start"] });
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"],
+  });
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
   const yOffset = useTransform(scrollYProgress, [0, 0.5], ["0px", "-50px"]);
 
   return (
-    <section ref={containerRef} className="relative w-full min-h-[80vh] bg-black overflow-hidden flex flex-col justify-between p-6 md:p-12 border-b border-neutral-900">
-      
-      
-      <motion.div style={{ opacity, y: yOffset }} className="z-10 flex flex-col items-start max-w-7xl my-auto">
+    <section
+      ref={containerRef}
+      className="relative w-full min-h-[80vh] bg-black overflow-hidden flex flex-col justify-between p-6 md:p-12 border-b border-neutral-900"
+    >
+      <motion.div
+        style={{ opacity, y: yOffset }}
+        className="z-10 flex flex-col items-start max-w-7xl my-auto"
+      >
         <h1 className="text-[clamp(2.5rem,8vw,8rem)] font-thin tracking-tighter leading-[0.95] text-white uppercase font-sans break-words w-full">
-          OPERATIONAL<br />CAPABILITIES.
+          OPERATIONAL
+          <br />
+          CAPABILITIES.
         </h1>
         <p className="text-[11px] md:text-xs tracking-[0.3em] text-neutral-400 font-light uppercase max-w-2xl mt-8 leading-relaxed">
-          We engineer raw visual weight. Below is our baseline framework for tailoring high-density digital assets, architectural fashion campaigns, and severe optical grades.
+          We engineer raw visual weight. Below is our baseline framework for
+          tailoring high-density digital assets, architectural fashion
+          campaigns, and severe optical grades.
         </p>
       </motion.div>
 
@@ -91,34 +106,53 @@ function ServicesMatrixList({ videoUrls = [], fallbackVideoIds = [] }) {
       num: "01",
       title: "CINEMATIC DIRECTION & ARCHITECTURE",
       desc: "Full-scale visual architecture from spatial concepts to continuous tracking. Engineered using precise camera grids, high-speed shutter manipulation, and geometric alignment.",
-      metrics: ["ANAMORPHIC PIPELINES", "SPATIAL BLOCKING", "16MM / 35MM EMBEDDED ENGINE"],
+      metrics: [
+        "ANAMORPHIC PIPELINES",
+        "SPATIAL BLOCKING",
+        "16MM / 35MM EMBEDDED ENGINE",
+      ],
     },
     {
       num: "02",
       title: "CHROMATIC GRADE & SPECTRAL DEPTH",
       desc: "Micro-tonal color shifts and unforgiving color treatments engineered for low-light digital landscapes. We calibrate custom look-up profiles tailored per deployment canvas.",
-      metrics: ["LUT SPECULATION", "HIGH-GLOW CONTRAST ISOLATION", "REDUCED NOISE COMPRESSION"],
+      metrics: [
+        "LUT SPECULATION",
+        "HIGH-GLOW CONTRAST ISOLATION",
+        "REDUCED NOISE COMPRESSION",
+      ],
     },
     {
       num: "03",
       title: "EDITORIAL FASHION & SILHOUETTE CAPTURE",
       desc: "Calibrating the relationship between moving fabrics, human form, and static brutalist architecture. Tailored strictly for high-end fashion campaigns and digital runway archives.",
-      metrics: ["DRAPE/VELOCITY SYNC", "TEXTURE RETENTION ENGINE", "ASYMMETRIC FRAMING"],
+      metrics: [
+        "DRAPE/VELOCITY SYNC",
+        "TEXTURE RETENTION ENGINE",
+        "ASYMMETRIC FRAMING",
+      ],
     },
     {
       num: "04",
       title: "SONIC LANDSCAPES & AUDIO TEXTURING",
       desc: "Constructing raw, industrial audio spaces that backstop visual weight. Sub-bass design, rhythmic pacing edits, and customized microtonal synthesis.",
-      metrics: ["SUB-FREQUENCY CALIBRATION", "RHYTHMIC INTERVAL SYNCHRONIZATION", "ATMOSPHERIC GAIN DESIGN"],
-    }
+      metrics: [
+        "SUB-FREQUENCY CALIBRATION",
+        "RHYTHMIC INTERVAL SYNCHRONIZATION",
+        "ATMOSPHERIC GAIN DESIGN",
+      ],
+    },
   ];
 
   return (
-    <section ref={componentRef} className="w-full bg-black py-12 px-6 md:px-12 lg:px-24">
+    <section
+      ref={componentRef}
+      className="w-full bg-black py-12 px-6 md:px-12 lg:px-24"
+    >
       <div className="max-w-7xl mx-auto flex flex-col">
         {capabilities.map((item, idx) => (
-          <div 
-            key={idx} 
+          <div
+            key={idx}
             className="group grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 py-16 border-b border-neutral-900 items-start transition-colors duration-500 hover:bg-neutral-950/40 px-2"
           >
             {/* Number Code */}
@@ -134,11 +168,14 @@ function ServicesMatrixList({ videoUrls = [], fallbackVideoIds = [] }) {
               <p className="text-xs md:text-[13px] font-light text-neutral-500 leading-relaxed max-w-xl group-hover:text-neutral-400 transition-colors">
                 {item.desc}
               </p>
-              
+
               {/* Technical Tags */}
               <div className="flex flex-wrap gap-2 pt-2">
                 {item.metrics.map((metric, mIdx) => (
-                  <span key={mIdx} className="font-mono text-[8px] md:text-[9px] tracking-wider text-neutral-600 border border-neutral-900 group-hover:border-neutral-800 group-hover:text-neutral-400 px-2 py-0.5 rounded-[1px] transition-all">
+                  <span
+                    key={mIdx}
+                    className="font-mono text-[8px] md:text-[9px] tracking-wider text-neutral-600 border border-neutral-900 group-hover:border-neutral-800 group-hover:text-neutral-400 px-2 py-0.5 rounded-[1px] transition-all"
+                  >
                     {metric}
                   </span>
                 ))}
@@ -147,7 +184,10 @@ function ServicesMatrixList({ videoUrls = [], fallbackVideoIds = [] }) {
 
             {/* Micro Video Terminal Preview */}
             <div className="lg:col-span-5 w-full aspect-video lg:aspect-[16/10] bg-neutral-950 border border-neutral-900 overflow-hidden relative shadow-2xl transition-all duration-700 group-hover:border-neutral-700 filter grayscale group-hover:grayscale-0">
-              <SaturatedVideo mediaUrl={videoUrls[idx]} fallbackVideoId={fallbackVideoIds[idx]} />
+              <SaturatedVideo
+                mediaUrl={videoUrls[idx]}
+                fallbackVideoId={fallbackVideoIds[idx]}
+              />
               <div className="absolute inset-0 bg-black/40 group-hover:bg-transparent transition-colors duration-500 pointer-events-none" />
               <div className="absolute bottom-2 right-2 font-mono text-[7px] text-neutral-600 group-hover:text-neutral-400 px-1 bg-black/60 backdrop-blur-sm uppercase">
                 PREVIEW_{item.num}_LIVE
@@ -165,38 +205,64 @@ function TechnicalSpecsTable() {
   return (
     <section className="w-full bg-black py-20 md:py-32 px-6 md:px-12 lg:px-24 border-t border-neutral-900">
       <div className="max-w-5xl mx-auto">
-        <span className="text-[10px] md:text-xs font-mono tracking-[0.5em] text-neutral-500 block mb-8">[03 // ACQUISITION PARAMETERS]</span>
-        <h2 className="text-2xl font-extralight tracking-tighter text-white uppercase mb-12 font-sans">DELIVERY SPECIFICATIONS</h2>
-        
+        <span className="text-[10px] md:text-xs font-mono tracking-[0.5em] text-neutral-500 block mb-8">
+          [03 // ACQUISITION PARAMETERS]
+        </span>
+        <h2 className="text-2xl font-extralight tracking-tighter text-white uppercase mb-12 font-sans">
+          DELIVERY SPECIFICATIONS
+        </h2>
+
         <div className="w-full overflow-x-auto border border-neutral-950">
           <table className="w-full text-left border-collapse font-mono text-[10px] md:text-xs text-neutral-400">
             <thead>
               <tr className="border-b border-neutral-900 text-neutral-500">
-                <th className="py-4 px-2 uppercase tracking-widest font-normal">MODULE SYSTEM</th>
-                <th className="py-4 px-2 uppercase tracking-widest font-normal">NATIVE ENGINE</th>
-                <th className="py-4 px-2 uppercase tracking-widest font-normal">OUTPUT STATE</th>
+                <th className="py-4 px-2 uppercase tracking-widest font-normal">
+                  MODULE SYSTEM
+                </th>
+                <th className="py-4 px-2 uppercase tracking-widest font-normal">
+                  NATIVE ENGINE
+                </th>
+                <th className="py-4 px-2 uppercase tracking-widest font-normal">
+                  OUTPUT STATE
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-neutral-900">
               <tr className="hover:text-white transition-colors">
-                <td className="py-4 px-2 text-neutral-300">RAW Capture Platform</td>
-                <td className="py-4 px-2">ARRI Alexa Mini LF / RED V-Raptor XL</td>
+                <td className="py-4 px-2 text-neutral-300">
+                  RAW Capture Platform
+                </td>
+                <td className="py-4 px-2">
+                  ARRI Alexa Mini LF / RED V-Raptor XL
+                </td>
                 <td className="py-4 px-2">ProRes 4444 XQ / 8K REDCODE RAW</td>
               </tr>
               <tr className="hover:text-white transition-colors">
                 <td className="py-4 px-2 text-neutral-300">Optics Mapping</td>
-                <td className="py-4 px-2">Cooke Anamorphic / Tribe7 Blackwing7</td>
-                <td className="py-4 px-2">Custom Spatial Distortion Profiles</td>
+                <td className="py-4 px-2">
+                  Cooke Anamorphic / Tribe7 Blackwing7
+                </td>
+                <td className="py-4 px-2">
+                  Custom Spatial Distortion Profiles
+                </td>
               </tr>
               <tr className="hover:text-white transition-colors">
                 <td className="py-4 px-2 text-neutral-300">Color Framework</td>
-                <td className="py-4 px-2">ACES workflow / DaVinci Resolve Studio</td>
+                <td className="py-4 px-2">
+                  ACES workflow / DaVinci Resolve Studio
+                </td>
                 <td className="py-4 px-2">Rec.2026 / P3 D65 Master Matrices</td>
               </tr>
               <tr className="hover:text-white transition-colors">
-                <td className="py-4 px-2 text-neutral-300">Spatial Mastering</td>
-                <td className="py-4 px-2">Dolby Atmos Spatial Mixing Engines</td>
-                <td className="py-4 px-2">24-bit Linear PCM Broadcast Stream</td>
+                <td className="py-4 px-2 text-neutral-300">
+                  Spatial Mastering
+                </td>
+                <td className="py-4 px-2">
+                  Dolby Atmos Spatial Mixing Engines
+                </td>
+                <td className="py-4 px-2">
+                  24-bit Linear PCM Broadcast Stream
+                </td>
               </tr>
             </tbody>
           </table>
@@ -210,77 +276,85 @@ function TechnicalSpecsTable() {
 function ServicesCTA({ mediaUrl, fallbackVideoId }) {
   return (
     <section className="w-full bg-black text-white pt-24 pb-28 px-6 md:px-12 lg:px-24 border-t border-neutral-900 selection:bg-white selection:text-black">
-  <div className="max-w-6xl mx-auto space-y-12">
-    
-    {/* SYSTEM MONITOR TOP TRIM */}
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between font-mono text-[9px] tracking-[0.2em] text-neutral-600 border-b border-neutral-900 pb-3 gap-2">
-      <div className="flex items-center gap-2">
-        <span className="w-1.5 h-1.5 rounded-full bg-neutral-700 animate-pulse"></span>
-        <span>SYS_ROUTING // CRT_WALL_01</span>
-      </div>
-      <div className="flex gap-4">
-        <span>MATRIX: ACTIVE</span>
-        <span>LOCATION // STUDIO_P3</span>
-      </div>
-    </div>
-
-    {/* ULTRA-WIDE BLACKBOX VIEWPORT */}
-    <div className="relative w-full aspect-[21/9] bg-black border border-neutral-900 overflow-hidden shadow-[0_0_80px_rgba(0,0,0,1)]">
-      {/* Heavy shadow vignette masking to sink the video into the black background */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_40%,rgba(0,0,0,0.85)_100%)] pointer-events-none z-10"></div>
-      <div className="absolute inset-0 opacity-90 brightness-90 contrast-[1.05] grayscale-[15%]">
-        <SaturatedVideo mediaUrl={mediaUrl} fallbackVideoId={fallbackVideoId} />
-      </div>
-    </div>
-
-    {/* SPLIT DATA FRAME & TELEMETRY TERMINAL */}
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-4">
-      
-      {/* Left Data Column */}
-      <div className="lg:col-span-8 space-y-6">
-        <div className="space-y-2">
-          <span className="font-mono text-[9px] tracking-[0.4em] text-neutral-500 block">
-            [ INITIATING SEQUENTIAL INTERACTION ]
-          </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extralight tracking-tighter text-white uppercase font-sans leading-none">
-            READY TO CALIBRATE YOUR SEQUENCES?
-          </h2>
-        </div>
-        
-        <p className="text-xs font-mono tracking-wide text-neutral-400 max-w-2xl leading-relaxed">
-          Connect your project core parameters with our architectural system pipeline. We accept direct inquiries for corporate assets, fashion campaigns, and feature grading frameworks.
-        </p>
-
-        {/* Technical Specification Ribbon */}
-        <div className="grid grid-cols-3 gap-2 border-t border-neutral-900 pt-6 font-mono text-[9px] text-neutral-500 tracking-wider">
-          <div>
-            <span className="text-neutral-700 block text-[8px] mb-1">01 / RESOLUTION</span>
-            <span>8K ANAMORPHIC</span>
+      <div className="max-w-6xl mx-auto space-y-12">
+        {/* SYSTEM MONITOR TOP TRIM */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between font-mono text-[9px] tracking-[0.2em] text-neutral-600 border-b border-neutral-900 pb-3 gap-2">
+          <div className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-neutral-700 animate-pulse"></span>
+            <span>SYS_ROUTING // CRT_WALL_01</span>
           </div>
-          <div>
-            <span className="text-neutral-700 block text-[8px] mb-1">02 / COLOR PROFILE</span>
-            <span>ACES MASTERING // LOG-C</span>
-          </div>
-          <div>
-            <span className="text-neutral-700 block text-[8px] mb-1">03 / TIMING</span>
-            <span>23.976 FPS // 180°</span>
+          <div className="flex gap-4">
+            <span>MATRIX: ACTIVE</span>
+            <span>LOCATION // STUDIO_P3</span>
           </div>
         </div>
+
+        {/* ULTRA-WIDE BLACKBOX VIEWPORT */}
+        <div className="relative w-full aspect-[21/9] bg-black border border-neutral-900 overflow-hidden shadow-[0_0_80px_rgba(0,0,0,1)]">
+          {/* Heavy shadow vignette masking to sink the video into the black background */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_40%,rgba(0,0,0,0.85)_100%)] pointer-events-none z-10"></div>
+          <div className="absolute inset-0 opacity-90 brightness-90 contrast-[1.05] grayscale-[15%]">
+            <SaturatedVideo
+              mediaUrl={mediaUrl}
+              fallbackVideoId={fallbackVideoId}
+            />
+          </div>
+        </div>
+
+        {/* SPLIT DATA FRAME & TELEMETRY TERMINAL */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-4">
+          {/* Left Data Column */}
+          <div className="lg:col-span-8 space-y-6">
+            <div className="space-y-2">
+              <span className="font-mono text-[9px] tracking-[0.4em] text-neutral-500 block">
+                [ INITIATING SEQUENTIAL INTERACTION ]
+              </span>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extralight tracking-tighter text-white uppercase font-sans leading-none">
+                READY TO CALIBRATE YOUR SEQUENCES?
+              </h2>
+            </div>
+
+            <p className="text-xs font-mono tracking-wide text-neutral-400 max-w-2xl leading-relaxed">
+              Connect your project core parameters with our architectural system
+              pipeline. We accept direct inquiries for corporate assets, fashion
+              campaigns, and feature grading frameworks.
+            </p>
+
+            {/* Technical Specification Ribbon */}
+            <div className="grid grid-cols-3 gap-2 border-t border-neutral-900 pt-6 font-mono text-[9px] text-neutral-500 tracking-wider">
+              <div>
+                <span className="text-neutral-700 block text-[8px] mb-1">
+                  01 / RESOLUTION
+                </span>
+                <span>8K ANAMORPHIC</span>
+              </div>
+              <div>
+                <span className="text-neutral-700 block text-[8px] mb-1">
+                  02 / COLOR PROFILE
+                </span>
+                <span>ACES MASTERING // LOG-C</span>
+              </div>
+              <div>
+                <span className="text-neutral-700 block text-[8px] mb-1">
+                  03 / TIMING
+                </span>
+                <span>23.976 FPS // 180°</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Action Column */}
+          <div className="lg:col-span-4 flex lg:justify-end lg:items-end">
+            <a
+              href="mailto:pipeline@SEKRICK.com"
+              className="w-full lg:w-auto text-center px-12 py-5 bg-white text-black font-mono text-[10px] tracking-[0.3em] uppercase hover:bg-neutral-200 transition-all duration-300 rounded-[1px] hover:shadow-[0_0_50px_rgba(255,255,255,0.1)]"
+            >
+              ENGAGE PRODUCTION ROUTER
+            </a>
+          </div>
+        </div>
       </div>
-
-      {/* Right Action Column */}
-      <div className="lg:col-span-4 flex lg:justify-end lg:items-end">
-        <a 
-          href="mailto:pipeline@seckrick.com" 
-          className="w-full lg:w-auto text-center px-12 py-5 bg-white text-black font-mono text-[10px] tracking-[0.3em] uppercase hover:bg-neutral-200 transition-all duration-300 rounded-[1px] hover:shadow-[0_0_50px_rgba(255,255,255,0.1)]">
-          ENGAGE PRODUCTION ROUTER
-        </a>
-      </div>
-
-    </div>
-
-  </div>
-</section>
+    </section>
   );
 }
 
@@ -292,9 +366,11 @@ export default function Services() {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const systemPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+      const systemPreference = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      );
       if (systemPreference.matches) {
-        ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+        ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
       }
     }
   }, []);
@@ -309,7 +385,9 @@ export default function Services() {
 
       if (data) {
         const map = {};
-        data.forEach((v) => { map[v.section_key] = v.media_url; });
+        data.forEach((v) => {
+          map[v.section_key] = v.media_url;
+        });
         setVideos(map);
       }
     }
@@ -320,11 +398,24 @@ export default function Services() {
     <div className="bg-black text-white overflow-x-hidden selection:bg-white selection:text-black antialiased">
       <ServicesHero />
       <ServicesMatrixList
-        videoUrls={[videos.service_1, videos.service_2, videos.service_3, videos.service_4]}
-        fallbackVideoIds={[ASSETS.serviceVideo1, ASSETS.serviceVideo2, ASSETS.serviceVideo3, ASSETS.serviceVideo4]}
+        videoUrls={[
+          videos.service_1,
+          videos.service_2,
+          videos.service_3,
+          videos.service_4,
+        ]}
+        fallbackVideoIds={[
+          ASSETS.serviceVideo1,
+          ASSETS.serviceVideo2,
+          ASSETS.serviceVideo3,
+          ASSETS.serviceVideo4,
+        ]}
       />
       <TechnicalSpecsTable />
-      <ServicesCTA mediaUrl={videos.services_cta} fallbackVideoId="Sgxbx65IDeM" />
+      <ServicesCTA
+        mediaUrl={videos.services_cta}
+        fallbackVideoId="Sgxbx65IDeM"
+      />
     </div>
   );
 }
