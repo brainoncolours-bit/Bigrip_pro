@@ -222,8 +222,8 @@ function Section4ChromaticMatte({
     target: triggerRef,
     offset: ["start end", "end start"],
   });
-  const yParallaxFast = useTransform(scrollYProgress, [0, 1], ["-10%", "10%"]);
-  const yParallaxSlow = useTransform(scrollYProgress, [0, 1], ["5%", "-5%"]);
+  const yParallaxFast = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
+  const yParallaxSlow = useTransform(scrollYProgress, [0, 1], ["8%", "-8%"]);
 
   return (
     <section
@@ -234,8 +234,11 @@ function Section4ChromaticMatte({
         <span>[04 // DEPTH LAYERING PROFILE]</span>
         <span className="text-white text-right">MATTE REEL: ACTIVE</span>
       </div>
-      <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative">
-        <div className="lg:col-span-7 aspect-[4/5] lg:aspect-[16/10] overflow-hidden bg-neutral-950 border border-neutral-800 relative w-full">
+
+      {/* Grid changed to 2 equal columns on medium screens and above */}
+      <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-center relative">
+        {/* Video Container 1 */}
+        <div className="w-full aspect-[16/10] overflow-hidden bg-neutral-950 border border-neutral-800 relative">
           <motion.div
             style={{ y: yParallaxSlow }}
             className="absolute top-0 left-0 w-full h-[115%]"
@@ -246,10 +249,12 @@ function Section4ChromaticMatte({
             />
           </motion.div>
         </div>
-        <div className="lg:col-span-5 aspect-[3/4] w-full max-w-[280px] lg:max-w-[340px] overflow-hidden bg-neutral-950 border border-neutral-800 relative lg:-translate-x-24 lg:translate-y-16 shadow-[0_0_60px_rgba(255,255,255,0.05)] z-10 mx-auto lg:mx-0">
+
+        {/* Video Container 2 (Matching size & alignment) */}
+        <div className="w-full aspect-[16/10] overflow-hidden bg-neutral-950 border border-neutral-800 relative">
           <motion.div
             style={{ y: yParallaxFast }}
-            className="absolute top-0 left-0 w-full h-[120%]"
+            className="absolute top-0 left-0 w-full h-[115%]"
           >
             <SaturatedVideo
               mediaUrl={fastMediaUrl}
@@ -307,31 +312,38 @@ function Section5VividMarquee() {
 // SECTION 6: THE EXPANDING HORIZONTAL LINE INTERCEPT
 function Section6LineVideoReveal({ mediaUrl, fallbackVideoId }) {
   const containerRef = useRef(null);
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start end", "end start"],
+    // Start animation earlier, finish when centered in viewport
+    offset: ["start 80%", "center center"],
   });
-  const lineWidth = useTransform(scrollYProgress, [0.1, 0.45], ["0%", "100%"]);
-  const lineHeight = useTransform(
-    scrollYProgress,
-    [0.45, 0.75],
-    ["0%", "100%"],
-  );
-  const opacity = useTransform(scrollYProgress, [0.5, 0.7], [0, 1]);
+
+  // Expand width first (early scroll)
+  const lineWidth = useTransform(scrollYProgress, [0.0, 0.4], ["0%", "100%"]);
+  
+  // Expand height top-to-bottom second
+  const lineHeight = useTransform(scrollYProgress, [0.4, 0.8], ["0%", "100%"]);
+  
+  // Fade in content
+  const opacity = useTransform(scrollYProgress, [0.5, 0.85], [0, 1]);
 
   return (
     <section
       ref={containerRef}
-      className="w-full min-h-[52vh] md:min-h-[140vh] bg-black flex flex-col justify-center items-center px-6 relative py-10 md:py-12"
+      /* Balanced height & padding to prevent excessive blank gaps */
+      className="w-full min-h-[100vh] bg-black flex flex-col justify-center items-center px-6 relative py-16"
     >
       <div className="w-full max-w-5xl flex justify-between font-mono text-[9px] md:text-[10px] text-neutral-400 mb-4 tracking-[0.2em] md:tracking-[0.3em] gap-4">
         <span>[06 // HORIZONTAL EXPANSION]</span>
         <span>STREAM IDENTITY ACTIVE</span>
       </div>
-      <div className="w-full max-w-5xl aspect-video relative overflow-hidden">
+
+      <div className="w-full max-w-5xl aspect-video relative overflow-hidden bg-neutral-900/50">
         <motion.div
           style={{ width: lineWidth, height: lineHeight }}
-          className="absolute inset-x-0 bottom-0 bg-neutral-800 overflow-hidden will-change-[width,height] shadow-2xl"
+          /* top-0 forces the expand animation from TOP to BOTTOM */
+          className="absolute inset-x-0 top-0 bg-neutral-800 overflow-hidden will-change-[width,height] shadow-2xl"
         >
           <motion.div
             style={{ opacity }}
@@ -344,6 +356,7 @@ function Section6LineVideoReveal({ mediaUrl, fallbackVideoId }) {
           </motion.div>
         </motion.div>
       </div>
+
       <div className="mt-6 max-w-md text-center">
         <p className="text-[10px] font-mono tracking-widest text-neutral-500 uppercase">
           [ Linear pixel translation complete ]
@@ -358,6 +371,7 @@ function Section7VividMatrix({ videoUrls = [], fallbackVideoIds = [] }) {
   return (
     <section className="w-full bg-black py-12 md:py-32 px-6 md:px-12 lg:px-16 border-b border-neutral-900">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-4 lg:gap-6">
+        {/* Card 1 */}
         <div className="flex flex-col justify-between p-4 md:p-6 border border-neutral-800 aspect-[3/4] bg-neutral-950 relative overflow-hidden group shadow-[0_0_30px_rgba(255,255,255,0.02)]">
           <SaturatedVideo
             mediaUrl={videoUrls[0]}
@@ -370,7 +384,9 @@ function Section7VividMatrix({ videoUrls = [], fallbackVideoIds = [] }) {
             CORE SPECTRUM METRIC
           </span>
         </div>
-        <div className="flex flex-col justify-between p-4 md:p-6 border border-neutral-800 aspect-[3/4] bg-neutral-950 relative overflow-hidden group md:translate-y-8 lg:translate-y-12 shadow-[0_0_30px_rgba(255,255,255,0.02)]">
+
+        {/* Card 2 (Removed translate-y classes so it stays in line) */}
+        <div className="flex flex-col justify-between p-4 md:p-6 border border-neutral-800 aspect-[3/4] bg-neutral-950 relative overflow-hidden group shadow-[0_0_30px_rgba(255,255,255,0.02)]">
           <SaturatedVideo
             mediaUrl={videoUrls[1]}
             fallbackVideoId={fallbackVideoIds[1]}
@@ -382,6 +398,8 @@ function Section7VividMatrix({ videoUrls = [], fallbackVideoIds = [] }) {
             CHROMATIC CORRECTION
           </span>
         </div>
+
+        {/* Card 3 */}
         <div className="flex flex-col justify-between p-4 md:p-6 border border-neutral-800 aspect-[3/4] bg-neutral-950 relative overflow-hidden group shadow-[0_0_30px_rgba(255,255,255,0.02)]">
           <SaturatedVideo
             mediaUrl={videoUrls[2]}
@@ -485,6 +503,7 @@ function Section10AsymmetricBlock({ mediaUrl, fallbackVideoId }) {
   );
 }
 
+
 // SECTION 11: CHROMATIC TEXT INTERSECTION
 function Section11TypeIntersect() {
   const textContainer = useRef(null);
@@ -534,7 +553,6 @@ function Section11TypeIntersect() {
           ease: "easeOut",
         }}
       />
-
       <div className="relative w-full max-w-6xl h-48 md:h-64 flex items-center justify-center z-10 overflow-hidden">
         {/* ================= LEFT TRAIN ================= */}
         {[
@@ -591,6 +609,7 @@ function Section11TypeIntersect() {
             </motion.div>
           );
         })}
+
 
         {/* ================= RIGHT TRAIN ================= */}
         {[
@@ -650,7 +669,7 @@ function Section11TypeIntersect() {
       </div>
     </section>
   );
-}
+} 
 
 // SECTION 12: CINEMATIC MULTI-ANGLE STRIP
 function Section12AngleStrip({ videoUrls = [], fallbackVideoIds = [] }) {
