@@ -74,7 +74,7 @@ function EditorialIntroSection() {
         </div>
         <div className="lg:col-span-8">
           <h2 className="text-3xl md:text-5xl lg:text-6xl font-sans font-extralight tracking-tight uppercase leading-[1.1] mb-0 md:mb-8">
-            We operate at the volatile intersection of high-end commercial viability and uncompromising conceptual art direction.
+            A collection of films, campaigns, and visual stories created for ambitious brands.
           </h2>
         </div>
       </div>
@@ -188,7 +188,7 @@ function InterstitialImageSection() {
       <div className="absolute bottom-12 right-6 md:right-12 text-right max-w-md mix-blend-difference">
         <span className="font-mono text-[9px] tracking-[0.4em] text-neutral-400 block mb-2">[ ARCHIVAL PROOF_04 ]</span>
         <h4 className="text-xl md:text-2xl font-sans font-thin tracking-widest text-white uppercase leading-tight">
-          CHRONICLING TRANSIENT STRATEGIES ACROSS HIGH-DENSITY POPULATION METRIC HUBS.
+          WE BELIEVE IN THOUGHTFUL FILMMAKING THAT GIVES EVERY PROJECT ITS OWN VISUAL IDENTITY.
         </h4>
       </div>
     </section>
@@ -204,10 +204,10 @@ function StudioManifesto() {
           [ PIPELINE VISUAL ETHOS // SPEC_08 ]
         </span>
         <h2 className="font-sans font-thin text-4xl md:text-6xl tracking-tight leading-none mb-5 md:mb-8 text-white uppercase">
-          DEFINITIVE OPTICAL MANAGEMENT.
+          BEHIND EVERY FRAME
         </h2>
         <p className="text-[13px] text-neutral-400 font-sans font-light leading-relaxed mb-5 md:mb-8 max-w-md">
-          Operating dynamic architectural layouts in critical cultural centers, we coordinate cross-platform digital and moving media formats with creator portfolios who prioritize high-contrast depth configurations and uncompromising alignment logic.
+          The films you see are the result of countless creative decisions. Every lighting setup, camera movement, sound layer, and color adjustment is carefully crafted to support the story—not distract from it.
         </p>
         <div>
           <a href="#" className="inline-block font-mono text-[10px] tracking-[0.3em] text-white uppercase border border-neutral-800 hover:border-white px-6 py-4 bg-neutral-950/40 transition-all">

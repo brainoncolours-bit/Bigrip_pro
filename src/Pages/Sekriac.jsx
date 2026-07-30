@@ -78,14 +78,12 @@ function ServicesHero() {
         className="z-10 flex flex-col items-start max-w-7xl my-auto"
       >
         <h1 className="text-[clamp(2.5rem,8vw,8rem)] font-thin tracking-tighter leading-[0.95] text-white uppercase font-sans break-words w-full">
-          OPERATIONAL
+          OBSESSED WITH DETAILS
           <br />
-          CAPABILITIES.
+          DRIVEN BY IMPACT.
         </h1>
         <p className="text-[11px] md:text-xs tracking-[0.3em] text-neutral-400 font-light uppercase max-w-2xl mt-8 leading-relaxed">
-          We engineer raw visual weight. Below is our baseline framework for
-          tailoring high-density digital assets, architectural fashion
-          campaigns, and severe optical grades.
+          We believe extraordinary stories are never accidental. Every frame, every sound, and every creative decision is crafted with purpose to create films that leave a lasting impression.
         </p>
       </motion.div>
 
@@ -104,8 +102,8 @@ function ServicesMatrixList({ videoUrls = [], fallbackVideoIds = [] }) {
   const capabilities = [
     {
       num: "01",
-      title: "CINEMATIC DIRECTION & ARCHITECTURE",
-      desc: "Full-scale visual architecture from spatial concepts to continuous tracking. Engineered using precise camera grids, high-speed shutter manipulation, and geometric alignment.",
+      title: "VISION DEFINES EVERYTHING",
+      desc: "Creative excellence begins with a clear vision. Every decision we make is guided by purpose, originality, and craftsmanship.",
       metrics: [
         "ANAMORPHIC PIPELINES",
         "SPATIAL BLOCKING",
@@ -114,8 +112,8 @@ function ServicesMatrixList({ videoUrls = [], fallbackVideoIds = [] }) {
     },
     {
       num: "02",
-      title: "CHROMATIC GRADE & SPECTRAL DEPTH",
-      desc: "Micro-tonal color shifts and unforgiving color treatments engineered for low-light digital landscapes. We calibrate custom look-up profiles tailored per deployment canvas.",
+      title: "PRECISION IN EVERY DETAIL",
+      desc: "Lighting, movement, composition, and sound work together to create immersive cinematic experiences that elevate every story.",
       metrics: [
         "LUT SPECULATION",
         "HIGH-GLOW CONTRAST ISOLATION",
@@ -124,8 +122,8 @@ function ServicesMatrixList({ videoUrls = [], fallbackVideoIds = [] }) {
     },
     {
       num: "03",
-      title: "EDITORIAL FASHION & SILHOUETTE CAPTURE",
-      desc: "Calibrating the relationship between moving fabrics, human form, and static brutalist architecture. Tailored strictly for high-end fashion campaigns and digital runway archives.",
+      title: "BUILT FOR TIMELESS IMPACT",
+      desc: "We don't create content for the moment. We create visual experiences designed to inspire, engage, and endure.",
       metrics: [
         "DRAPE/VELOCITY SYNC",
         "TEXTURE RETENTION ENGINE",
@@ -134,8 +132,8 @@ function ServicesMatrixList({ videoUrls = [], fallbackVideoIds = [] }) {
     },
     {
       num: "04",
-      title: "SONIC LANDSCAPES & AUDIO TEXTURING",
-      desc: "Constructing raw, industrial audio spaces that backstop visual weight. Sub-bass design, rhythmic pacing edits, and customized microtonal synthesis.",
+      title: "COLLABORATION DRIVES CREATIVITY",
+      desc: "Great storytelling is never a solo effort. We partner closely with our clients, combining ideas, expertise, and creativity to transform ambitious visions into unforgettable cinematic experiences.",
       metrics: [
         "SUB-FREQUENCY CALIBRATION",
         "RHYTHMIC INTERVAL SYNCHRONIZATION",
@@ -209,7 +207,7 @@ function TechnicalSpecsTable() {
           [03 // ACQUISITION PARAMETERS]
         </span>
         <h2 className="text-2xl font-extralight tracking-tighter text-white uppercase mb-12 font-sans">
-          DELIVERY SPECIFICATIONS
+          READY TO BRING YOUR VISION TO LIFE?
         </h2>
 
         <div className="w-full overflow-x-auto border border-neutral-950">
@@ -315,9 +313,7 @@ function ServicesCTA({ mediaUrl, fallbackVideoId }) {
             </div>
 
             <p className="text-xs font-mono tracking-wide text-neutral-400 max-w-2xl leading-relaxed">
-              Connect your project core parameters with our architectural system
-              pipeline. We accept direct inquiries for corporate assets, fashion
-              campaigns, and feature grading frameworks.
+              Every remarkable film begins with a conversation. Whether you're launching a brand, producing a campaign, or telling a story that matters, we're here to craft visuals with purpose, precision, and lasting impact.
             </p>
 
             {/* Technical Specification Ribbon */}

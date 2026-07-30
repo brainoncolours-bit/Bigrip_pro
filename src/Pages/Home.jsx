@@ -76,7 +76,7 @@ function Section1Hero({ mediaUrl, fallbackVideoId }) {
         className="z-10 flex flex-col items-start max-w-7xl mt-auto"
       >
         <h1 className="text-[clamp(2.2rem,7.5vw,9rem)] font-extralight tracking-tighter leading-[0.9] text-white uppercase font-sans break-words w-full">
-          SEKRICK Productions
+          SEKRICK
         </h1>
         <div className="w-full flex flex-col md:flex-row md:items-center justify-between mt-6 md:mt-8 gap-4">
           <p className="text-[9px] md:text-[10px] tracking-[0.4em] md:tracking-[0.6em] text-neutral-400 font-light uppercase leading-relaxed">
@@ -291,7 +291,7 @@ function Section5VividMarquee() {
       `}</style>
 
       <div className="max-w-6xl px-4 md:px-8 text-center text-[5.5vw] md:text-[4.5vw] lg:text-[3vw] font-sans font-thin tracking-[0.12em] md:tracking-[0.18em] uppercase text-neutral-500 leading-relaxed break-words">
-        {"Art is not what you see, but what you make others see."
+        {"A seamless blend of strategy, filmmaking, sound, and post-production"
           .split("")
           .map((char, index) => (
             <span
@@ -483,8 +483,8 @@ function Section10AsymmetricBlock({ mediaUrl, fallbackVideoId }) {
           [10 // DYNAMIC GRID OVERLAY]
         </span>
         <h3 className="text-2xl md:text-3xl lg:text-5xl font-extralight tracking-tighter text-white uppercase font-sans leading-none break-words">
-          ASYMMETRIC
-          <br className="hidden lg:block" /> DISPLACEMENT
+          FROM STRATEGY TO
+          <br className="hidden lg:block" /> POST PRODUCTION
         </h3>
       </div>
       <div className="lg:col-span-8 relative flex items-center justify-center w-full">
