@@ -5,6 +5,10 @@ import { supabase } from "../../lib/supabaseClient";
 const navItems = [
   { to: "/admin/dashboard", label: "Dashboard" },
   { to: "/admin/home-videos", label: "Home Videos" },
+  { to: "/admin/categories", label: "Categories" },
+  { to: "/admin/artists", label: "Artists" },
+  { to: "/admin/artist-works", label: "Artist Works" },
+  { to: "/admin/works", label: "Works" },
 ];
 
 export default function AdminLayout({ children }) {
@@ -77,17 +81,6 @@ export default function AdminLayout({ children }) {
               </a>
             );
           })}
-          <a
-            href="/admin/works"
-            onClick={(e) => { e.preventDefault(); navigate("/admin/works"); }}
-            className={`px-4 py-2.5 text-xs uppercase tracking-[0.18em] rounded transition-colors ${
-              location.pathname === "/admin/works"
-                ? "bg-[#ff3d1a]/10 text-[#ff3d1a] font-bold"
-                : "text-[#f5f5f0]/60 hover:text-[#f5f5f0] hover:bg-[#f5f5f0]/5"
-            }`}
-          >
-            Works
-          </a>
         </nav>
 
         <button

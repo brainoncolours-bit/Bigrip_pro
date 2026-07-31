@@ -65,6 +65,54 @@ export default function AdminDashboard() {
             Upload and manage portfolio work
           </p>
         </button>
+
+        <button
+          type="button"
+          onClick={() => navigate("/admin/categories")}
+          className="border border-[#f5f5f0]/10 bg-[#111] p-6 rounded text-left hover:border-[#ff3d1a]/40 transition-colors group"
+        >
+          <p className="text-[10px] font-semibold uppercase tracking-[0.32em] text-[#ff3d1a] mb-2">
+            Artist Page
+          </p>
+          <h2 className="text-xl font-black uppercase mb-1 group-hover:text-[#ff3d1a] transition-colors">
+            Categories
+          </h2>
+          <p className="text-xs text-[#f5f5f0]/40 font-mono">
+            Create artist page category groups
+          </p>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => navigate("/admin/artists")}
+          className="border border-[#f5f5f0]/10 bg-[#111] p-6 rounded text-left hover:border-[#ff3d1a]/40 transition-colors group"
+        >
+          <p className="text-[10px] font-semibold uppercase tracking-[0.32em] text-[#ff3d1a] mb-2">
+            Artist Page
+          </p>
+          <h2 className="text-xl font-black uppercase mb-1 group-hover:text-[#ff3d1a] transition-colors">
+            Artists
+          </h2>
+          <p className="text-xs text-[#f5f5f0]/40 font-mono">
+            Add artists and assign a category
+          </p>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => navigate("/admin/artist-works")}
+          className="border border-[#f5f5f0]/10 bg-[#111] p-6 rounded text-left hover:border-[#ff3d1a]/40 transition-colors group"
+        >
+          <p className="text-[10px] font-semibold uppercase tracking-[0.32em] text-[#ff3d1a] mb-2">
+            Artist Page
+          </p>
+          <h2 className="text-xl font-black uppercase mb-1 group-hover:text-[#ff3d1a] transition-colors">
+            Artist Works
+          </h2>
+          <p className="text-xs text-[#f5f5f0]/40 font-mono">
+            Add portfolio images / videos per artist
+          </p>
+        </button>
       </div>
     </AdminLayout>
   );

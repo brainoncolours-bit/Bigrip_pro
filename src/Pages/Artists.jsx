@@ -1,73 +1,71 @@
-import React, { useState } from 'react';
-
-const artistsData = [
-  {
-    title: 'Direction & Motion',
-    artists: [
-      { 
-        name: 'Suhail', 
-        images: [
-          'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80', 
-          'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&auto=format&fit=crop&q=80',
-          'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&auto=format&fit=crop&q=80',
-          'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80', 
-          'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&auto=format&fit=crop&q=80',
-          'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&auto=format&fit=crop&q=80',
-          'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80', 
-          'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&auto=format&fit=crop&q=80',
-          'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&auto=format&fit=crop&q=80',
-        ] 
-      },
-      {
-        name: 'Michael Bailey-Gates',
-        images: [
-          'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&auto=format&fit=crop&q=80',
-          'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&auto=format&fit=crop&q=80'
-        ]
-      }
-    ]
-  },
-  {
-    title: 'Styling',
-    artists: [
-      { 
-        name: 'Miyako Bellizzi', 
-        images: [
-          'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&auto=format&fit=crop&q=80', 
-          'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=600&auto=format&fit=crop&q=80'
-        ] 
-      },
-    ],
-  },
-  {
-    title: 'Casting',
-    artists: [
-      { 
-        name: 'Je Suis Casting', 
-        images: [
-          'https://images.unsplash.com/photo-1509631179647-0177331693ae?w=600&auto=format&fit=crop&q=80', 
-          'https://images.unsplash.com/photo-1554412933-514a83d2f3c8?w=600&auto=format&fit=crop&q=80'
-        ] 
-      },
-    ],
-  },
-  {
-    title: 'Set Design',
-    artists: [
-      { 
-        name: 'Noemi Bonazzi', 
-        images: ['https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=600&auto=format&fit=crop&q=80'] 
-      },
-      { 
-        name: 'Rachel Thomas', 
-        images: ['https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=600&auto=format&fit=crop&q=80'] 
-      },
-    ],
-  },
-];
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "../lib/supabaseClient";
 
 const Artists = () => {
+  const navigate = useNavigate();
   const [activeArtist, setActiveArtist] = useState(null);
+  const [artistsData, setArtistsData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadArtists() {
+      const [categoryRes, artistRes, workRes] = await Promise.all([
+        supabase
+          .from("categories")
+          .select("*")
+          .eq("published", true)
+          .order("sort_order", { ascending: true })
+          .order("created_at", { ascending: true }),
+        supabase
+          .from("artists")
+          .select("*")
+          .eq("published", true)
+          .order("sort_order", { ascending: true })
+          .order("created_at", { ascending: true }),
+        supabase
+          .from("artist_works")
+          .select("*")
+          .eq("published", true)
+          .order("sort_order", { ascending: true })
+          .order("created_at", { ascending: true }),
+      ]);
+
+      const categories = categoryRes.data || [];
+      const artists = artistRes.data || [];
+      const works = workRes.data || [];
+
+      const worksByArtist = {};
+      works.forEach((work) => {
+        if (!worksByArtist[work.artist_id]) worksByArtist[work.artist_id] = [];
+        worksByArtist[work.artist_id].push({
+          url: work.media_url,
+          type: work.media_type,
+        });
+      });
+
+      const grouped = categories
+        .map((category) => ({
+          id: category.id,
+          title: category.name,
+          artists: artists
+            .filter((artist) => artist.category_id === category.id)
+            .map((artist) => ({
+              id: artist.id,
+              name: artist.name,
+              images: (worksByArtist[artist.id] || [])
+                .filter((item) => item.url)
+                .slice(0, 12),
+            })),
+        }))
+        .filter((category) => category.artists.length > 0);
+
+      setArtistsData(grouped);
+      setLoading(false);
+    }
+
+    loadArtists();
+  }, []);
 
   // Split images into left and right groups if there are many, keeping layout balanced
   const getDistributedImages = (images) => {
@@ -76,13 +74,34 @@ const Artists = () => {
     // If there's a lot of images, split them; otherwise keep them on the natural side
     return {
       leftImages: images.slice(0, mid),
-      rightImages: images.slice(mid)
+      rightImages: images.slice(mid),
     };
+  };
+
+  const renderMedia = (item, artistName, index) => {
+    if (item.type === "video") {
+      return (
+        <video
+          src={item.url}
+          className="w-full h-full object-cover"
+          autoPlay
+          muted
+          loop
+          playsInline
+        />
+      );
+    }
+    return (
+      <img
+        src={item.url}
+        alt={`${artistName} work preview ${index + 1}`}
+        className="w-full h-full object-cover"
+      />
+    );
   };
 
   return (
     <main className="min-h-screen bg-white text-black font-serif px-12 py-8 relative selection:bg-neutral-200 overflow-x-hidden">
-      
       {/* Top Navigation Links */}
       <nav className="flex justify-between items-center text-sm font-sans mb-16">
         <div className="flex gap-8">
@@ -95,7 +114,6 @@ const Artists = () => {
 
       {/* Main Container */}
       <div className="grid grid-cols-12 gap-6 items-start relative">
-        
         {/* Logo / Title Column */}
         <div className="col-span-2">
           <h1 className="text-2xl font-bold font-sans tracking-tight leading-none text-black">
@@ -104,12 +122,24 @@ const Artists = () => {
         </div>
 
         {/* Categories & Artists Grid */}
-        <div 
+        <div
           className="col-span-10 grid grid-cols-4 gap-8 font-sans relative"
           onMouseLeave={() => setActiveArtist(null)}
         >
+          {loading && (
+            <p className="col-span-4 text-[12px] text-neutral-500 tracking-wide animate-pulse">
+              Loading artists...
+            </p>
+          )}
+
+          {!loading && artistsData.length === 0 && (
+            <p className="col-span-4 text-[12px] text-neutral-500 tracking-wide">
+              No artists published yet.
+            </p>
+          )}
+
           {artistsData.map((category) => (
-            <div key={category.title} className="flex flex-col gap-4">
+            <div key={category.id} className="flex flex-col gap-4">
               <h2 className="text-[12px] font-normal text-neutral-800 tracking-wide">
                 {category.title}
               </h2>
@@ -122,10 +152,11 @@ const Artists = () => {
                     <li key={artist.name} className="relative">
                       <button
                         onMouseEnter={() => setActiveArtist(artist)}
+                        onClick={() => navigate(`/artists/${artist.id}`)}
                         className={`text-left transition-colors duration-150 block w-full leading-snug ${
                           isActive
-                            ? 'text-red-600 font-medium'
-                            : 'text-black hover:text-red-600'
+                            ? "text-red-600 font-medium"
+                            : "text-black hover:text-red-600"
                         }`}
                       >
                         {artist.name}
@@ -134,17 +165,13 @@ const Artists = () => {
                       {/* Left Side Overflow Images */}
                       {isActive && leftImages.length > 0 && (
                         <div className="absolute top-0 right-full mr-6 z-30 flex items-start gap-3 pointer-events-none transition-all duration-300 ease-out opacity-100">
-                          {leftImages.map((imgSrc, idx) => (
+                          {leftImages.map((item, idx) => (
                             <div
                               key={`left-${artist.name}-${idx}`}
                               className="flex-shrink-0 bg-neutral-100 shadow-sm"
-                              style={{ width: '150px', height: '200px' }}
+                              style={{ width: "150px", height: "200px" }}
                             >
-                              <img
-                                src={imgSrc}
-                                alt={`${artist.name} work preview`}
-                                className="w-full h-full object-cover"
-                              />
+                              {renderMedia(item, artist.name, idx)}
                             </div>
                           ))}
                         </div>
@@ -153,17 +180,13 @@ const Artists = () => {
                       {/* Right Side Images */}
                       {isActive && rightImages.length > 0 && (
                         <div className="absolute top-0 left-full ml-6 z-30 flex items-start gap-3 pointer-events-none transition-all duration-300 ease-out opacity-100">
-                          {rightImages.map((imgSrc, idx) => (
+                          {rightImages.map((item, idx) => (
                             <div
                               key={`right-${artist.name}-${idx}`}
                               className="flex-shrink-0 bg-neutral-100 shadow-sm"
-                              style={{ width: '150px', height: '200px' }}
+                              style={{ width: "150px", height: "200px" }}
                             >
-                              <img
-                                src={imgSrc}
-                                alt={`${artist.name} work preview`}
-                                className="w-full h-full object-cover"
-                              />
+                              {renderMedia(item, artist.name, idx)}
                             </div>
                           ))}
                         </div>
@@ -175,7 +198,6 @@ const Artists = () => {
             </div>
           ))}
         </div>
-
       </div>
     </main>
   );
