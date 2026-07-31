@@ -71,7 +71,6 @@ const Artists = () => {
   const getDistributedImages = (images) => {
     if (!images) return { leftImages: [], rightImages: [] };
     const mid = Math.ceil(images.length / 2);
-    // If there's a lot of images, split them; otherwise keep them on the natural side
     return {
       leftImages: images.slice(0, mid),
       rightImages: images.slice(mid),
@@ -79,9 +78,9 @@ const Artists = () => {
   };
 
   const renderMedia = (item, artistName, index) => {
-    if (item.type === "video") {
+    if (item.type === "ideo") {
       return (
-        <video
+        <ideo
           src={item.url}
           className="w-full h-full object-cover"
           autoPlay
@@ -101,23 +100,16 @@ const Artists = () => {
   };
 
   return (
-    <main className="min-h-screen bg-white text-black font-serif px-12 py-8 relative selection:bg-neutral-200 overflow-x-hidden">
+    /* Changed py-8 to pt-20 pb-12 below to bring content down */
+    <main className="min-h-screen bg-white text-black font-serif px-12 pt-20 pb-12 relative selection:bg-neutral-200 overflow-x-hidden">
       {/* Top Navigation Links */}
-      <nav className="flex justify-between items-center text-sm font-sans mb-16">
-        <div className="flex gap-8">
-          <a href="#" className="text-black hover:opacity-60 transition-opacity">News</a>
-          <a href="#" className="text-black hover:opacity-60 transition-opacity">Artists</a>
-          <a href="#" className="text-black hover:opacity-60 transition-opacity">Info</a>
-        </div>
-        <span className="text-red-600 font-medium">ARTISTS</span>
-      </nav>
 
       {/* Main Container */}
       <div className="grid grid-cols-12 gap-6 items-start relative">
         {/* Logo / Title Column */}
         <div className="col-span-2">
           <h1 className="text-2xl font-bold font-sans tracking-tight leading-none text-black">
-            mini title
+            sekrick
           </h1>
         </div>
 
@@ -146,7 +138,9 @@ const Artists = () => {
               <ul className="flex flex-col gap-1.5 text-[13px]">
                 {category.artists.map((artist) => {
                   const isActive = activeArtist?.name === artist.name;
-                  const { leftImages, rightImages } = getDistributedImages(artist.images);
+                  const { leftImages, rightImages } = getDistributedImages(
+                    artist.images
+                  );
 
                   return (
                     <li key={artist.name} className="relative">
