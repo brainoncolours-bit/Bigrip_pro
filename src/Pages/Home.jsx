@@ -48,7 +48,7 @@ function SaturatedVideo({
 }
 
 /* ==========================================
-   THE 15 EXPERIMENTAL CINEMATIC SECTIONS
+   THE EXPERIMENTAL CINEMATIC SECTIONS
    ========================================= */
 
 // SECTION 1: Pre-flight Brand Identity Landing
@@ -235,9 +235,7 @@ function Section4ChromaticMatte({
         <span className="text-white text-right">MATTE REEL: ACTIVE</span>
       </div>
 
-      {/* Grid changed to 2 equal columns on medium screens and above */}
       <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-center relative">
-        {/* Video Container 1 */}
         <div className="w-full aspect-[16/10] overflow-hidden bg-neutral-950 border border-neutral-800 relative">
           <motion.div
             style={{ y: yParallaxSlow }}
@@ -250,7 +248,6 @@ function Section4ChromaticMatte({
           </motion.div>
         </div>
 
-        {/* Video Container 2 (Matching size & alignment) */}
         <div className="w-full aspect-[16/10] overflow-hidden bg-neutral-950 border border-neutral-800 relative">
           <motion.div
             style={{ y: yParallaxFast }}
@@ -315,23 +312,16 @@ function Section6LineVideoReveal({ mediaUrl, fallbackVideoId }) {
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    // Start animation earlier, finish when centered in viewport
     offset: ["start 80%", "center center"],
   });
 
-  // Expand width first (early scroll)
   const lineWidth = useTransform(scrollYProgress, [0.0, 0.4], ["0%", "100%"]);
-  
-  // Expand height top-to-bottom second
   const lineHeight = useTransform(scrollYProgress, [0.4, 0.8], ["0%", "100%"]);
-  
-  // Fade in content
   const opacity = useTransform(scrollYProgress, [0.5, 0.85], [0, 1]);
 
   return (
     <section
       ref={containerRef}
-      /* Balanced height & padding to prevent excessive blank gaps */
       className="w-full min-h-[100vh] bg-black flex flex-col justify-center items-center px-6 relative py-16"
     >
       <div className="w-full max-w-5xl flex justify-between font-mono text-[9px] md:text-[10px] text-neutral-400 mb-4 tracking-[0.2em] md:tracking-[0.3em] gap-4">
@@ -342,7 +332,6 @@ function Section6LineVideoReveal({ mediaUrl, fallbackVideoId }) {
       <div className="w-full max-w-5xl aspect-video relative overflow-hidden bg-neutral-900/50">
         <motion.div
           style={{ width: lineWidth, height: lineHeight }}
-          /* top-0 forces the expand animation from TOP to BOTTOM */
           className="absolute inset-x-0 top-0 bg-neutral-800 overflow-hidden will-change-[width,height] shadow-2xl"
         >
           <motion.div
@@ -371,7 +360,6 @@ function Section7VividMatrix({ videoUrls = [], fallbackVideoIds = [] }) {
   return (
     <section className="w-full bg-black py-12 md:py-32 px-6 md:px-12 lg:px-16 border-b border-neutral-900">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-4 lg:gap-6">
-        {/* Card 1 */}
         <div className="flex flex-col justify-between p-4 md:p-6 border border-neutral-800 aspect-[3/4] bg-neutral-950 relative overflow-hidden group shadow-[0_0_30px_rgba(255,255,255,0.02)]">
           <SaturatedVideo
             mediaUrl={videoUrls[0]}
@@ -385,7 +373,6 @@ function Section7VividMatrix({ videoUrls = [], fallbackVideoIds = [] }) {
           </span>
         </div>
 
-        {/* Card 2 (Removed translate-y classes so it stays in line) */}
         <div className="flex flex-col justify-between p-4 md:p-6 border border-neutral-800 aspect-[3/4] bg-neutral-950 relative overflow-hidden group shadow-[0_0_30px_rgba(255,255,255,0.02)]">
           <SaturatedVideo
             mediaUrl={videoUrls[1]}
@@ -399,7 +386,6 @@ function Section7VividMatrix({ videoUrls = [], fallbackVideoIds = [] }) {
           </span>
         </div>
 
-        {/* Card 3 */}
         <div className="flex flex-col justify-between p-4 md:p-6 border border-neutral-800 aspect-[3/4] bg-neutral-950 relative overflow-hidden group shadow-[0_0_30px_rgba(255,255,255,0.02)]">
           <SaturatedVideo
             mediaUrl={videoUrls[2]}
@@ -503,310 +489,102 @@ function Section10AsymmetricBlock({ mediaUrl, fallbackVideoId }) {
   );
 }
 
+// SECTION 11: TERMINAL ZENITH (FINAL VISUAL BEAT)
+function Section11TerminalZenith() {
+  const containerRef = useRef(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
-// SECTION 11: CHROMATIC TEXT INTERSECTION
-function Section11TypeIntersect() {
-  const textContainer = useRef(null);
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.to(".intersect-item-1", {
-        xPercent: -20,
-        ease: "none",
-        scrollTrigger: {
-          trigger: textContainer.current,
-          scrub: true,
-          start: "top bottom",
-          end: "bottom top",
-        },
-      });
-      gsap.to(".intersect-item-2", {
-        xPercent: 20,
-        ease: "none",
-        scrollTrigger: {
-          trigger: textContainer.current,
-          scrub: true,
-          start: "top bottom",
-          end: "bottom top",
-        },
-      });
-    }, textContainer);
-    return () => ctx.revert();
-  }, []);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end end"],
+  });
+
+  const scale = useTransform(scrollYProgress, [0, 1], [0.92, 1]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [0.3, 1]);
+
+  const handleMouseMove = (e) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    setMousePos({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+  };
+
+  const scrollToTop = () => {
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
 
   return (
     <section
-      ref={textContainer}
-      className="w-full py-12 md:py-32 bg-black border-b border-neutral-900 overflow-hidden flex items-center justify-center select-none relative min-h-[260px] md:min-h-[500px]"
+      ref={containerRef}
+      onMouseMove={handleMouseMove}
+      className="relative w-full h-screen bg-black overflow-hidden flex flex-col justify-between p-6 md:p-16 border-t border-neutral-900 select-none"
     >
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#141414_1px,transparent_1px),linear-gradient(to_bottom,#141414_1px,transparent_1px)] bg-[size:3rem_3rem] md:bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-60" />
-
-      <motion.div
-        className="absolute w-16 h-16 md:w-24 md:h-24 rounded-full border border-violet-500/40 bg-violet-500/5 blur-sm z-0 pointer-events-none"
-        animate={{
-          scale: [0, 0, 3.5, 5, 0],
-          opacity: [0, 0, 0.8, 0, 0],
-        }}
-        transition={{
-          duration: 6,
-          times: [0, 0.22, 0.26, 0.37, 1],
-          repeat: Infinity,
-          ease: "easeOut",
+      {/* Interactive Cursor Light Field */}
+      <div
+        className="pointer-events-none absolute w-[400px] h-[400px] rounded-full bg-white/5 filter blur-[100px] transition-transform duration-150 ease-out -translate-x-1/2 -translate-y-1/2 z-0"
+        style={{
+          left: `${mousePos.x}px`,
+          top: `${mousePos.y}px`,
         }}
       />
-      <div className="relative w-full max-w-6xl h-48 md:h-64 flex items-center justify-center z-10 overflow-hidden">
-        {/* ================= LEFT TRAIN ================= */}
-        {[
-          "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=300&auto=format&fit=crop&q=80",
-          "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=300&auto=format&fit=crop&q=80",
-          "https://images.unsplash.com/photo-1563089145-599997674d42?w=300&auto=format&fit=crop&q=80",
-          "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=300&auto=format&fit=crop&q=80",
-        ].map((src, i) => {
-          const baseOffset = -120 - i * 60;
-          const orbitAngle = i * (360 / 8);
 
-          return (
-            <motion.div
-              key={`left-${i}`}
-              className="absolute w-14 h-9 md:w-20 md:h-12 origin-center"
-              animate={{
-                x: [
-                  baseOffset,
-                  0,
-                  0,
-                  Math.cos((orbitAngle * Math.PI) / 180) * 90,
-                  Math.cos(((orbitAngle + 360) * Math.PI) / 180) * 180,
-                ],
-                y: [
-                  0,
-                  0,
-                  0,
-                  Math.sin((orbitAngle * Math.PI) / 180) * 90,
-                  Math.sin(((orbitAngle + 360) * Math.PI) / 180) * 180,
-                ],
-                rotate: [0, 0, 0, orbitAngle + 90, orbitAngle + 90 + 360],
-                scale: [1, 1, 1.1, 0.9, 0],
-                opacity: [0, 1, 1, 0.9, 0],
-                filter: [
-                  "blur(2px)",
-                  "blur(0px)",
-                  "blur(0px)",
-                  "blur(1px)",
-                  "blur(6px)",
-                ],
-              }}
-              transition={{
-                duration: 6,
-                times: [0, 0.18, 0.32, 0.75, 1],
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-            >
-              <img
-                src={src}
-                alt=""
-                className="w-full h-full object-cover rounded-none shadow-[0_0_20px_rgba(0,0,0,0.8)]"
-              />
-            </motion.div>
-          );
-        })}
-
-
-        {/* ================= RIGHT TRAIN ================= */}
-        {[
-          "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300&auto=format&fit=crop&q=80",
-          "https://images.unsplash.com/photo-1513151233558-d860c5398176?w=300&auto=format&fit=crop&q=80",
-          "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=300&auto=format&fit=crop&q=80",
-          "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=300&auto=format&fit=crop&q=80",
-        ].map((src, i) => {
-          const baseOffset = 120 + i * 60;
-          const orbitAngle = (i + 4) * (360 / 8);
-
-          return (
-            <motion.div
-              key={`right-${i}`}
-              className="absolute w-14 h-9 md:w-20 md:h-12 origin-center"
-              animate={{
-                x: [
-                  baseOffset,
-                  0,
-                  0,
-                  Math.cos((orbitAngle * Math.PI) / 180) * 90,
-                  Math.cos(((orbitAngle + 360) * Math.PI) / 180) * 180,
-                ],
-                y: [
-                  0,
-                  0,
-                  0,
-                  Math.sin((orbitAngle * Math.PI) / 180) * 90,
-                  Math.sin(((orbitAngle + 360) * Math.PI) / 180) * 180,
-                ],
-                rotate: [0, 0, 0, orbitAngle + 90, orbitAngle + 90 + 360],
-                scale: [1, 1, 1.1, 0.9, 0],
-                opacity: [0, 1, 1, 0.9, 0],
-                filter: [
-                  "blur(2px)",
-                  "blur(0px)",
-                  "blur(0px)",
-                  "blur(1px)",
-                  "blur(6px)",
-                ],
-              }}
-              transition={{
-                duration: 6,
-                times: [0, 0.18, 0.32, 0.75, 1],
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-            >
-              <img
-                src={src}
-                alt=""
-                className="w-full h-full object-cover rounded-none shadow-[0_0_20px_rgba(0,0,0,0.8)]"
-              />
-            </motion.div>
-          );
-        })}
-      </div>
-    </section>
-  );
-} 
-
-// SECTION 12: CINEMATIC MULTI-ANGLE STRIP
-function Section12AngleStrip({ videoUrls = [], fallbackVideoIds = [] }) {
-  return (
-    <section className="w-full bg-black py-12 md:py-28 px-6 md:px-12 lg:px-16 border-b border-neutral-900">
-      <div className="max-w-7xl mx-auto flex flex-col space-y-5 md:space-y-12">
-        <div className="w-full flex justify-between items-center font-mono text-[9px] md:text-[10px] text-neutral-400 tracking-widest border-b border-neutral-900 pb-4 gap-4">
-          <span>[12 // CAPTURE AXIS MAP]</span>
-          <span className="text-white text-right">MULTI_ANGLE_PROFILES</span>
+      {/* Top Status Intercept */}
+      <div className="w-full flex justify-between items-center font-mono text-[9px] md:text-[10px] tracking-[0.4em] text-neutral-400 z-10">
+        <div className="flex items-center space-x-2">
+          <span className="w-2 h-2 rounded-full bg-neutral-400 animate-ping" />
         </div>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
-          {videoUrls.map((mediaUrl, idx) => (
-            <div
-              key={idx}
-              className="group relative aspect-[3/4] overflow-hidden bg-neutral-950 border border-neutral-800"
-            >
-              <SaturatedVideo
-                mediaUrl={mediaUrl}
-                fallbackVideoId={fallbackVideoIds[idx]}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent pointer-events-none" />
-              <span className="absolute bottom-3 left-3 font-mono text-[8px] md:text-[9px] text-white opacity-80 bg-black/50 px-1.5 py-0.5 rounded backdrop-blur-sm">
-                [CAM_0{idx + 1}]
-              </span>
-            </div>
-          ))}
-        </div>
+        
       </div>
-    </section>
-  );
-}
 
-// SECTION 13: THE INVERTED APERTURE MASQUE
-function Section13InvertedAperture({ mediaUrl, fallbackVideoId }) {
-  const scaleRef = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: scaleRef,
-    offset: ["start end", "end start"],
-  });
-  const innerScale = useTransform(scrollYProgress, [0, 1], [1.1, 1]);
-
-  return (
-    <section
-      ref={scaleRef}
-      className="w-full h-[42vh] md:h-screen bg-black overflow-hidden relative border-b border-neutral-900 flex items-center justify-center"
-    >
+      {/* Hero Visual Anchor & Magnetic CTA */}
       <motion.div
-        style={{ scale: innerScale }}
-        className="absolute inset-0 w-full h-full"
+        style={{ scale, opacity }}
+        className="my-auto z-10 flex flex-col items-center text-center max-w-5xl mx-auto space-y-8"
       >
-        <SaturatedVideo mediaUrl={mediaUrl} fallbackVideoId={fallbackVideoId} />
-      </motion.div>
-      <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black opacity-40 pointer-events-none" />
-      <div className="absolute top-6 left-6 md:top-12 md:left-12 font-mono text-[9px] md:text-[10px] tracking-[0.4em] md:tracking-[0.5em] text-white bg-black/40 px-2.5 py-1 backdrop-blur-sm rounded">
-        [13 // INVERTED TARGET]
-      </div>
-    </section>
-  );
-}
-
-// SECTION 14: KINETIC SHUTTER PROFILE
-function Section14ShutterProfile() {
-  return (
-    <section className="w-full min-h-[24vh] md:min-h-[35vh] bg-black flex items-center px-6 md:px-12 lg:px-24 py-10 md:py-20 border-b border-neutral-900">
-      <div className="max-w-4xl grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 items-baseline">
-        <span className="font-mono text-[10px] md:text-xs text-white lg:col-span-3 uppercase tracking-widest">
-          [14 // SHUTTER SYNC]
+        <span className="font-mono text-[10px] md:text-xs tracking-[0.6em] text-neutral-400 uppercase">
+          Ready to construct the next optic statement?
         </span>
-        <h2 className="text-lg md:text-xl lg:text-3xl font-extralight text-neutral-400 tracking-tight leading-relaxed lg:col-span-9 font-sans">
-          We break absolute linearity to calibrate alternative visual frames.
-          Tracking velocity is matched seamlessly with the organic drape of
-          structural fabrics.
-        </h2>
-      </div>
-    </section>
-  );
-}
 
-// SECTION 15: CHROMATIC ARCHITECTURAL COMMAND TERMINAL
-function Section15TerminalFooter() {
-  return (
-    <section className="w-full bg-black text-white pt-14 md:pt-40 pb-10 md:pb-12 px-6 md:px-12 lg:px-20">
-      <div className="max-w-7xl mx-auto flex flex-col justify-between h-full">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 mb-12 md:mb-32">
-          <div className="lg:col-span-8 flex flex-col items-start space-y-5 md:space-y-10">
-            <span className="font-mono text-[8px] md:text-[9px] tracking-[0.3em] md:tracking-[0.4em] text-neutral-400">
-              [15 // MASTER OUTFLOW TERMINAL]
+        <h2 className="text-[clamp(2.5rem,8vw,8.5rem)] font-extralight tracking-tighter leading-none text-white uppercase font-sans">
+          PROJECT <span className="italic font-normal text-neutral-400">NEXT</span>
+        </h2>
+
+        {/* Magnetic CTA Trigger Ring */}
+        <motion.a
+          href="#contact"
+          whileHover={{ scale: 1.08 }}
+          whileTap={{ scale: 0.95 }}
+          className="group relative inline-flex items-center justify-center px-10 py-5 overflow-hidden font-mono text-xs tracking-[0.3em] uppercase text-white bg-neutral-950 border border-neutral-800 rounded-full hover:border-white transition-colors duration-500 shadow-[0_0_40px_rgba(255,255,255,0.05)]"
+        >
+          <span className="absolute inset-0 w-full h-full bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-500" />
+          <span className="relative z-10 flex items-center gap-3">
+            INITIATE DISCUSSIONS 
+            <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+              →
             </span>
-            <h2 className="text-2xl sm:text-4xl lg:text-6xl font-extralight tracking-tighter text-white uppercase leading-[1.05] md:leading-[0.98] max-w-2xl font-sans break-words">
-              EXECUTE PROJECT CORES &amp; SYNC CHROMATIC CHANNELS.
-            </h2>
-            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto pt-2">
-              <a
-                href="#"
-                className="px-8 md:px-12 py-3.5 md:py-4 bg-white text-black font-mono text-[9px] md:text-[10px] tracking-[0.2em] md:tracking-[0.3em] uppercase hover:bg-neutral-200 transition-colors rounded-[1px] text-center shadow-[0_0_25px_rgba(255,255,255,0.1)]"
-              >
-                LAUNCH ARCHIVE SOURCE
-              </a>
-              <a
-                href="#"
-                className="px-8 md:px-12 py-3.5 md:py-4 border border-neutral-800 text-neutral-400 font-mono text-[9px] md:text-[10px] tracking-[0.2em] md:tracking-[0.3em] uppercase hover:text-white hover:border-neutral-500 transition-colors rounded-[1px] text-center"
-              >
-                READ SPECTRAL CONFIGS
-              </a>
-            </div>
-          </div>
-          <div className="lg:col-span-3 lg:col-start-10 flex flex-col gap-3 font-mono text-[9px] md:text-[10px] tracking-widest text-neutral-500 pt-6 lg:pt-0 border-t border-neutral-900 lg:border-none self-end w-full">
-            <span className="text-neutral-400 font-bold mb-1 uppercase">
-              [SYSTEM INDICES]
-            </span>
-            <a href="#" className="hover:text-white transition-colors">
-              01 / PLATFORM CORE LANDING
-            </a>
-            <a href="#" className="hover:text-white transition-colors">
-              02 / COLOR GAIN TRACK RUN
-            </a>
-            <a href="#" className="hover:text-white transition-colors">
-              03 / CONTINUOUS HORIZON CELL
-            </a>
-            <a href="#" className="hover:text-white transition-colors">
-              04 / ARCHIVE LOG DISPATCH
-            </a>
-          </div>
+          </span>
+        </motion.a>
+      </motion.div>
+
+      {/* Bottom Architectural Closure */}
+      <div className="w-full flex justify-between items-end z-10 font-mono text-[9px] md:text-[10px] tracking-widest text-neutral-500 border-t border-neutral-900/60 pt-6">
+        <div>
+          <span className="block text-white">SEKRICK </span>
+          <span className="text-[8px] text-neutral-600">
+            ALL SYSTEMS NORMALIZED
+          </span>
         </div>
-        <div className="w-full pt-8 border-t border-neutral-900 flex flex-col md:flex-row items-center justify-between gap-4 font-mono text-[8px] md:text-[9px] tracking-wider text-neutral-600 text-center md:text-left">
-          <span>© 2026 ROCKET JACKET LABS. DIGITAL COGNIZANCE SECURED.</span>
-          <div className="flex gap-6 md:gap-8">
-            <a href="#" className="hover:text-white transition-colors">
-              INSTAGRAM
-            </a>
-            <a href="#" className="hover:text-white transition-colors">
-              VIMEO CONTROL
-            </a>
-            <a href="#" className="hover:text-white transition-colors">
-              X ARCHIVE
-            </a>
-          </div>
+        <div className="text-right">
+          <button
+            onClick={scrollToTop}
+            className="animate-pulse text-neutral-400 hover:text-white transition-colors cursor-pointer"
+          >
+            ▲ SCROLL TOP TO RESET
+          </button>
         </div>
       </div>
     </section>
@@ -892,27 +670,7 @@ export default function Home() {
         mediaUrl={videos.asymmetric_block}
         fallbackVideoId={ASSETS.heroVideo}
       />
-      <Section11TypeIntersect />
-      <Section12AngleStrip
-        videoUrls={[
-          videos.angle_strip_1,
-          videos.angle_strip_2,
-          videos.angle_strip_3,
-          videos.angle_strip_4,
-        ]}
-        fallbackVideoIds={[
-          ASSETS.heroVideo,
-          ASSETS.cinematicClip2,
-          ASSETS.cinematicClip3,
-          ASSETS.heroVideo,
-        ]}
-      />
-      <Section13InvertedAperture
-        mediaUrl={videos.inverted_aperture}
-        fallbackVideoId={ASSETS.cinematicClip2}
-      />
-      <Section14ShutterProfile />
-      <Section15TerminalFooter />
+      <Section11TerminalZenith />
     </main>
   );
 }
