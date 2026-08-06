@@ -7,6 +7,8 @@ export default function AdminDashboard() {
   const navigate = useNavigate();
   const [videoCount, setVideoCount] = useState(0);
   const [publishedCount, setPublishedCount] = useState(0);
+  const [servicesCount, setServicesCount] = useState(0);
+  const [servicesPublishedCount, setServicesPublishedCount] = useState(0);
 
   useEffect(() => {
     async function loadStats() {
@@ -17,6 +19,15 @@ export default function AdminDashboard() {
       if (data) {
         setVideoCount(data.length);
         setPublishedCount(data.filter((v) => v.published).length);
+      }
+
+      const { data: servicesData } = await supabase
+        .from("services_videos")
+        .select("published");
+
+      if (servicesData) {
+        setServicesCount(servicesData.length);
+        setServicesPublishedCount(servicesData.filter((v) => v.published).length);
       }
     }
     loadStats();
@@ -47,6 +58,22 @@ export default function AdminDashboard() {
           </h2>
           <p className="text-xs text-[#f5f5f0]/40 font-mono">
             {publishedCount} of {videoCount} sections active
+          </p>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => navigate("/admin/services-videos")}
+          className="border border-[#f5f5f0]/10 bg-[#111] p-6 rounded text-left hover:border-[#ff3d1a]/40 transition-colors group"
+        >
+          <p className="text-[10px] font-semibold uppercase tracking-[0.32em] text-[#ff3d1a] mb-2">
+            Sekriac Page
+          </p>
+          <h2 className="text-xl font-black uppercase mb-1 group-hover:text-[#ff3d1a] transition-colors">
+            Services Videos
+          </h2>
+          <p className="text-xs text-[#f5f5f0]/40 font-mono">
+            {servicesPublishedCount} of {servicesCount} sections active
           </p>
         </button>
 

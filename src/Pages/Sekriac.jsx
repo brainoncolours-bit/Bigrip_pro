@@ -18,6 +18,55 @@ const ASSETS = {
   serviceVideo4: "6HBxWrmI8OU", // Sound Design & Sonic Textures
 };
 
+const DEFAULT_SERVICES_CONTENT = [
+  {
+    num: "01",
+    title: "VISION DEFINES EVERYTHING",
+    desc: "Creative excellence begins with a clear vision. Every decision we make is guided by purpose, originality, and craftsmanship.",
+    metrics: [
+      "ANAMORPHIC PIPELINES",
+      "SPATIAL BLOCKING",
+      "16MM / 35MM EMBEDDED ENGINE",
+    ],
+  },
+  {
+    num: "02",
+    title: "PRECISION IN EVERY DETAIL",
+    desc: "Lighting, movement, composition, and sound work together to create immersive cinematic experiences that elevate every story.",
+    metrics: [
+      "LUT SPECULATION",
+      "HIGH-GLOW CONTRAST ISOLATION",
+      "REDUCED NOISE COMPRESSION",
+    ],
+  },
+  {
+    num: "03",
+    title: "BUILT FOR TIMELESS IMPACT",
+    desc: "We don't create content for the moment. We create visual experiences designed to inspire, engage, and endure.",
+    metrics: [
+      "DRAPE/VELOCITY SYNC",
+      "TEXTURE RETENTION ENGINE",
+      "ASYMMETRIC FRAMING",
+    ],
+  },
+  {
+    num: "04",
+    title: "COLLABORATION DRIVES CREATIVITY",
+    desc: "Great storytelling is never a solo effort. We partner closely with our clients, combining ideas, expertise, and creativity to transform ambitious visions into unforgettable cinematic experiences.",
+    metrics: [
+      "SUB-FREQUENCY CALIBRATION",
+      "RHYTHMIC INTERVAL SYNCHRONIZATION",
+      "ATMOSPHERIC GAIN DESIGN",
+    ],
+  },
+];
+
+const DEFAULT_CTA_CONTENT = {
+  title: "READY TO CALIBRATE YOUR SEQUENCES?",
+  desc: "Every remarkable film begins with a conversation. Whether you're launching a brand, producing a campaign, or telling a story that matters, we're here to craft visuals with purpose, precision, and lasting impact.",
+  buttonLabel: "ENGAGE PRODUCTION ROUTER",
+};
+
 /* ==========================================
    PRODUCTION REUSABLE WRAPPERS
    ========================================== */
@@ -96,51 +145,8 @@ function ServicesHero() {
 }
 
 // SECTION 2: Interactive Service List Matrix (GSAP Scrubbing)
-function ServicesMatrixList({ videoUrls = [], fallbackVideoIds = [] }) {
+function ServicesMatrixList({ items = [] }) {
   const componentRef = useRef(null);
-
-  const capabilities = [
-    {
-      num: "01",
-      title: "VISION DEFINES EVERYTHING",
-      desc: "Creative excellence begins with a clear vision. Every decision we make is guided by purpose, originality, and craftsmanship.",
-      metrics: [
-        "ANAMORPHIC PIPELINES",
-        "SPATIAL BLOCKING",
-        "16MM / 35MM EMBEDDED ENGINE",
-      ],
-    },
-    {
-      num: "02",
-      title: "PRECISION IN EVERY DETAIL",
-      desc: "Lighting, movement, composition, and sound work together to create immersive cinematic experiences that elevate every story.",
-      metrics: [
-        "LUT SPECULATION",
-        "HIGH-GLOW CONTRAST ISOLATION",
-        "REDUCED NOISE COMPRESSION",
-      ],
-    },
-    {
-      num: "03",
-      title: "BUILT FOR TIMELESS IMPACT",
-      desc: "We don't create content for the moment. We create visual experiences designed to inspire, engage, and endure.",
-      metrics: [
-        "DRAPE/VELOCITY SYNC",
-        "TEXTURE RETENTION ENGINE",
-        "ASYMMETRIC FRAMING",
-      ],
-    },
-    {
-      num: "04",
-      title: "COLLABORATION DRIVES CREATIVITY",
-      desc: "Great storytelling is never a solo effort. We partner closely with our clients, combining ideas, expertise, and creativity to transform ambitious visions into unforgettable cinematic experiences.",
-      metrics: [
-        "SUB-FREQUENCY CALIBRATION",
-        "RHYTHMIC INTERVAL SYNCHRONIZATION",
-        "ATMOSPHERIC GAIN DESIGN",
-      ],
-    },
-  ];
 
   return (
     <section
@@ -148,7 +154,7 @@ function ServicesMatrixList({ videoUrls = [], fallbackVideoIds = [] }) {
       className="w-full bg-black py-12 px-6 md:px-12 lg:px-24"
     >
       <div className="max-w-7xl mx-auto flex flex-col">
-        {capabilities.map((item, idx) => (
+        {items.map((item, idx) => (
           <div
             key={idx}
             className="group grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 py-16 border-b border-neutral-900 items-start transition-colors duration-500 hover:bg-neutral-950/40 px-2"
@@ -183,8 +189,8 @@ function ServicesMatrixList({ videoUrls = [], fallbackVideoIds = [] }) {
             {/* Micro Video Terminal Preview */}
             <div className="lg:col-span-5 w-full aspect-video lg:aspect-[16/10] bg-neutral-950 border border-neutral-900 overflow-hidden relative shadow-2xl transition-all duration-700 group-hover:border-neutral-700 filter grayscale group-hover:grayscale-0">
               <SaturatedVideo
-                mediaUrl={videoUrls[idx]}
-                fallbackVideoId={fallbackVideoIds[idx]}
+                mediaUrl={item.videoUrl}
+                fallbackVideoId={item.fallbackVideoId}
               />
               <div className="absolute inset-0 bg-black/40 group-hover:bg-transparent transition-colors duration-500 pointer-events-none" />
               <div className="absolute bottom-2 right-2 font-mono text-[7px] text-neutral-600 group-hover:text-neutral-400 px-1 bg-black/60 backdrop-blur-sm uppercase">
@@ -271,7 +277,12 @@ function TechnicalSpecsTable() {
 }
 
 // SECTION 4: Pipeline Operational Call To Action
-function ServicesCTA({ mediaUrl, fallbackVideoId }) {
+function ServicesCTA({ mediaUrl, fallbackVideoId, content = {} }) {
+  const {
+    title = DEFAULT_CTA_CONTENT.title,
+    desc = DEFAULT_CTA_CONTENT.desc,
+    buttonLabel = DEFAULT_CTA_CONTENT.buttonLabel,
+  } = content;
   return (
     <section className="w-full bg-black text-white pt-24 pb-28 px-6 md:px-12 lg:px-24 border-t border-neutral-900 selection:bg-white selection:text-black">
       <div className="max-w-6xl mx-auto space-y-12">
@@ -308,12 +319,12 @@ function ServicesCTA({ mediaUrl, fallbackVideoId }) {
                 [ INITIATING SEQUENTIAL INTERACTION ]
               </span>
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extralight tracking-tighter text-white uppercase font-sans leading-none">
-                READY TO CALIBRATE YOUR SEQUENCES?
+                {title}
               </h2>
             </div>
 
             <p className="text-xs font-mono tracking-wide text-neutral-400 max-w-2xl leading-relaxed">
-              Every remarkable film begins with a conversation. Whether you're launching a brand, producing a campaign, or telling a story that matters, we're here to craft visuals with purpose, precision, and lasting impact.
+              {desc}
             </p>
 
             {/* Technical Specification Ribbon */}
@@ -345,7 +356,7 @@ function ServicesCTA({ mediaUrl, fallbackVideoId }) {
               href="mailto:pipeline@SEKRICK.com"
               className="w-full lg:w-auto text-center px-12 py-5 bg-white text-black font-mono text-[10px] tracking-[0.3em] uppercase hover:bg-neutral-200 transition-all duration-300 rounded-[1px] hover:shadow-[0_0_50px_rgba(255,255,255,0.1)]"
             >
-              ENGAGE PRODUCTION ROUTER
+              {buttonLabel}
             </a>
           </div>
         </div>
@@ -359,6 +370,8 @@ function ServicesCTA({ mediaUrl, fallbackVideoId }) {
    ========================================== */
 export default function Services() {
   const [videos, setVideos] = useState({});
+  const [serviceItems, setServiceItems] = useState(DEFAULT_SERVICES_CONTENT);
+  const [ctaContent, setCtaContent] = useState(DEFAULT_CTA_CONTENT);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -381,10 +394,39 @@ export default function Services() {
 
       if (data) {
         const map = {};
+        const itemMap = {};
+        let cta = DEFAULT_CTA_CONTENT;
         data.forEach((v) => {
           map[v.section_key] = v.media_url;
+          if (v.section_key === "services_cta") {
+            cta = {
+              title: v.title || DEFAULT_CTA_CONTENT.title,
+              desc: v.description || DEFAULT_CTA_CONTENT.desc,
+              buttonLabel:
+                v.button_label || DEFAULT_CTA_CONTENT.buttonLabel,
+            };
+          } else if (v.title) {
+            itemMap[v.section_key] = v;
+          }
         });
         setVideos(map);
+        setCtaContent(cta);
+        if (Object.keys(itemMap).length > 0) {
+          setServiceItems(
+            DEFAULT_SERVICES_CONTENT.map((defaultItem, idx) => {
+              const row = itemMap[`service_${idx + 1}`];
+              return {
+                num: defaultItem.num,
+                title: row?.title || defaultItem.title,
+                desc: row?.description || defaultItem.desc,
+                metrics:
+                  Array.isArray(row?.metrics) && row.metrics.length > 0
+                    ? row.metrics
+                    : defaultItem.metrics,
+              };
+            }),
+          );
+        }
       }
     }
     loadVideos();
@@ -394,23 +436,17 @@ export default function Services() {
     <div className="bg-black text-white overflow-x-hidden selection:bg-white selection:text-black antialiased">
       <ServicesHero />
       <ServicesMatrixList
-        videoUrls={[
-          videos.service_1,
-          videos.service_2,
-          videos.service_3,
-          videos.service_4,
-        ]}
-        fallbackVideoIds={[
-          ASSETS.serviceVideo1,
-          ASSETS.serviceVideo2,
-          ASSETS.serviceVideo3,
-          ASSETS.serviceVideo4,
-        ]}
+        items={serviceItems.map((item, idx) => ({
+          ...item,
+          videoUrl: videos[`service_${idx + 1}`],
+          fallbackVideoId: ASSETS[`serviceVideo${idx + 1}`],
+        }))}
       />
       <TechnicalSpecsTable />
       <ServicesCTA
         mediaUrl={videos.services_cta}
         fallbackVideoId="Sgxbx65IDeM"
+        content={ctaContent}
       />
     </div>
   );

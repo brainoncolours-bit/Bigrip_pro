@@ -5,6 +5,7 @@ import { supabase } from "../../lib/supabaseClient";
 const navItems = [
   { to: "/admin/dashboard", label: "Dashboard" },
   { to: "/admin/home-videos", label: "Home Videos" },
+  { to: "/admin/services-videos", label: "Services Videos" },
   { to: "/admin/categories", label: "Categories" },
   { to: "/admin/artists", label: "Artists" },
   { to: "/admin/artist-works", label: "Artist Works" },

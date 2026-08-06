@@ -9,6 +9,7 @@ import Navbar from "./componants/Navbar";
 import AdminLogin from "./Pages/admin/AdminLogin";
 import AdminDashboard from "./Pages/admin/AdminDashboard";
 import AdminHomeVideos from "./Pages/admin/AdminHomeVideos";
+import AdminServicesVideos from "./Pages/admin/AdminServicesVideos";
 import AdminWorks from "./Pages/admin/AdminWorks";
 import AdminCategories from "./Pages/admin/AdminCategories";
 import AdminArtists from "./Pages/admin/AdminArtists";
@@ -39,6 +40,7 @@ function AppRoutes() {
       <Route path="/admin" element={<AdminLogin />} />
       <Route path="/admin/dashboard" element={<AdminDashboard />} />
       <Route path="/admin/home-videos" element={<AdminHomeVideos />} />
+      <Route path="/admin/services-videos" element={<AdminServicesVideos />} />
       <Route path="/admin/works" element={<AdminWorks />} />
       <Route path="/admin/categories" element={<AdminCategories />} />
       <Route path="/admin/artists" element={<AdminArtists />} />
