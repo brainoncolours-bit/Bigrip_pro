@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import Home from "./Pages/Home";
-import Work from "./Pages/work";
+//import Work from "./Pages/work";
 import Sekriac from "./Pages/Sekriac";
 import Artists from "./Pages/Artists";
 import ArtistDetail from "./Pages/ArtistDetail";
@@ -31,8 +31,9 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
-      <Route path="/work" element={<Work />} />
+      {/* <Route path="/work" element={<Work />} /> */}
       <Route path="/sekriac" element={<Sekriac />} />
+       
       <Route path="/contact" element={<Contact />} />
       <Route path="/sekrick" element={<Sekriac />} />
       <Route path="/artists" element={<Artists />} />
@@ -56,7 +57,8 @@ export default function App() {
       <ScrollToTop />
       <Navbar />
       <AppRoutes />
-      <Footer />
+      {location.pathname !== "/" && <Footer />}
+     
     </>
   );
 }

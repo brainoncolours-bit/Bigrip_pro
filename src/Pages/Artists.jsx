@@ -2,6 +2,16 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
 
+// Scatter offset positions across the screen without any rotation
+const SCATTER_POSITIONS = [
+  { top: "-140px", left: "-230px", width: "170px", height: "220px", zIndex: 30 },
+  { top: "-180px", right: "-250px", width: "190px", height: "240px", zIndex: 25 },
+  { top: "120px", left: "-260px", width: "150px", height: "190px", zIndex: 35 },
+  { top: "140px", right: "-280px", width: "180px", height: "230px", zIndex: 20 },
+  { top: "-260px", left: "80px", width: "160px", height: "200px", zIndex: 28 },
+  { top: "220px", left: "20px", width: "175px", height: "220px", zIndex: 32 },
+];
+
 const Artists = () => {
   const navigate = useNavigate();
   const [activeArtist, setActiveArtist] = useState(null);
@@ -53,9 +63,11 @@ const Artists = () => {
             .map((artist) => ({
               id: artist.id,
               name: artist.name,
+              bio: artist.bio || artist.role || "Boutique creative directional output.",
+              role: artist.role,
               images: (worksByArtist[artist.id] || [])
                 .filter((item) => item.url)
-                .slice(0, 12),
+                .slice(0, 6),
             })),
         }))
         .filter((category) => category.artists.length > 0);
@@ -67,20 +79,10 @@ const Artists = () => {
     loadArtists();
   }, []);
 
-  // Split images into left and right groups if there are many, keeping layout balanced
-  const getDistributedImages = (images) => {
-    if (!images) return { leftImages: [], rightImages: [] };
-    const mid = Math.ceil(images.length / 2);
-    return {
-      leftImages: images.slice(0, mid),
-      rightImages: images.slice(mid),
-    };
-  };
-
   const renderMedia = (item, artistName, index) => {
-    if (item.type === "ideo") {
+    if (item.type === "video") {
       return (
-        <ideo
+        <video
           src={item.url}
           className="w-full h-full object-cover"
           autoPlay
@@ -100,89 +102,86 @@ const Artists = () => {
   };
 
   return (
-    /* Changed py-8 to pt-20 pb-12 below to bring content down */
-    <main className="min-h-screen bg-white text-black font-serif px-12 pt-20 pb-12 relative selection:bg-neutral-200 overflow-x-hidden">
-      {/* Top Navigation Links */}
-
-      {/* Main Container */}
-      <div className="grid grid-cols-12 gap-6 items-start relative">
-        {/* Logo / Title Column */}
-        <div className="col-span-2">
-          <h1 className="text-2xl font-bold font-sans tracking-tight leading-none text-black">
+    <main className="min-h-screen bg-black text-white font-sans px-6 md:px-12 pt-28 pb-20 relative selection:bg-white selection:text-black overflow-x-hidden antialiased">
+      <div className="grid grid-cols-12 gap-6 items-start relative max-w-7xl mx-auto">
+        {/* Title Column */}
+        <div className="col-span-12 lg:col-span-2 mb-8 lg:mb-0">
+          <h1 className="text-2xl font-thin tracking-tighter uppercase leading-none text-white font-sans">
             sekrick
           </h1>
         </div>
 
         {/* Categories & Artists Grid */}
         <div
-          className="col-span-10 grid grid-cols-4 gap-8 font-sans relative"
+          className="col-span-12 lg:col-span-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 relative"
           onMouseLeave={() => setActiveArtist(null)}
         >
           {loading && (
-            <p className="col-span-4 text-[12px] text-neutral-500 tracking-wide animate-pulse">
-              Loading artists...
+            <p className="col-span-4 font-mono text-[10px] text-neutral-500 tracking-[0.3em] uppercase animate-pulse">
+              [ SYNCHRONIZING ARTISTS ROSTER... ]
             </p>
           )}
 
           {!loading && artistsData.length === 0 && (
-            <p className="col-span-4 text-[12px] text-neutral-500 tracking-wide">
-              No artists published yet.
+            <p className="col-span-4 font-mono text-[10px] text-neutral-500 tracking-[0.3em] uppercase">
+              NO ARTISTS PUBLISHED YET.
             </p>
           )}
 
           {artistsData.map((category) => (
-            <div key={category.id} className="flex flex-col gap-4">
-              <h2 className="text-[12px] font-normal text-neutral-800 tracking-wide">
-                {category.title}
+            <div key={category.id} className="flex flex-col gap-6">
+              <h2 className="font-mono text-[10px] text-neutral-500 tracking-[0.3em] uppercase border-b border-neutral-900 pb-2">
+                // {category.title}
               </h2>
-              <ul className="flex flex-col gap-1.5 text-[13px]">
+              <ul className="flex flex-col gap-8 text-sm font-light">
                 {category.artists.map((artist) => {
                   const isActive = activeArtist?.name === artist.name;
-                  const { leftImages, rightImages } = getDistributedImages(
-                    artist.images
-                  );
 
                   return (
-                    <li key={artist.name} className="relative">
+                    <li key={artist.name} className="relative group">
                       <button
                         onMouseEnter={() => setActiveArtist(artist)}
                         onClick={() => navigate(`/artists/${artist.id}`)}
-                        className={`text-left transition-colors duration-150 block w-full leading-snug ${
+                        className={`text-left transition-colors duration-200 block w-full leading-snug uppercase tracking-tight ${
                           isActive
-                            ? "text-red-600 font-medium"
-                            : "text-black hover:text-red-600"
+                            ? "text-red-500 font-normal"
+                            : "text-neutral-200 hover:text-white"
                         }`}
                       >
                         {artist.name}
                       </button>
 
-                      {/* Left Side Overflow Images */}
-                      {isActive && leftImages.length > 0 && (
-                        <div className="absolute top-0 right-full mr-6 z-30 flex items-start gap-3 pointer-events-none transition-all duration-300 ease-out opacity-100">
-                          {leftImages.map((item, idx) => (
-                            <div
-                              key={`left-${artist.name}-${idx}`}
-                              className="flex-shrink-0 bg-neutral-100 shadow-sm"
-                              style={{ width: "150px", height: "200px" }}
-                            >
-                              {renderMedia(item, artist.name, idx)}
-                            </div>
-                          ))}
-                        </div>
+                      {/* Bio Text rendered ONLY when active (hovered) */}
+                      {isActive && artist.bio && (
+                        <p className="mt-1 text-[11px] font-sans text-neutral-400 line-clamp-2 leading-relaxed animate-fadeIn">
+                          {artist.bio}
+                        </p>
                       )}
 
-                      {/* Right Side Images */}
-                      {isActive && rightImages.length > 0 && (
-                        <div className="absolute top-0 left-full ml-6 z-30 flex items-start gap-3 pointer-events-none transition-all duration-300 ease-out opacity-100">
-                          {rightImages.map((item, idx) => (
-                            <div
-                              key={`right-${artist.name}-${idx}`}
-                              className="flex-shrink-0 bg-neutral-100 shadow-sm"
-                              style={{ width: "150px", height: "200px" }}
-                            >
-                              {renderMedia(item, artist.name, idx)}
-                            </div>
-                          ))}
+                      {/* UNROTATED SCATTERED OVERLAY IMAGES */}
+                      {isActive && artist.images.length > 0 && (
+                        <div className="absolute top-0 left-0 w-full h-full pointer-events-none z-50">
+                          {artist.images.map((item, idx) => {
+                            const pos =
+                              SCATTER_POSITIONS[idx % SCATTER_POSITIONS.length];
+                            return (
+                              <div
+                                key={`scatter-${artist.name}-${idx}`}
+                                className="absolute bg-neutral-950 border border-neutral-800 shadow-2xl overflow-hidden transition-all duration-300 ease-out"
+                                style={{
+                                  top: pos.top,
+                                  left: pos.left,
+                                  right: pos.right,
+                                  width: pos.width,
+                                  height: pos.height,
+                                  zIndex: pos.zIndex,
+                                }}
+                              >
+                                {renderMedia(item, artist.name, idx)}
+                                <div className="absolute inset-0 bg-black/10 pointer-events-none" />
+                              </div>
+                            );
+                          })}
                         </div>
                       )}
                     </li>

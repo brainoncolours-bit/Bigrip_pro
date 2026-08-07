@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 
 const links = [
   { to: "/", label: "Home" },
-  { to: "/work", label: "Work" },
+  //{ to: "/work", label: "Work" },
   { to: "/artists", label: "Artists" },
   { to: "/sekriac", label: "SEKRICK" },
   { to: "/contact", label: "Contact" },
@@ -54,23 +54,22 @@ const Navbar = ({ mode = "dark" }) => {
             : "bg-transparent"
         }`}
       >
-        {/* Micro border line at the bottom, ultra thin like luxury fashion sites */}
         <nav
-          className={`flex items-baseline justify-between px-6 py-3 border-b ${borderColor} transition-colors duration-500`}
+          className={`relative flex items-center justify-between px-6 py-3 border-b ${borderColor} transition-colors duration-500 h-14`}
         >
-          {/* Zara-Style Overlapping Editorial Wordmark */}
-          <div className="select-none tracking-[-0.08em] font-black transform scale-y-110 leading-none">
-            <span
-              className={`text-xl uppercase ${textColor} transition-colors duration-500`}
-            >
-              SEKRICK
-            </span>
+          {/* Editorial Logo Image (Positioned absolutely so it doesn't affect nav height) */}
+          <div className="select-none flex items-center h-full">
+            <img 
+              src="/logo (2).png" 
+              alt="Sekrick Logo" 
+              className="h-18 md:h-22 w-auto object-contain transition-all duration-500 max-w-none" 
+            />
           </div>
 
           {/* Tiny Minimal Links (desktop) */}
           <ul className="hidden md:flex items-center gap-8 lowercase text-[11px] tracking-[0.15em]">
             {links.map(({ to, label }) => (
-              <li key={to}>
+              <li key={to} className="flex items-center">
                 <NavLink
                   to={to}
                   className="relative block py-1"
@@ -120,6 +119,7 @@ const Navbar = ({ mode = "dark" }) => {
           </div>
         </nav>
       </header>
+
       {open && (
         <div className="fixed inset-0 z-[999] h-dvh w-screen overflow-hidden bg-black/95 backdrop-blur-sm md:hidden">
           <div className="absolute right-0 top-0 p-6">

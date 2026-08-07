@@ -15,7 +15,6 @@ const ASSETS = {
   serviceVideo1: "6HBxWrmI8OU", // Narrative Architecture
   serviceVideo2: "9Wd_A8e8TqM", // Chromatic Grading & Finish
   serviceVideo3: "s1x4u5QBbXM", // Fashion & Silhouette Capture
-  serviceVideo4: "6HBxWrmI8OU", // Sound Design & Sonic Textures
 };
 
 const DEFAULT_SERVICES_CONTENT = [
@@ -47,16 +46,6 @@ const DEFAULT_SERVICES_CONTENT = [
       "DRAPE/VELOCITY SYNC",
       "TEXTURE RETENTION ENGINE",
       "ASYMMETRIC FRAMING",
-    ],
-  },
-  {
-    num: "04",
-    title: "COLLABORATION DRIVES CREATIVITY",
-    desc: "Great storytelling is never a solo effort. We partner closely with our clients, combining ideas, expertise, and creativity to transform ambitious visions into unforgettable cinematic experiences.",
-    metrics: [
-      "SUB-FREQUENCY CALIBRATION",
-      "RHYTHMIC INTERVAL SYNCHRONIZATION",
-      "ATMOSPHERIC GAIN DESIGN",
     ],
   },
 ];
@@ -127,19 +116,17 @@ function ServicesHero() {
         className="z-10 flex flex-col items-start max-w-7xl my-auto"
       >
         <h1 className="text-[clamp(2.5rem,8vw,8rem)] font-thin tracking-tighter leading-[0.95] text-white uppercase font-sans break-words w-full">
-          OBSESSED WITH DETAILS
+          WHERE STORIES
           <br />
-          DRIVEN BY IMPACT.
+          TAKE FORM.
         </h1>
         <p className="text-[11px] md:text-xs tracking-[0.3em] text-neutral-400 font-light uppercase max-w-2xl mt-8 leading-relaxed">
-          We believe extraordinary stories are never accidental. Every frame, every sound, and every creative decision is crafted with purpose to create films that leave a lasting impression.
+          Every brand has something worth sharing. We take the time to understand what makes it unique, then bring it to life through thoughtful ideas, beautiful visuals, and stories people genuinely connect with.
+
         </p>
       </motion.div>
 
-      <div className="w-full flex justify-between items-end z-10 font-mono text-[9px] tracking-widest text-neutral-500">
-        <span className="animate-pulse">[ DEPLOYING CORE MODULES ]</span>
-        <span>INDEXED BY VOLTAGE</span>
-      </div>
+      
     </section>
   );
 }
@@ -276,94 +263,6 @@ function TechnicalSpecsTable() {
   );
 }
 
-// SECTION 4: Pipeline Operational Call To Action
-function ServicesCTA({ mediaUrl, fallbackVideoId, content = {} }) {
-  const {
-    title = DEFAULT_CTA_CONTENT.title,
-    desc = DEFAULT_CTA_CONTENT.desc,
-    buttonLabel = DEFAULT_CTA_CONTENT.buttonLabel,
-  } = content;
-  return (
-    <section className="w-full bg-black text-white pt-24 pb-28 px-6 md:px-12 lg:px-24 border-t border-neutral-900 selection:bg-white selection:text-black">
-      <div className="max-w-6xl mx-auto space-y-12">
-        {/* SYSTEM MONITOR TOP TRIM */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between font-mono text-[9px] tracking-[0.2em] text-neutral-600 border-b border-neutral-900 pb-3 gap-2">
-          <div className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-neutral-700 animate-pulse"></span>
-            <span>SYS_ROUTING // CRT_WALL_01</span>
-          </div>
-          <div className="flex gap-4">
-            <span>MATRIX: ACTIVE</span>
-            <span>LOCATION // STUDIO_P3</span>
-          </div>
-        </div>
-
-        {/* ULTRA-WIDE BLACKBOX VIEWPORT */}
-        <div className="relative w-full aspect-[21/9] bg-black border border-neutral-900 overflow-hidden shadow-[0_0_80px_rgba(0,0,0,1)]">
-          {/* Heavy shadow vignette masking to sink the video into the black background */}
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_40%,rgba(0,0,0,0.85)_100%)] pointer-events-none z-10"></div>
-          <div className="absolute inset-0 opacity-90 brightness-90 contrast-[1.05] grayscale-[15%]">
-            <SaturatedVideo
-              mediaUrl={mediaUrl}
-              fallbackVideoId={fallbackVideoId}
-            />
-          </div>
-        </div>
-
-        {/* SPLIT DATA FRAME & TELEMETRY TERMINAL */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-4">
-          {/* Left Data Column */}
-          <div className="lg:col-span-8 space-y-6">
-            <div className="space-y-2">
-              <span className="font-mono text-[9px] tracking-[0.4em] text-neutral-500 block">
-                [ INITIATING SEQUENTIAL INTERACTION ]
-              </span>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extralight tracking-tighter text-white uppercase font-sans leading-none">
-                {title}
-              </h2>
-            </div>
-
-            <p className="text-xs font-mono tracking-wide text-neutral-400 max-w-2xl leading-relaxed">
-              {desc}
-            </p>
-
-            {/* Technical Specification Ribbon */}
-            <div className="grid grid-cols-3 gap-2 border-t border-neutral-900 pt-6 font-mono text-[9px] text-neutral-500 tracking-wider">
-              <div>
-                <span className="text-neutral-700 block text-[8px] mb-1">
-                  01 / RESOLUTION
-                </span>
-                <span>8K ANAMORPHIC</span>
-              </div>
-              <div>
-                <span className="text-neutral-700 block text-[8px] mb-1">
-                  02 / COLOR PROFILE
-                </span>
-                <span>ACES MASTERING // LOG-C</span>
-              </div>
-              <div>
-                <span className="text-neutral-700 block text-[8px] mb-1">
-                  03 / TIMING
-                </span>
-                <span>23.976 FPS // 180°</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Right Action Column */}
-          <div className="lg:col-span-4 flex lg:justify-end lg:items-end">
-            <a
-              href="mailto:pipeline@SEKRICK.com"
-              className="w-full lg:w-auto text-center px-12 py-5 bg-white text-black font-mono text-[10px] tracking-[0.3em] uppercase hover:bg-neutral-200 transition-all duration-300 rounded-[1px] hover:shadow-[0_0_50px_rgba(255,255,255,0.1)]"
-            >
-              {buttonLabel}
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
 
 /* ==========================================
    MAIN SERVICES PAGE COMPONENT EXPORT
@@ -443,11 +342,7 @@ export default function Services() {
         }))}
       />
       <TechnicalSpecsTable />
-      <ServicesCTA
-        mediaUrl={videos.services_cta}
-        fallbackVideoId="Sgxbx65IDeM"
-        content={ctaContent}
-      />
+     
     </div>
   );
 }

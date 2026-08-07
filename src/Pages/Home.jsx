@@ -80,95 +80,74 @@ function Section1Hero({ mediaUrl, fallbackVideoId }) {
         </h1>
         <div className="w-full flex flex-col md:flex-row md:items-center justify-between mt-6 md:mt-8 gap-4">
           <p className="text-[9px] md:text-[10px] tracking-[0.4em] md:tracking-[0.6em] text-neutral-400 font-light uppercase leading-relaxed">
-            VISUAL PRODUCTION &amp; FASHION ARCHITECTURE
+            Visual Storytelling & Brand Architecture
           </p>
-          <span className="text-[9px] font-mono tracking-widest text-neutral-500 animate-pulse">
-            [ RUNTIME INIT: 2026 ]
-          </span>
+         
         </div>
       </motion.div>
-      <div className="w-full flex flex-col sm:flex-row justify-between items-start sm:items-end z-10 font-mono text-[9px] tracking-widest text-neutral-400 gap-2">
-        <span className="animate-pulse duration-[4000ms] ease-in-out text-neutral-400 hover:text-white transition-colors cursor-default">
-          SCROLL TO TRIGGER EXPOSURE
-        </span>
-        <span>01 // IDENTITY</span>
-      </div>
+      
     </section>
   );
 }
 
-// SECTION 2: Dynamic Typographic Threshold
+// SECTION 2: Dynamic Typographic Threshold (Line-by-Line Reveal)
+// SECTION 2: Dynamic Typographic Threshold (Sequential Line-by-Line Word Fill)
 function Section2Threshold() {
   const containerRef = useRef(null);
-  const words =
-    "We construct optical weight. Every sequence is structured through clean geometry, micro-tonal color shifts, and unforgiving silhouettes tailored for alternative digital landscapes.".split(
-      " ",
-    );
+
+  const lines = [
+    "We don’t just create visuals.",
+    "We shape stories people can feel.",
+    "Every frame is crafted with intention,",
+    "emotion, and timeless design.",
+  ];
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      const words = gsap.utils.toArray(".manifesto-word");
-      const mm = gsap.matchMedia();
+      const allWords = gsap.utils.toArray(".manifesto-word");
 
-      mm.add("(max-width: 767px)", () => {
-        gsap.set(words, { color: "#404040" });
+      gsap.set(allWords, { color: "#404040" });
 
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: "top 82%",
-            end: "bottom 48%",
-            scrub: 0.45,
-          },
-        });
-
-        tl.to(words, {
-          color: "#ffffff",
-          duration: 0.25,
-          stagger: 0.12,
-          ease: "power2.out",
-        });
+      gsap.to(allWords, {
+        color: "#ffffff",
+        stagger: 0.1,
+        ease: "none",
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top 70%",
+          end: "bottom 20%",
+          scrub: 1,
+        },
       });
-
-      mm.add("(min-width: 768px)", () => {
-        gsap.set(words, { color: "#404040" });
-
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: "top 78%",
-            end: "bottom 42%",
-            scrub: 0.7,
-          },
-        });
-
-        tl.to(words, {
-          color: "#ffffff",
-          duration: 0.25,
-          stagger: 0.12,
-          ease: "power2.out",
-        });
-      });
-
-      return () => mm.revert();
     }, containerRef);
+
     return () => ctx.revert();
   }, []);
 
   return (
     <section
       ref={containerRef}
-      className="w-full min-h-[28vh] md:min-h-[40vh] bg-black flex items-center px-6 sm:px-12 md:px-24 py-10 md:py-24 border-y border-neutral-900"
+      className="w-full min-h-[40vh] md:min-h-[60vh] bg-black flex items-center px-6 sm:px-12 md:px-24 py-16 md:py-32 border-y border-neutral-900"
     >
       <div className="max-w-5xl">
         <span className="text-[10px] md:text-xs font-mono tracking-[0.5em] text-neutral-500 block mb-6 md:mb-8">
           [02 / MANIFESTO MATRIX]
         </span>
-        <h2 className="text-xl sm:text-2xl md:text-5xl font-extralight tracking-tight leading-snug font-sans">
-          {words.map((word, i) => (
-            <span key={i} className="manifesto-word text-neutral-700">
-              {word}
-              {i < words.length - 1 ? " " : ""}
+        <h2 className="text-xl sm:text-2xl md:text-5xl font-extralight tracking-tight leading-snug font-sans space-y-2">
+          {lines.map((line, lineIdx) => (
+            <span key={lineIdx} className="block">
+              {line
+                .trim()
+                .split(/\s+/)
+                .filter(Boolean)
+                .map((word, wordIdx) => (
+                  <span
+                    key={wordIdx}
+                    className="manifesto-word inline-block mr-[0.25em]"
+                  >
+                    {word}
+                  </span>
+                ))}
             </span>
           ))}
         </h2>
@@ -264,144 +243,7 @@ function Section4ChromaticMatte({
   );
 }
 
-// SECTION 5: BRUTALIST NEON PULSE RUNTIME BANNER
-function Section5VividMarquee() {
-  return (
-    <section className="w-full py-12 md:py-32 bg-black overflow-hidden border-b border-neutral-900 flex justify-center items-center select-none">
-      <style>{`
-        @keyframes revealLetter {
-          from {
-            opacity: 0;
-            transform: translateY(10px);
-            filter: blur(4px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-            filter: blur(0);
-          }
-        }
-        .animate-letter {
-          opacity: 0;
-          animation: revealLetter 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-      `}</style>
 
-      <div className="max-w-6xl px-4 md:px-8 text-center text-[5.5vw] md:text-[4.5vw] lg:text-[3vw] font-sans font-thin tracking-[0.12em] md:tracking-[0.18em] uppercase text-neutral-500 leading-relaxed break-words">
-        {"A seamless blend of strategy, filmmaking, sound, and post-production"
-          .split("")
-          .map((char, index) => (
-            <span
-              key={index}
-              className="inline-block animate-letter transition-colors duration-500 hover:text-white"
-              style={{
-                animationDelay: `${index * 15}ms`,
-              }}
-            >
-              {char === " " ? "\u00A0" : char}
-            </span>
-          ))}
-      </div>
-    </section>
-  );
-}
-
-// SECTION 6: THE EXPANDING HORIZONTAL LINE INTERCEPT
-function Section6LineVideoReveal({ mediaUrl, fallbackVideoId }) {
-  const containerRef = useRef(null);
-
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start 80%", "center center"],
-  });
-
-  const lineWidth = useTransform(scrollYProgress, [0.0, 0.4], ["0%", "100%"]);
-  const lineHeight = useTransform(scrollYProgress, [0.4, 0.8], ["0%", "100%"]);
-  const opacity = useTransform(scrollYProgress, [0.5, 0.85], [0, 1]);
-
-  return (
-    <section
-      ref={containerRef}
-      className="w-full min-h-[100vh] bg-black flex flex-col justify-center items-center px-6 relative py-16"
-    >
-      <div className="w-full max-w-5xl flex justify-between font-mono text-[9px] md:text-[10px] text-neutral-400 mb-4 tracking-[0.2em] md:tracking-[0.3em] gap-4">
-        <span>[06 // HORIZONTAL EXPANSION]</span>
-        <span>STREAM IDENTITY ACTIVE</span>
-      </div>
-
-      <div className="w-full max-w-5xl aspect-video relative overflow-hidden bg-neutral-900/50">
-        <motion.div
-          style={{ width: lineWidth, height: lineHeight }}
-          className="absolute inset-x-0 top-0 bg-neutral-800 overflow-hidden will-change-[width,height] shadow-2xl"
-        >
-          <motion.div
-            style={{ opacity }}
-            className="absolute inset-0 w-full h-full"
-          >
-            <SaturatedVideo
-              mediaUrl={mediaUrl}
-              fallbackVideoId={fallbackVideoId}
-            />
-          </motion.div>
-        </motion.div>
-      </div>
-
-      <div className="mt-6 max-w-md text-center">
-        <p className="text-[10px] font-mono tracking-widest text-neutral-500 uppercase">
-          [ Linear pixel translation complete ]
-        </p>
-      </div>
-    </section>
-  );
-}
-
-// SECTION 7: VIVID TRIPLE-STILL GRID INTERLOCK
-function Section7VividMatrix({ videoUrls = [], fallbackVideoIds = [] }) {
-  return (
-    <section className="w-full bg-black py-12 md:py-32 px-6 md:px-12 lg:px-16 border-b border-neutral-900">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-4 lg:gap-6">
-        <div className="flex flex-col justify-between p-4 md:p-6 border border-neutral-800 aspect-[3/4] bg-neutral-950 relative overflow-hidden group shadow-[0_0_30px_rgba(255,255,255,0.02)]">
-          <SaturatedVideo
-            mediaUrl={videoUrls[0]}
-            fallbackVideoId={fallbackVideoIds[0]}
-          />
-          <span className="font-mono text-[9px] md:text-[10px] text-white z-10 bg-black/40 p-1 rounded backdrop-blur-sm self-start">
-            [ VAL_01 / RADIANCE ]
-          </span>
-          <span className="font-mono text-[8px] md:text-[9px] text-neutral-400 text-right z-10 bg-black/40 p-1 rounded backdrop-blur-sm self-end">
-            CORE SPECTRUM METRIC
-          </span>
-        </div>
-
-        <div className="flex flex-col justify-between p-4 md:p-6 border border-neutral-800 aspect-[3/4] bg-neutral-950 relative overflow-hidden group shadow-[0_0_30px_rgba(255,255,255,0.02)]">
-          <SaturatedVideo
-            mediaUrl={videoUrls[1]}
-            fallbackVideoId={fallbackVideoIds[1]}
-          />
-          <span className="font-mono text-[9px] md:text-[10px] text-white z-10 bg-black/40 p-1 rounded backdrop-blur-sm self-start">
-            [ VAL_02 / VIBRANCY ]
-          </span>
-          <span className="font-mono text-[8px] md:text-[9px] text-neutral-400 text-right z-10 bg-black/40 p-1 rounded backdrop-blur-sm self-end">
-            CHROMATIC CORRECTION
-          </span>
-        </div>
-
-        <div className="flex flex-col justify-between p-4 md:p-6 border border-neutral-800 aspect-[3/4] bg-neutral-950 relative overflow-hidden group shadow-[0_0_30px_rgba(255,255,255,0.02)]">
-          <SaturatedVideo
-            mediaUrl={videoUrls[2]}
-            fallbackVideoId={fallbackVideoIds[2]}
-          />
-          <span className="font-mono text-[9px] md:text-[10px] text-white z-10 bg-black/40 p-1 rounded backdrop-blur-sm self-start">
-            [ VAL_03 / SATURATE ]
-          </span>
-          <span className="font-mono text-[8px] md:text-[9px] text-neutral-400 text-right z-10 bg-black/40 p-1 rounded backdrop-blur-sm self-end">
-            COLOR CONVERSION INIT
-          </span>
-        </div>
-      </div>
-    </section>
-  );
-}
 
 // SECTION 8: FULL-BLEED SATURATED PARALLAX REEL REVEAL
 function Section8VideoIntercept({ mediaUrl, fallbackVideoId }) {
@@ -435,21 +277,6 @@ function Section8VideoIntercept({ mediaUrl, fallbackVideoId }) {
   );
 }
 
-// SECTION 9: HIGH-GLOW CINEMATIC SPECTRUM FOCAL WALL
-function Section9VividFocus({ mediaUrl, fallbackVideoId }) {
-  return (
-    <section className="w-full min-h-[40vh] md:min-h-screen bg-black flex items-center justify-center py-10 md:py-24 px-6 border-b border-neutral-900">
-      <div className="w-full max-w-5xl aspect-video relative border border-neutral-800 bg-neutral-950 overflow-hidden shadow-[0_0_60px_rgba(255,255,255,0.05)]">
-        <SaturatedVideo mediaUrl={mediaUrl} fallbackVideoId={fallbackVideoId} />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10 pointer-events-none" />
-        <div className="absolute top-4 left-4 md:top-8 md:left-8 font-mono text-[8px] md:text-[10px] tracking-[0.3em] md:tracking-[0.4em] text-white bg-black/40 px-2 py-1 backdrop-blur-sm rounded">
-          [ 09 // SPECTRUM INTENSITY FIELD ]
-        </div>
-      </div>
-    </section>
-  );
-}
-
 // SECTION 10: ALTERNATIVE GEOMETRIC BLOCK OVERLAY
 function Section10AsymmetricBlock({ mediaUrl, fallbackVideoId }) {
   const blockRef = useRef(null);
@@ -469,8 +296,8 @@ function Section10AsymmetricBlock({ mediaUrl, fallbackVideoId }) {
           [10 // DYNAMIC GRID OVERLAY]
         </span>
         <h3 className="text-2xl md:text-3xl lg:text-5xl font-extralight tracking-tighter text-white uppercase font-sans leading-none break-words">
-          FROM STRATEGY TO
-          <br className="hidden lg:block" /> POST PRODUCTION
+          WHERE IDEAS FIND
+          <br className="hidden lg:block" /> THEIR VISUAL VOICE.
         </h3>
       </div>
       <div className="lg:col-span-8 relative flex items-center justify-center w-full">
@@ -489,107 +316,7 @@ function Section10AsymmetricBlock({ mediaUrl, fallbackVideoId }) {
   );
 }
 
-// SECTION 11: TERMINAL ZENITH (FINAL VISUAL BEAT)
-function Section11TerminalZenith() {
-  const containerRef = useRef(null);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end end"],
-  });
-
-  const scale = useTransform(scrollYProgress, [0, 1], [0.92, 1]);
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [0.3, 1]);
-
-  const handleMouseMove = (e) => {
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    setMousePos({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    });
-  };
-
-  const scrollToTop = () => {
-    if (typeof window !== "undefined") {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-  };
-
-  return (
-    <section
-      ref={containerRef}
-      onMouseMove={handleMouseMove}
-      className="relative w-full h-screen bg-black overflow-hidden flex flex-col justify-between p-6 md:p-16 border-t border-neutral-900 select-none"
-    >
-      {/* Interactive Cursor Light Field */}
-      <div
-        className="pointer-events-none absolute w-[400px] h-[400px] rounded-full bg-white/5 filter blur-[100px] transition-transform duration-150 ease-out -translate-x-1/2 -translate-y-1/2 z-0"
-        style={{
-          left: `${mousePos.x}px`,
-          top: `${mousePos.y}px`,
-        }}
-      />
-
-      {/* Top Status Intercept */}
-      <div className="w-full flex justify-between items-center font-mono text-[9px] md:text-[10px] tracking-[0.4em] text-neutral-400 z-10">
-        <div className="flex items-center space-x-2">
-          <span className="w-2 h-2 rounded-full bg-neutral-400 animate-ping" />
-        </div>
-        
-      </div>
-
-      {/* Hero Visual Anchor & Magnetic CTA */}
-      <motion.div
-        style={{ scale, opacity }}
-        className="my-auto z-10 flex flex-col items-center text-center max-w-5xl mx-auto space-y-8"
-      >
-        <span className="font-mono text-[10px] md:text-xs tracking-[0.6em] text-neutral-400 uppercase">
-          Ready to construct the next optic statement?
-        </span>
-
-        <h2 className="text-[clamp(2.5rem,8vw,8.5rem)] font-extralight tracking-tighter leading-none text-white uppercase font-sans">
-          PROJECT <span className="italic font-normal text-neutral-400">NEXT</span>
-        </h2>
-
-        {/* Magnetic CTA Trigger Ring */}
-        <motion.a
-          href="#contact"
-          whileHover={{ scale: 1.08 }}
-          whileTap={{ scale: 0.95 }}
-          className="group relative inline-flex items-center justify-center px-10 py-5 overflow-hidden font-mono text-xs tracking-[0.3em] uppercase text-white bg-neutral-950 border border-neutral-800 rounded-full hover:border-white transition-colors duration-500 shadow-[0_0_40px_rgba(255,255,255,0.05)]"
-        >
-          <span className="absolute inset-0 w-full h-full bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-500" />
-          <span className="relative z-10 flex items-center gap-3">
-            INITIATE DISCUSSIONS 
-            <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
-              →
-            </span>
-          </span>
-        </motion.a>
-      </motion.div>
-
-      {/* Bottom Architectural Closure */}
-      <div className="w-full flex justify-between items-end z-10 font-mono text-[9px] md:text-[10px] tracking-widest text-neutral-500 border-t border-neutral-900/60 pt-6">
-        <div>
-          <span className="block text-white">SEKRICK </span>
-          <span className="text-[8px] text-neutral-600">
-            ALL SYSTEMS NORMALIZED
-          </span>
-        </div>
-        <div className="text-right">
-          <button
-            onClick={scrollToTop}
-            className="animate-pulse text-neutral-400 hover:text-white transition-colors cursor-pointer"
-          >
-            ▲ SCROLL TOP TO RESET
-          </button>
-        </div>
-      </div>
-    </section>
-  );
-}
 
 /* ==========================================
    MAIN ROOT EXPORT ENTRY COMPONENT
@@ -641,36 +368,16 @@ export default function Home() {
         fastMediaUrl={videos.chromatic_matte_2}
         fastFallback={ASSETS.heroVideo}
       />
-      <Section5VividMarquee />
-      <Section6LineVideoReveal
-        mediaUrl={videos.line_video_reveal}
-        fallbackVideoId={ASSETS.cinematicClip3}
-      />
-      <Section7VividMatrix
-        videoUrls={[
-          videos.vivid_matrix_1,
-          videos.vivid_matrix_2,
-          videos.vivid_matrix_3,
-        ]}
-        fallbackVideoIds={[
-          ASSETS.heroVideo,
-          ASSETS.cinematicClip2,
-          ASSETS.cinematicClip3,
-        ]}
-      />
       <Section8VideoIntercept
         mediaUrl={videos.video_intercept}
         fallbackVideoId={ASSETS.cinematicClip2}
       />
-      <Section9VividFocus
-        mediaUrl={videos.vivid_focus}
-        fallbackVideoId={ASSETS.cinematicClip3}
-      />
+      
       <Section10AsymmetricBlock
         mediaUrl={videos.asymmetric_block}
         fallbackVideoId={ASSETS.heroVideo}
       />
-      <Section11TerminalZenith />
+     
     </main>
   );
 }
