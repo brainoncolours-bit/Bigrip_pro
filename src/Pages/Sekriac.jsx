@@ -122,11 +122,8 @@ function ServicesHero() {
         </h1>
         <p className="text-[11px] md:text-xs tracking-[0.3em] text-neutral-400 font-light uppercase max-w-2xl mt-8 leading-relaxed">
           Every brand has something worth sharing. We take the time to understand what makes it unique, then bring it to life through thoughtful ideas, beautiful visuals, and stories people genuinely connect with.
-
         </p>
       </motion.div>
-
-      
     </section>
   );
 }
@@ -192,77 +189,65 @@ function ServicesMatrixList({ items = [] }) {
 }
 
 // SECTION 3: The Deployment Spec Sheet (Grid Specs)
-function TechnicalSpecsTable() {
-  return (
-    <section className="w-full bg-black py-20 md:py-32 px-6 md:px-12 lg:px-24 border-t border-neutral-900">
-      <div className="max-w-5xl mx-auto">
-        <span className="text-[10px] md:text-xs font-mono tracking-[0.5em] text-neutral-500 block mb-8">
-          [03 // ACQUISITION PARAMETERS]
-        </span>
-        <h2 className="text-2xl font-extralight tracking-tighter text-white uppercase mb-12 font-sans">
-          READY TO BRING YOUR VISION TO LIFE?
-        </h2>
 
-        <div className="w-full overflow-x-auto border border-neutral-950">
-          <table className="w-full text-left border-collapse font-mono text-[10px] md:text-xs text-neutral-400">
-            <thead>
-              <tr className="border-b border-neutral-900 text-neutral-500">
-                <th className="py-4 px-2 uppercase tracking-widest font-normal">
-                  MODULE SYSTEM
-                </th>
-                <th className="py-4 px-2 uppercase tracking-widest font-normal">
-                  NATIVE ENGINE
-                </th>
-                <th className="py-4 px-2 uppercase tracking-widest font-normal">
-                  OUTPUT STATE
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-neutral-900">
-              <tr className="hover:text-white transition-colors">
-                <td className="py-4 px-2 text-neutral-300">
-                  RAW Capture Platform
-                </td>
-                <td className="py-4 px-2">
-                  ARRI Alexa Mini LF / RED V-Raptor XL
-                </td>
-                <td className="py-4 px-2">ProRes 4444 XQ / 8K REDCODE RAW</td>
-              </tr>
-              <tr className="hover:text-white transition-colors">
-                <td className="py-4 px-2 text-neutral-300">Optics Mapping</td>
-                <td className="py-4 px-2">
-                  Cooke Anamorphic / Tribe7 Blackwing7
-                </td>
-                <td className="py-4 px-2">
-                  Custom Spatial Distortion Profiles
-                </td>
-              </tr>
-              <tr className="hover:text-white transition-colors">
-                <td className="py-4 px-2 text-neutral-300">Color Framework</td>
-                <td className="py-4 px-2">
-                  ACES workflow / DaVinci Resolve Studio
-                </td>
-                <td className="py-4 px-2">Rec.2026 / P3 D65 Master Matrices</td>
-              </tr>
-              <tr className="hover:text-white transition-colors">
-                <td className="py-4 px-2 text-neutral-300">
-                  Spatial Mastering
-                </td>
-                <td className="py-4 px-2">
-                  Dolby Atmos Spatial Mixing Engines
-                </td>
-                <td className="py-4 px-2">
-                  24-bit Linear PCM Broadcast Stream
-                </td>
-              </tr>
-            </tbody>
-          </table>
+
+// SECTION 4: Contact Us & Social Connections
+function ServicesContact() {
+  const socialLinks = [
+    {
+      name: "INSTAGRAM",
+      url: "https://www.instagram.com/sekrickstudio?igsh=MWs4cnE4dDMxZWp6cw==",
+      handle: "sekrickstudio",
+    },
+    {
+      name: "LINKEDIN",
+      url: "https://www.linkedin.com/in/sekrick-studio-403298422/",
+      handle: "Sekrick Studio",
+    },
+    {
+      name: "BEHANCE",
+      url: "https://www.behance.net/sekrickstudio",
+      handle: "Sekrick studio",
+    },
+  ];
+
+  return (
+    <section className="w-full bg-black text-white py-20 md:py-32 px-6 md:px-12 lg:px-24 border-t border-neutral-900">
+      <div className="max-w-5xl mx-auto space-y-12">
+        <div className="space-y-4">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extralight tracking-tight uppercase font-sans">
+            LET'S WORK TOGETHER.
+          </h2>
+          <p className="text-xs md:text-sm font-mono text-neutral-400 max-w-xl leading-relaxed">
+            Have a project, collaboration, or story in mind? Get in touch with us or follow our creative output across networks.
+          </p>
+        </div>
+
+      
+
+        {/* Social Networks List */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-8 border-t border-neutral-900">
+          {socialLinks.map((social) => (
+            <a
+              key={social.name}
+              href={social.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group p-6 bg-neutral-950/60 border border-neutral-900 hover:border-neutral-700 transition-all duration-300"
+            >
+              <span className="font-mono text-[9px] text-neutral-500 tracking-[0.3em] block mb-2 group-hover:text-neutral-400">
+                // {social.name}
+              </span>
+              <span className="text-sm font-sans text-neutral-300 group-hover:text-white transition-colors block">
+                {social.handle}
+              </span>
+            </a>
+          ))}
         </div>
       </div>
     </section>
   );
 }
-
 
 /* ==========================================
    MAIN SERVICES PAGE COMPONENT EXPORT
@@ -341,8 +326,8 @@ export default function Services() {
           fallbackVideoId: ASSETS[`serviceVideo${idx + 1}`],
         }))}
       />
-      <TechnicalSpecsTable />
-     
+      
+      <ServicesContact />
     </div>
   );
 }

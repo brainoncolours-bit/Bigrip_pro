@@ -130,9 +130,7 @@ function Section2Threshold() {
       className="w-full min-h-[40vh] md:min-h-[60vh] bg-black flex items-center px-6 sm:px-12 md:px-24 py-16 md:py-32 border-y border-neutral-900"
     >
       <div className="max-w-5xl">
-        <span className="text-[10px] md:text-xs font-mono tracking-[0.5em] text-neutral-500 block mb-6 md:mb-8">
-          [02 / MANIFESTO MATRIX]
-        </span>
+        
         <h2 className="text-xl sm:text-2xl md:text-5xl font-extralight tracking-tight leading-snug font-sans space-y-2">
           {lines.map((line, lineIdx) => (
             <span key={lineIdx} className="block">
@@ -181,9 +179,7 @@ function Section3Aperture({ mediaUrl, fallbackVideoId }) {
           opacity="opacity-100"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none" />
-        <div className="absolute bottom-6 left-6 md:bottom-12 md:left-12 z-10 font-mono text-[9px] md:text-[10px] tracking-[0.4em] text-white">
-          [ 03 // APERTURE EXPOSURE CAPTURE ]
-        </div>
+        
       </motion.div>
     </div>
   );
@@ -210,7 +206,7 @@ function Section4ChromaticMatte({
       className="w-full min-h-[auto] md:min-h-screen bg-black flex flex-col justify-center py-12 md:py-24 px-6 md:px-12 lg:px-24 border-b border-neutral-900 relative overflow-hidden"
     >
       <div className="w-full flex justify-between font-mono text-[9px] md:text-[10px] tracking-[0.3em] md:tracking-[0.5em] text-neutral-400 mb-6 gap-4">
-        <span>[04 // DEPTH LAYERING PROFILE]</span>
+        
         <span className="text-white text-right">MATTE REEL: ACTIVE</span>
       </div>
 
@@ -292,9 +288,7 @@ function Section10AsymmetricBlock({ mediaUrl, fallbackVideoId }) {
       className="w-full min-h-[auto] md:min-h-screen bg-black py-12 md:py-24 px-6 md:px-12 lg:px-24 border-b border-neutral-900 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-center overflow-hidden"
     >
       <div className="lg:col-span-4 flex flex-col space-y-4 md:space-y-6">
-        <span className="font-mono text-[10px] md:text-xs text-neutral-400 tracking-[0.4em]">
-          [10 // DYNAMIC GRID OVERLAY]
-        </span>
+        
         <h3 className="text-2xl md:text-3xl lg:text-5xl font-extralight tracking-tighter text-white uppercase font-sans leading-none break-words">
           WHERE IDEAS FIND
           <br className="hidden lg:block" /> THEIR VISUAL VOICE.

@@ -6,7 +6,7 @@ const links = [
   //{ to: "/work", label: "Work" },
   { to: "/artists", label: "Artists" },
   { to: "/sekriac", label: "SEKRICK" },
-  { to: "/contact", label: "Contact" },
+  //{ to: "/contact", label: "Contact" },
 ];
 
 const Navbar = ({ mode = "dark" }) => {

@@ -14,7 +14,7 @@ import AdminWorks from "./Pages/admin/AdminWorks";
 import AdminCategories from "./Pages/admin/AdminCategories";
 import AdminArtists from "./Pages/admin/AdminArtists";
 import AdminArtistWorks from "./Pages/admin/AdminArtistWorks";
-import Contact from "./Pages/Contact";
+//import Contact from "./Pages/Contact";
 import Footer from "./componants/Footer";
 
 function ScrollToTop() {
@@ -34,7 +34,7 @@ function AppRoutes() {
       {/* <Route path="/work" element={<Work />} /> */}
       <Route path="/sekriac" element={<Sekriac />} />
        
-      <Route path="/contact" element={<Contact />} />
+      {/* <Route path="/contact" element={<Contact />} /> */}
       <Route path="/sekrick" element={<Sekriac />} />
       <Route path="/artists" element={<Artists />} />
       <Route path="/artists/:id" element={<ArtistDetail />} />
