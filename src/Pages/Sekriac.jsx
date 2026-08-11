@@ -14,7 +14,7 @@ if (typeof window !== "undefined") {
 const ASSETS = {
   serviceVideo1: "6HBxWrmI8OU", // Narrative Architecture
   serviceVideo2: "9Wd_A8e8TqM", // Chromatic Grading & Finish
-  serviceVideo3: "s1x4u5QBbXM", // Fashion & Silhouette Capture
+ // serviceVideo3: "s1x4u5QBbXM", // Fashion & Silhouette Capture
 };
 
 const DEFAULT_SERVICES_CONTENT = [
@@ -38,7 +38,7 @@ const DEFAULT_SERVICES_CONTENT = [
       "REDUCED NOISE COMPRESSION",
     ],
   },
-  {
+ /* {
     num: "03",
     title: "BUILT FOR TIMELESS IMPACT",
     desc: "We don't create content for the moment. We create visual experiences designed to inspire, engage, and endure.",
@@ -47,7 +47,7 @@ const DEFAULT_SERVICES_CONTENT = [
       "TEXTURE RETENTION ENGINE",
       "ASYMMETRIC FRAMING",
     ],
-  },
+  },*/
 ];
 
 const DEFAULT_CTA_CONTENT = {
@@ -143,10 +143,7 @@ function ServicesMatrixList({ items = [] }) {
             key={idx}
             className="group grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 py-16 border-b border-neutral-900 items-start transition-colors duration-500 hover:bg-neutral-950/40 px-2"
           >
-            {/* Number Code */}
-            <div className="lg:col-span-1 font-mono text-[10px] md:text-xs text-neutral-600 group-hover:text-white transition-colors">
-              [{item.num} // GEN_CAP]
-            </div>
+           
 
             {/* Core Details */}
             <div className="lg:col-span-6 flex flex-col space-y-4">
