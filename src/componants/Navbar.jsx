@@ -2,11 +2,15 @@ import { NavLink } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 const links = [
-  { to: "/", label: "Home" },
+  { to: "/", label: "Sekrick" },
+  { to: "/production", label: "Production" },
+  { to: "/agency", label: "Agency" },
+  { to: "/community", label: "Community" },
   //{ to: "/work", label: "Work" },
   { to: "/artists", label: "Artists" },
-  { to: "/sekriac", label: "SEKRICK" },
-  //{ to: "/contact", label: "Contact" },
+  { to: "/journal", label: "Journal" },
+  //{ to: "/sekriac", label: "SEKRICK" },
+  { to: "/contact", label: "Contact" },
 ];
 
 const Navbar = ({ mode = "dark" }) => {

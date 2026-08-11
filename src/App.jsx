@@ -14,8 +14,12 @@ import AdminWorks from "./Pages/admin/AdminWorks";
 import AdminCategories from "./Pages/admin/AdminCategories";
 import AdminArtists from "./Pages/admin/AdminArtists";
 import AdminArtistWorks from "./Pages/admin/AdminArtistWorks";
-//import Contact from "./Pages/Contact";
+import Contact from "./Pages/Contact";
 import Footer from "./componants/Footer";
+import Production from "./Pages/Production";
+import Agency from "./Pages/Agency";
+import Community from "./Pages/Community";
+import Journal from "./Pages/Journal";
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -31,10 +35,14 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
+      <Route path="/production" element={<Production />} />
+      <Route path="/agency" element={<Agency />} />
+      <Route path="/community" element={<Community />} />
+      <Route path="/journal" element={<Journal />} />
       {/* <Route path="/work" element={<Work />} /> */}
-      <Route path="/sekriac" element={<Sekriac />} />
+      <Route path="/sekriac" element={<Sekriac />} /> 
        
-      {/* <Route path="/contact" element={<Contact />} /> */}
+      <Route path="/contact" element={<Contact />} /> 
       <Route path="/sekrick" element={<Sekriac />} />
       <Route path="/artists" element={<Artists />} />
       <Route path="/artists/:id" element={<ArtistDetail />} />
@@ -57,7 +65,7 @@ export default function App() {
       <ScrollToTop />
       <Navbar />
       <AppRoutes />
-      {location.pathname !== "/" && <Footer />}
+      <Footer />
      
     </>
   );

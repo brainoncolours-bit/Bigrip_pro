@@ -111,9 +111,18 @@ function WorksGridSection({ works, loading, error }) {
 
   return (
     <section id="works" className="relative w-full bg-black py-8 md:py-12 px-6 md:px-12 border-b border-neutral-900">
-      <div className="w-full flex justify-between items-end border-b border-neutral-900 pb-4 mb-8 md:mb-24 text-[9px] tracking-[0.3em] text-neutral-500 uppercase font-mono">
-        <div>[ WORKS ]</div>
-        <div>TOTAL_UNITS // {works.length || "04"}</div>
+     
+
+      {/* New Section Heading & Sub-content Header */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-start mb-12 md:mb-24">
+        <div className="lg:col-span-8">
+          <h2 className="text-3xl md:text-5xl lg:text-6xl font-sans font-extralight tracking-tight text-white uppercase leading-[1.1] mb-4">
+            FROM IDEA TO IMAGE.
+          </h2>
+          <p className="text-xs md:text-sm font-mono text-neutral-400 uppercase tracking-widest max-w-2xl leading-relaxed">
+            A selection of films, campaigns and visual stories created with our collaborators.
+          </p>
+        </div>
       </div>
 
       {loading && (
@@ -223,7 +232,13 @@ function Section1Hero({ mediaUrl, fallbackVideoId }) {
         </h1>
         <div className="w-full flex flex-col md:flex-row md:items-center justify-between mt-6 md:mt-8 gap-4">
           <p className="text-[9px] md:text-[10px] tracking-[0.4em] md:tracking-[0.6em] text-neutral-400 font-light uppercase leading-relaxed">
-            Visual Storytelling & Brand Architecture
+            SECRETS OF CREATIVE CULTURE.
+          </p>
+          
+        </div>
+        <div>
+          <p className="text-[9px] md:text-[10px] tracking-[0.4em] md:tracking-[0.6em] text-neutral-400 font-light uppercase leading-relaxed">
+            A creative production house and agency working across fashion, film, brands and culture.
           </p>
         </div>
       </motion.div>
@@ -235,10 +250,9 @@ function Section1Hero({ mediaUrl, fallbackVideoId }) {
 function Section2Threshold() {
   const containerRef = useRef(null);
   const lines = [
-    "We don’t just create visuals.",
-    "We shape stories people can feel.",
-    "Every frame is crafted with intention,",
-    "emotion, and timeless design.",
+    "MORE THAN A PRODUCTION HOUSE.",
+    "SEKRICK is an independent creative company built around production, ideas, people and culture.",
+    "We work across commercial production, creative direction, fashion, film and visual culture — collaborating with brands, artists and creative talent to develop ideas from concept to screen.",
   ];
 
   useEffect(() => {
@@ -247,12 +261,12 @@ function Section2Threshold() {
       gsap.set(allWords, { color: "#404040" });
       gsap.to(allWords, {
         color: "#ffffff",
-        stagger: 0.1,
+        stagger: 0.08,
         ease: "none",
         scrollTrigger: {
           trigger: containerRef.current,
-          start: "top 70%",
-          end: "bottom 20%",
+          start: "top 75%",
+          end: "bottom 25%",
           scrub: 1,
         },
       });
@@ -264,22 +278,23 @@ function Section2Threshold() {
   return (
     <section ref={containerRef} className="w-full min-h-[40vh] md:min-h-[60vh] bg-black flex items-center px-6 sm:px-12 md:px-24 py-16 md:py-32 border-y border-neutral-900">
       <div className="max-w-5xl">
-        <h2 className="text-xl sm:text-2xl md:text-5xl font-extralight tracking-tight leading-snug font-sans space-y-2">
-          {lines.map((line, lineIdx) => (
-            <span key={lineIdx} className="block">
+        {lines.map((line, lineIdx) => (
+          <div key={lineIdx} className="mb-4 md:mb-6">
+            <span className="block text-xl sm:text-2xl md:text-4xl font-extralight tracking-tight leading-snug font-sans">
               {line.trim().split(/\s+/).filter(Boolean).map((word, wordIdx) => (
                 <span key={wordIdx} className="manifesto-word inline-block mr-[0.25em]">
                   {word}
                 </span>
               ))}
             </span>
-          ))}
-        </h2>
+          </div>
+        ))}
       </div>
     </section>
   );
 }
 
+/*
 // SECTION 3
 function Section3Aperture({ mediaUrl, fallbackVideoId }) {
   const containerRef = useRef(null);
@@ -299,6 +314,7 @@ function Section3Aperture({ mediaUrl, fallbackVideoId }) {
     </div>
   );
 }
+  */
 
 // SECTION 4
 function Section4ChromaticMatte({ slowMediaUrl, slowFallback, fastMediaUrl, fastFallback }) {
@@ -379,6 +395,9 @@ function Section10AsymmetricBlock({ mediaUrl, fallbackVideoId }) {
   );
 }
 
+
+
+
 /* ==========================================
    MAIN ROOT EXPORT ENTRY COMPONENT
    ========================================== */
@@ -397,6 +416,8 @@ export default function Home() {
     }
   }, []);
 
+
+  
   // Fetch Home Videos from Supabase
   useEffect(() => {
     async function loadVideos() {
@@ -452,7 +473,7 @@ export default function Home() {
       
       
 
-      <Section3Aperture mediaUrl={videos.aperture} fallbackVideoId={ASSETS.heroVideo} />
+      
       <Section4ChromaticMatte
         slowMediaUrl={videos.chromatic_matte_1}
         slowFallback={ASSETS.cinematicClip3}
@@ -463,6 +484,7 @@ export default function Home() {
       <Section10AsymmetricBlock mediaUrl={videos.asymmetric_block} fallbackVideoId={ASSETS.heroVideo} />
       {/* Dynamic Works Section under Home */}
       <WorksGridSection works={works} loading={loadingWorks} error={worksError} />
+      
     </main>
   );
 }

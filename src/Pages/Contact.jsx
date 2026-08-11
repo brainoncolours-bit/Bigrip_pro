@@ -1,312 +1,325 @@
-import { useState, useRef } from "react";
-import {
-  motion,
-  useScroll,
-  useTransform,
-  AnimatePresence,
-} from "framer-motion";
+import { useRef, useEffect, useState } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import emailjs from "@emailjs/browser";
+import { supabase } from "../lib/supabaseClient";
 
-export default function MultiSectionContactPage() {
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    agency: "",
-    timeline: "",
-    criteria: "",
-  });
-  const [isTransmitted, setIsTransmitted] = useState(false);
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
-  // Scroll Tracking for Smooth Parallax Transitions
-  const heroRef = useRef(null);
+/* ==========================================
+   CONTACT HERO SECTION WITH BACKGROUND VIDEO
+   ========================================== */
+function ContactHero({ onSelectCategory }) {
+  const containerRef = useRef(null);
+  const defaultYoutubeId = "FWIJr42Ezfw";
+
   const { scrollYProgress } = useScroll({
-    target: heroRef,
+    target: containerRef,
     offset: ["start start", "end start"],
   });
 
-  const videoScale = useTransform(scrollYProgress, [0, 1], [1, 1.05]);
-  const textY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
-  const opacityDim = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const yOffset = useTransform(scrollYProgress, [0, 0.5], ["0px", "-40px"]);
 
-  const handleDispatch = (e) => {
+  const inquiryTypes = [
+    { label: "PROJECTS →", value: "PROJECTS", email: "projects@sikrick.com" },
+    { label: "TALENT →", value: "TALENT", email: "talent@sikrick.com" },
+    { label: "GENERAL →", value: "GENERAL", email: "hello@sikrick.com" },
+  ];
+
+  return (
+    <section
+      ref={containerRef}
+      className="relative w-full h-screen bg-black overflow-hidden flex flex-col justify-between p-6 md:p-12 border-b border-neutral-900"
+    >
+      {/* Background Video Layer */}
+      <div className="absolute inset-0 z-0 pointer-events-none w-full h-full overflow-hidden">
+        <iframe
+          src={`https://www.youtube.com/embed/${defaultYoutubeId}?autoplay=1&mute=1&loop=1&playlist=${defaultYoutubeId}&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&playsinline=1`}
+          title="Contact Hero Background"
+          className="absolute top-1/2 left-1/2 w-[150%] h-[150%] sm:w-[130%] sm:h-[130%] -translate-x-1/2 -translate-y-1/2 object-cover select-none filter grayscale contrast-125 brightness-75"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        />
+        <div className="absolute inset-0 bg-black/40 mix-blend-multiply" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/60" />
+      </div>
+
+      {/* Main Title Content */}
+      <motion.div
+        style={{ opacity, y: yOffset }}
+        className="z-10 flex flex-col items-start max-w-7xl my-auto"
+      >
+        <h1 className="text-[clamp(2.5rem,8vw,8rem)] font-thin tracking-tighter leading-[0.95] text-white uppercase font-sans break-words w-full drop-shadow-2xl">
+          MAKE SOMETHING WITH US.
+        </h1>
+        <p className="text-[11px] md:text-xs tracking-[0.3em] text-neutral-300 font-light uppercase max-w-2xl mt-8 leading-relaxed drop-shadow">
+          For projects, collaborations, talent and creative enquiries.
+        </p>
+
+        {/* Quick Router Buttons */}
+        <div className="flex flex-wrap gap-4 md:gap-6 mt-10">
+          {inquiryTypes.map((item, idx) => (
+            <button
+              key={idx}
+              onClick={() => onSelectCategory(item.value)}
+              className="font-mono text-xs md:text-sm tracking-[0.25em] font-bold text-black bg-white hover:bg-neutral-200 px-6 py-3.5 uppercase transition-all duration-300 border border-white"
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+      </motion.div>
+
+    </section>
+  );
+}
+
+/* ==========================================
+   CONTACT FORM SECTION
+   ========================================== */
+function ContactFormSection({ selectedCategory, formRef }) {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    subject: selectedCategory || "PROJECTS",
+    message: "",
+  });
+  const [status, setStatus] = useState("");
+
+  useEffect(() => {
+    if (selectedCategory) {
+      setFormData((prev) => ({ ...prev, subject: selectedCategory }));
+    }
+  }, [selectedCategory]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsTransmitted(true);
+    setStatus("TRANSMITTING...");
+
+    // EmailJS Credentials
+    const SERVICE_ID = "service_ow97enk";
+    const TEMPLATE_ID = "template_y4bxfyn";
+    const PUBLIC_KEY = "vcVGmsEGIuZ6iHQiF";
+
+    const templateParams = {
+      from_name: formData.name,
+      from_email: formData.email,
+      enquiry_type: formData.subject,
+      message: formData.message,
+    };
+
+    try {
+      // 1. Save entry to Supabase
+      const { error } = await supabase
+        .from("contact_inquiries")
+        .insert([formData]);
+
+      if (error) console.warn("Supabase insert warning:", error.message);
+
+      // 2. Send email directly via EmailJS API
+      const result = await emailjs.send(
+        SERVICE_ID,
+        TEMPLATE_ID,
+        templateParams,
+        PUBLIC_KEY
+      );
+
+      console.log("EmailJS Success:", result.status, result.text);
+      setStatus("DISPATCH SENT");
+
+      // Reset form fields
+      setFormData({
+        name: "",
+        email: "",
+        subject: selectedCategory || "PROJECTS",
+        message: "",
+      });
+    } catch (err) {
+      console.error("Transmission Error:", err);
+      setStatus("TRANSMISSION ERROR");
+    }
   };
 
   return (
-    <main className="bg-black text-white min-h-screen selection:bg-white selection:text-black antialiased font-sans overflow-x-hidden">
-      {/* GLOBAL SYSTEM OVERLAY NAVIGATION */}
+    <section ref={formRef} className="w-full bg-black py-12 md:py-24 px-6 md:px-12 lg:px-24 border-b border-neutral-900">
+      
 
-      {/* ==========================================
-         SECTION 01: FULL-BLEED KINETIC BANNER 
-         ========================================== */}
-      <section
-        ref={heroRef}
-        className="relative w-full h-screen flex items-end justify-start p-6 md:p-12 overflow-hidden border-b border-neutral-900"
-      >
-        {/* Absolute Background Video Scaling Layer */}
-        <motion.div
-          style={{ scale: videoScale }}
-          className="absolute inset-0 w-full h-full pointer-events-none select-none"
-        >
-          <div className="absolute inset-0 bg-neutral-950/40 z-10 mix-blend-multiply" />
-          <iframe
-            src="https://www.youtube.com/embed/szdbKz5CyhA?autoplay=1&mute=1&loop=1&playlist=szdbKz5CyhA&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1"
-            title="Structural Context Loop"
-            className="absolute top-1/2 left-1/2 w-[180%] h-[180%] md:w-[130%] md:h-[130%] -translate-x-1/2 -translate-y-1/2 object-cover grayscale contrast-[1.12]"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          />
-        </motion.div>
-
-        {/* Scanline Mesh Texture */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(0,0,0,0)_96%,rgba(255,255,255,0.02)_96%)] bg-[size:100%_18px] pointer-events-none z-10 mix-blend-overlay" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/10 to-transparent pointer-events-none z-10" />
-
-        {/* Typography Content Layer */}
-        <motion.div
-          style={{ y: textY, opacity: opacityDim }}
-          className="z-20 max-w-5xl relative pb-8"
-        >
-          <span className="font-mono text-[9px] tracking-[0.5em] text-neutral-400 block mb-4">
-            [ SEC-01 // ENTRY EXPANSION ]
-          </span>
-          <h1 className="text-[clamp(2.5rem,8vw,8.5rem)] font-extralight uppercase tracking-tighter leading-[0.9] text-white">
-            Initiate <br /> Correspondence
-          </h1>
-          <div className="mt-8 font-mono text-[9px] tracking-widest text-neutral-500 uppercase animate-pulse">
-            [ SCROLL DOWN TO EXPOSE DATA MESH ]
-          </div>
-        </motion.div>
-      </section>
-
-      {/* ==========================================
-         SECTION 02: THE CENTRAL INPUT METRICS 
-         ========================================== */}
-      <section className="w-full bg-black border-b border-neutral-900 px-6 md:px-12 py-14 md:py-36 relative">
-        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 max-w-7xl mx-auto items-start">
-          {/* Section Indicator Sidebar */}
-          <div className="col-span-12 lg:col-span-4 lg:sticky lg:top-28 flex flex-col space-y-3 md:space-y-4">
-            <span className="font-mono text-[10px] tracking-[0.4em] text-neutral-500 uppercase">
-              [ SEC-02 // INTAKE PORT ]
-            </span>
-            <h2 className="text-2xl md:text-3xl font-light uppercase tracking-tight text-white leading-tight">
-              Operational <br />
-              Parameters
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+        {/* Left Direct Details */}
+        <div className="lg:col-span-5 flex flex-col space-y-8">
+          <div>
+            <h2 className="text-3xl md:text-5xl font-extralight uppercase font-sans tracking-tight text-white mb-4">
+              START A PROJECT.
             </h2>
-            <p className="font-sans font-extralight text-neutral-500 text-sm max-w-xs leading-relaxed">
-              Complete the serialization arrays below to sync your project
-              footprint with our asset architecture.
+            <p className="text-xs md:text-sm font-light text-neutral-400 font-sans leading-relaxed">
+              Have an idea, campaign, or project in mind? Select a category or reach out directly to our production desk.
             </p>
           </div>
 
-          {/* Core Interactive Grid Form Block */}
-          <div className="col-span-12 lg:col-span-8">
-            <AnimatePresence mode="wait">
-              {!isTransmitted ? (
-                <motion.form
-                  key="form-matrix"
-                  onSubmit={handleDispatch}
-                  className="w-full flex flex-col space-y-6 md:space-y-10"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0, y: -10 }}
-                >
-                  {/* Field 1 */}
-                  <div className="flex flex-col border-b border-neutral-900 pb-3 group relative">
-                    <span className="font-mono text-[9px] tracking-[0.3em] text-neutral-500 uppercase mb-1 group-focus-within:text-white transition-colors">
-                      01 // Agent Call Sign
-                    </span>
-                    <input
-                      type="text"
-                      required
-                      placeholder="Individual Name or Venture Node"
-                      value={form.name}
-                      onChange={(e) =>
-                        setForm({ ...form, name: e.target.value })
-                      }
-                      className="bg-transparent border-0 p-0 text-lg font-light text-white placeholder-neutral-800 focus:ring-0 focus:outline-none w-full"
-                    />
-                  </div>
-
-                  {/* Field 2 */}
-                  <div className="flex flex-col border-b border-neutral-900 pb-3 group relative">
-                    <span className="font-mono text-[9px] tracking-[0.3em] text-neutral-500 uppercase mb-1 group-focus-within:text-white transition-colors">
-                      02 // Secure Digital Address
-                    </span>
-                    <input
-                      type="email"
-                      required
-                      placeholder="endpoint@network.location"
-                      value={form.email}
-                      onChange={(e) =>
-                        setForm({ ...form, email: e.target.value })
-                      }
-                      className="bg-transparent border-0 p-0 text-lg font-light text-white placeholder-neutral-800 focus:ring-0 focus:outline-none w-full"
-                    />
-                  </div>
-
-                  {/* Field 3 */}
-                  <div className="flex flex-col border-b border-neutral-900 pb-3 group relative">
-                    <span className="font-mono text-[9px] tracking-[0.3em] text-neutral-500 uppercase mb-1 group-focus-within:text-white transition-colors">
-                      03 // Intent Alignment
-                    </span>
-                    <input
-                      type="text"
-                      required
-                      placeholder="Visual Production / Fine Art Architecture"
-                      value={form.agency}
-                      onChange={(e) =>
-                        setForm({ ...form, agency: e.target.value })
-                      }
-                      className="bg-transparent border-0 p-0 text-lg font-light text-white placeholder-neutral-800 focus:ring-0 focus:outline-none w-full"
-                    />
-                  </div>
-
-                  {/* Field 4 */}
-                  <div className="flex flex-col border-b border-neutral-900 pb-3 group relative">
-                    <span className="font-mono text-[9px] tracking-[0.3em] text-neutral-500 uppercase mb-1 group-focus-within:text-white transition-colors">
-                      04 // Timeline Benchmark
-                    </span>
-                    <input
-                      type="text"
-                      required
-                      placeholder="Target Launch Window // Q3 2026"
-                      value={form.timeline}
-                      onChange={(e) =>
-                        setForm({ ...form, timeline: e.target.value })
-                      }
-                      className="bg-transparent border-0 p-0 text-lg font-light text-white placeholder-neutral-800 focus:ring-0 focus:outline-none w-full"
-                    />
-                  </div>
-
-                  {/* Field 5 (Textarea) */}
-                  <div className="flex flex-col border-b border-neutral-900 pb-3 group relative">
-                    <span className="font-mono text-[9px] tracking-[0.3em] text-neutral-500 uppercase mb-1 group-focus-within:text-white transition-colors">
-                      05 // Structural Criteria
-                    </span>
-                    <textarea
-                      rows={3}
-                      required
-                      placeholder="Outline specifications, sizing metrics, or asset counts..."
-                      value={form.criteria}
-                      onChange={(e) =>
-                        setForm({ ...form, criteria: e.target.value })
-                      }
-                      className="bg-transparent border-0 p-0 text-lg font-light text-white placeholder-neutral-800 focus:ring-0 focus:outline-none w-full resize-none leading-relaxed"
-                    />
-                  </div>
-
-                  {/* Action Link Control */}
-                  <div className="pt-2 md:pt-4">
-                    <button
-                      type="submit"
-                      className="px-12 py-4 bg-white text-black font-mono text-[10px] tracking-[0.4em] uppercase font-bold hover:bg-neutral-200 transition-colors rounded-[1px] shadow-2xl"
-                    >
-                      TRANSMIT PAYLOAD DATA
-                    </button>
-                  </div>
-                </motion.form>
-              ) : (
-                /* Clear Success State */
-                <motion.div
-                  key="success-prompt"
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="flex flex-col space-y-6 items-start py-6"
-                >
-                  <div className="font-mono text-[9px] tracking-[0.4em] text-emerald-400 uppercase">
-                    [ SYSTEM CONFIRMATION // ACK 200 ]
-                  </div>
-                  <h3 className="text-3xl font-light uppercase tracking-tighter text-white">
-                    Log Complete.
-                  </h3>
-                  <p className="font-light text-neutral-400 text-base leading-relaxed max-w-md">
-                    The serialization block has been appended directly into our
-                    network pipeline. Operatives will review parameters and ping
-                    your digital node address shortly.
-                  </p>
-                  <button
-                    onClick={() => setIsTransmitted(false)}
-                    className="font-mono text-[9px] tracking-[0.3em] uppercase text-neutral-500 hover:text-white transition-colors border-b border-neutral-800 pb-1"
-                  >
-                    [ INTRODUCE ALTERNATIVE LOG ]
-                  </button>
-                </motion.div>
-              )}
-            </AnimatePresence>
+          <div className="space-y-4 font-mono text-xs text-neutral-400 uppercase tracking-widest pt-4 border-t border-neutral-900">
+            
           </div>
         </div>
-      </section>
 
-      {/* ==========================================
-         SECTION 03: ASYMMETRICAL NETWORKS MATRIX
-         ========================================== */}
-      <section className="w-full bg-neutral-950/40 px-6 md:px-12 py-14 md:py-32">
-        <div className="w-full max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 font-mono">
-          <div className="col-span-12 md:col-span-4 flex flex-col space-y-2">
-            <span className="text-[10px] tracking-[0.4em] text-neutral-500 uppercase">
-              [ SEC-03 // INDEX MATRIX ]
-            </span>
-            <h3 className="text-sm uppercase tracking-widest font-medium text-white">
-              // CORE INDEX TERMINALS
-            </h3>
-          </div>
-
-          {/* Grid column clusters containing structural address arrays */}
-          <div className="col-span-12 sm:col-span-6 md:col-span-4 grid grid-cols-1 gap-5 md:gap-8 text-[11px] tracking-widest text-neutral-400">
-            <div>
-              <span className="text-neutral-700 block text-[9px] tracking-[0.3em] uppercase mb-2">
-                [ INTENSIFIED NODES ]
-              </span>
-              <p className="hover:text-white transition-colors cursor-pointer">
-                studio@SEKRICK.archive
-              </p>
-              <p className="hover:text-white transition-colors cursor-pointer">
-                pipelines@SEKRICK.archive
-              </p>
+        {/* Right Form */}
+        <form onSubmit={handleSubmit} className="lg:col-span-7 space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="flex flex-col space-y-2">
+              <label className="font-mono text-[9px] tracking-widest text-neutral-500 uppercase">
+                // YOUR NAME *
+              </label>
+              <input
+                type="text"
+                required
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                className="bg-neutral-950 border border-neutral-900 text-white font-mono text-xs px-4 py-3 focus:outline-none focus:border-neutral-500 transition-colors"
+                placeholder="NAME / COMPANY"
+              />
             </div>
-            <div>
-              <span className="text-neutral-700 block text-[9px] tracking-[0.3em] uppercase mb-2">
-                [ HARD ARCHIVES ]
-              </span>
-              <p>42.3601° N, 71.0589° W</p>
-              <p>Global Shipments Transit // 2026</p>
+
+            <div className="flex flex-col space-y-2">
+              <label className="font-mono text-[9px] tracking-widest text-neutral-500 uppercase">
+                // EMAIL ADDRESS *
+              </label>
+              <input
+                type="email"
+                required
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                className="bg-neutral-950 border border-neutral-900 text-white font-mono text-xs px-4 py-3 focus:outline-none focus:border-neutral-500 transition-colors"
+                placeholder="EMAIL@DOMAIN.COM"
+              />
             </div>
           </div>
 
-          <div className="col-span-12 sm:col-span-6 md:col-span-4 grid grid-cols-1 gap-4 text-[10px] tracking-widest text-neutral-500">
-            <span className="text-neutral-700 block text-[9px] tracking-[0.3em] uppercase mb-1">
-              [ SYSTEM NAVIGATION ]
-            </span>
-            <a href="#" className="hover:text-white transition-colors">
-              01 / PLATFORM CORE INTEGRATION
-            </a>
-            <a href="#" className="hover:text-white transition-colors">
-              02 / COLOR GAIN CONFIG MATRIX
-            </a>
-            <a href="#" className="hover:text-white transition-colors">
-              03 / CONTINUOUS HORIZON STREAM
-            </a>
+          <div className="flex flex-col space-y-2">
+            <label className="font-mono text-[9px] tracking-widest text-neutral-500 uppercase">
+              // ENQUIRY TYPE
+            </label>
+            <select
+              value={formData.subject}
+              onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+              className="bg-neutral-950 border border-neutral-900 text-white font-mono text-xs px-4 py-3 focus:outline-none focus:border-neutral-500 transition-colors uppercase"
+            >
+              <option value="PROJECTS">PROJECTS</option>
+              <option value="TALENT">TALENT</option>
+              <option value="GENERAL">GENERAL</option>
+            </select>
           </div>
-        </div>
-      </section>
 
-      {/* ==========================================
-         INVARIANT SYSTEM FOOTER BLOCK
-         ========================================== */}
-      <footer className="w-full border-t border-neutral-900 bg-black py-8 px-6 md:px-12 flex flex-col md:flex-row items-center justify-between gap-4 font-mono text-[8px] md:text-[9px] tracking-wider text-neutral-600 text-center md:text-left">
-        <span>© 2026 ROCKET JACKET LABS. DIGITAL COGNIZANCE SECURED.</span>
-        <div className="flex gap-6 md:gap-8">
-          <a href="#" className="hover:text-white transition-colors">
-            INSTAGRAM
-          </a>
-          <a href="#" className="hover:text-white transition-colors">
-            VIMEO CONTROL
-          </a>
-          <a href="#" className="hover:text-white transition-colors">
-            X ARCHIVE
-          </a>
+          <div className="flex flex-col space-y-2">
+            <label className="font-mono text-[9px] tracking-widest text-neutral-500 uppercase">
+              // PROJECT DETAILS *
+            </label>
+            <textarea
+              required
+              rows={5}
+              value={formData.message}
+              onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+              className="bg-neutral-950 border border-neutral-900 text-white font-mono text-xs px-4 py-3 focus:outline-none focus:border-neutral-500 transition-colors resize-none"
+              placeholder="TELL US ABOUT YOUR VISION AND TIMELINE..."
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full bg-white text-black font-mono text-xs font-bold tracking-[0.3em] py-4 uppercase transition-colors hover:bg-neutral-200"
+          >
+            {status || "ENGAGE DISPATCH ROUTER →"}
+          </button>
+        </form>
+      </div>
+    </section>
+  );
+}
+
+/* ==========================================
+   SOCIAL NETWORKS MATRIX
+   ========================================== */
+function ContactSocials() {
+  const socialLinks = [
+    {
+      name: "INSTAGRAM",
+      url: "https://www.instagram.com/sekrickstudio?igsh=MWs4cnE4dDMxZWp6cw==",
+      handle: "sekrickstudio",
+    },
+    {
+      name: "LINKEDIN",
+      url: "https://www.linkedin.com/in/sekrick-studio-403298422/",
+      handle: "Sekrick Studio",
+    },
+    {
+      name: "BEHANCE",
+      url: "https://www.behance.net/sekrickstudio",
+      handle: "Sekrick studio",
+    },
+  ];
+
+  return (
+    <section className="w-full bg-black text-white py-16 md:py-24 px-6 md:px-12 lg:px-24">
+      <div className="max-w-7xl mx-auto space-y-8">
+       
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          {socialLinks.map((social) => (
+            <a
+              key={social.name}
+              href={social.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group p-6 bg-neutral-950/60 border border-neutral-900 hover:border-neutral-700 transition-all duration-300"
+            >
+              <span className="font-mono text-[9px] text-neutral-500 tracking-[0.3em] block mb-2 group-hover:text-white transition-colors uppercase">
+                // {social.name}
+              </span>
+              <span className="text-sm font-sans text-neutral-300 group-hover:text-white transition-colors block">
+                {social.handle}
+              </span>
+            </a>
+          ))}
         </div>
-      </footer>
-    </main>
+      </div>
+    </section>
+  );
+}
+
+/* ==========================================
+   MAIN CONTACT PAGE COMPONENT EXPORT
+   ========================================== */
+export default function Contact() {
+  const [selectedCategory, setSelectedCategory] = useState("PROJECTS");
+  const formRef = useRef(null);
+
+  const handleSelectCategory = (category) => {
+    setSelectedCategory(category);
+    if (formRef.current) {
+      formRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  useEffect(() => {
+    // Scroll directly to the form if arriving from an external CTA
+    if (formRef.current && window.location.hash === "#form") {
+      formRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+
+    if (typeof window !== "undefined") {
+      const systemPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+      if (systemPreference.matches) {
+        ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+      }
+    }
+  }, []);
+
+  return (
+    <div className="bg-black text-white overflow-x-hidden selection:bg-white selection:text-black antialiased">
+      <ContactHero onSelectCategory={handleSelectCategory} />
+      <ContactFormSection selectedCategory={selectedCategory} formRef={formRef} />
+      <ContactSocials />
+    </div>
   );
 }
