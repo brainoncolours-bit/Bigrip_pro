@@ -2,19 +2,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
 
-// Expanded base positions for up to 12 items (or dynamically calculated)
-// Shifted negative top values downward to prevent overlapping the header/navbar area
-const SCATTER_POSITIONS = [
-  { top: "-40px", left: "-220px", width: "170px", zIndex: 10 },
-  { top: "-60px", right: "-240px", width: "190px", zIndex: 8 },
-  { top: "120px", left: "-250px", width: "150px", zIndex: 12 },
-  { top: "140px", right: "-260px", width: "180px", zIndex: 6 },
-  { top: "-80px", left: "80px", width: "160px", zIndex: 9 },
-  { top: "200px", left: "20px", width: "175px", zIndex: 11 },
-  { top: "40px", left: "260px", width: "180px", zIndex: 10 },
-  { top: "180px", left: "240px", width: "165px", zIndex: 7 },
-];
-
 const Artists = () => {
   const navigate = useNavigate();
   const [activeArtist, setActiveArtist] = useState(null);
@@ -68,7 +55,6 @@ const Artists = () => {
               name: artist.name,
               bio: artist.bio || artist.role || "Boutique creative directional output.",
               role: artist.role,
-              // Removed .slice(0, 6) so ALL works are mapped
               images: (worksByArtist[artist.id] || []).filter((item) => item.url),
             })),
         }))
@@ -86,7 +72,7 @@ const Artists = () => {
       return (
         <video
           src={item.url}
-          className="w-full h-auto object-contain block"
+          className="h-full w-auto block max-w-none"
           autoPlay
           muted
           loop
@@ -98,7 +84,7 @@ const Artists = () => {
       <img
         src={item.url}
         alt={`${artistName} work preview ${index + 1}`}
-        className="w-full h-auto object-contain block"
+        className="h-full w-auto block max-w-none"
       />
     );
   };
@@ -106,12 +92,14 @@ const Artists = () => {
   return (
     <main className="min-h-screen bg-black text-white font-sans px-6 md:px-12 pt-28 pb-20 relative selection:bg-white selection:text-black overflow-x-hidden antialiased">
       <div className="grid grid-cols-12 gap-6 items-start relative max-w-7xl mx-auto">
+        {/* Title Column */}
         <div className="col-span-12 lg:col-span-2 mb-8 lg:mb-0">
           <h1 className="text-2xl font-thin tracking-tighter uppercase leading-none text-white font-sans">
             sekrick
           </h1>
         </div>
 
+        {/* Categories & Artists Grid */}
         <div
           className="col-span-12 lg:col-span-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 relative"
           onMouseLeave={() => setActiveArtist(null)}
@@ -135,10 +123,15 @@ const Artists = () => {
               </h2>
               <ul className="flex flex-col gap-8 text-sm font-light">
                 {category.artists.map((artist) => {
-                  const isActive = activeArtist?.name === artist.name;
+                  const isActive = activeArtist?.id === artist.id;
+
+                  // Split works: First 2 on the left side, remainder on the right
+                  const LEFT_COUNT = 2;
+                  const leftImages = isActive ? artist.images.slice(0, LEFT_COUNT) : [];
+                  const rightImages = isActive ? artist.images.slice(LEFT_COUNT) : [];
 
                   return (
-                    <li key={artist.name} className="relative group">
+                    <li key={artist.id} className="relative group">
                       <button
                         onMouseEnter={() => setActiveArtist(artist)}
                         onClick={() => navigate(`/artists/${artist.id}`)}
@@ -157,33 +150,31 @@ const Artists = () => {
                         </p>
                       )}
 
-                      
-                      {/* UNROTATED SCATTERED OVERLAY IMAGES */}
-                      {isActive && artist.images.length > 0 && (
-                        <div className="absolute top-0 left-0 w-full h-full pointer-events-none z-10">
-                          {artist.images.map((item, idx) => {
-                            const pos = SCATTER_POSITIONS[idx % SCATTER_POSITIONS.length];
-                            const cycle = Math.floor(idx / SCATTER_POSITIONS.length);
-                            const extraOffset = cycle * 15;
+                      {/* LEFT SIDE WORKS ROW */}
+                      {isActive && leftImages.length > 0 && (
+                        <div className="absolute top-0 right-[calc(100%+1.5rem)] flex gap-4 items-center pointer-events-none z-30">
+                          {leftImages.map((item, idx) => (
+                            <div
+                              key={`left-preview-${artist.id}-${idx}`}
+                              className="shrink-0 h-44 w-auto bg-neutral-950 border border-neutral-800 shadow-xl overflow-hidden"
+                            >
+                              {renderMedia(item, artist.name, idx)}
+                            </div>
+                          ))}
+                        </div>
+                      )}
 
-                            return (
-                              <div
-                                key={`scatter-${artist.name}-${idx}`}
-                                className="absolute bg-neutral-950 border border-neutral-800 shadow-2xl overflow-hidden transition-all duration-300 ease-out"
-                                style={{
-                                  top: pos.top ? `calc(${pos.top} + ${extraOffset}px)` : undefined,
-                                  left: pos.left ? `calc(${pos.left} + ${extraOffset}px)` : undefined,
-                                  right: pos.right ? `calc(${pos.right} + ${extraOffset}px)` : undefined,
-                                  width: pos.width,
-                                  height: "auto",
-                                  zIndex: pos.zIndex + idx,
-                                }}
-                              >
-                                {renderMedia(item, artist.name, idx)}
-                                <div className="absolute inset-0 bg-black/10 pointer-events-none" />
-                              </div>
-                            );
-                          })}
+                      {/* RIGHT SIDE WORKS ROW */}
+                      {isActive && rightImages.length > 0 && (
+                        <div className="absolute top-0 left-[calc(100%+1.5rem)] flex gap-4 items-center pointer-events-none z-30">
+                          {rightImages.map((item, idx) => (
+                            <div
+                              key={`right-preview-${artist.id}-${idx}`}
+                              className="shrink-0 h-44 w-auto bg-neutral-950 border border-neutral-800 shadow-xl overflow-hidden"
+                            >
+                              {renderMedia(item, artist.name, idx + LEFT_COUNT)}
+                            </div>
+                          ))}
                         </div>
                       )}
                     </li>

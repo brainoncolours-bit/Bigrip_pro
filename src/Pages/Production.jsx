@@ -73,15 +73,18 @@ function ProductionHero() {
     >
       {/* Background Video Layer */}
       <div className="absolute inset-0 z-0 pointer-events-none w-full h-full overflow-hidden">
-        <iframe
-          src={`https://www.youtube.com/embed/${heroVideoId}?autoplay=1&mute=1&loop=1&playlist=${heroVideoId}&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&playsinline=1`}
-          title="Production Hero Background"
-          className="absolute top-1/2 left-1/2 w-[150%] h-[150%] sm:w-[130%] sm:h-[130%] -translate-x-1/2 -translate-y-1/2 object-cover select-none filter grayscale contrast-125 brightness-75"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        <video
+          src="/web 25.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute top-1/2 left-1/2 min-w-full min-h-full w-auto h-auto -translate-x-1/2 -translate-y-1/2 object-cover select-none filter grayscale contrast-125 brightness-75"
         />
+
         {/* Subtle Dark Gradient Overlay */}
-        <div className="absolute inset-0 bg-black/40 mix-blend-multiply" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/60" />
+        <div className="absolute inset-0 bg-black/40 mix-blend-multiply" />  
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/60" />  
       </div>
 
       

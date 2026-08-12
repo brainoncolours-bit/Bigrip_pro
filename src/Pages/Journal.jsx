@@ -32,11 +32,10 @@ function JournalHero() {
     >
       {/* Background Video Layer */}
       <div className="absolute inset-0 z-0 pointer-events-none w-full h-full overflow-hidden">
-        <iframe
-          src={`https://www.youtube.com/embed/${defaultYoutubeId}?autoplay=1&mute=1&loop=1&playlist=${defaultYoutubeId}&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&playsinline=1`}
-          title="Journal Hero Background"
-          className="absolute top-1/2 left-1/2 w-[150%] h-[150%] sm:w-[130%] sm:h-[130%] -translate-x-1/2 -translate-y-1/2 object-cover select-none filter grayscale contrast-125 brightness-75"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        <img
+          src="/web banner 2.jpg"
+          alt="Community Hero Background"
+          className="absolute top-1/2 left-1/2 min-w-full min-h-full w-auto h-auto -translate-x-1/2 -translate-y-1/2 object-cover select-none filter grayscale contrast-125 brightness-75"
         />
         <div className="absolute inset-0 bg-black/40 mix-blend-multiply" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/60" />
@@ -50,7 +49,7 @@ function JournalHero() {
         className="z-10 flex flex-col items-start max-w-7xl my-auto"
       >
         <h1 className="text-[clamp(2.5rem,8vw,8rem)] font-thin tracking-tighter leading-[0.95] text-white uppercase font-sans break-words w-full drop-shadow-2xl">
-          THE SIKRICK JOURNAL.
+          THE SEKRICK JOURNAL.
         </h1>
         <p className="text-[11px] md:text-xs tracking-[0.3em] text-neutral-300 font-light uppercase max-w-2xl mt-8 leading-relaxed drop-shadow">
           Stories, conversations, films and ideas from the people shaping creative culture.
