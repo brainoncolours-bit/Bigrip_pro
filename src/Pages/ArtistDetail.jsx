@@ -16,7 +16,12 @@ const ArtistDetail = () => {
       setNotFound(false);
 
       const [artistRes, workRes] = await Promise.all([
-        supabase.from("artists").select("*").eq("id", id).eq("published", true).maybeSingle(),
+        supabase
+          .from("artists")
+          .select("*")
+          .eq("id", id)
+          .eq("published", true)
+          .maybeSingle(),
         supabase
           .from("artist_works")
           .select("*")
@@ -45,7 +50,7 @@ const ArtistDetail = () => {
       return (
         <video
           src={work.media_url}
-          className="w-full h-full object-cover"
+          className="w-full h-auto block"
           autoPlay
           muted
           loop
@@ -57,16 +62,16 @@ const ArtistDetail = () => {
       <img
         src={work.media_url}
         alt={work.title || `${artist?.name} work`}
-        className="w-full h-full object-cover"
+        className="w-full h-auto block"
       />
     );
   };
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-white text-black font-serif px-12 py-8 relative selection:bg-neutral-200">
-        <p className="text-[12px] text-neutral-500 tracking-wide animate-pulse">
-          Loading artist...
+      <main className="min-h-screen bg-black text-white px-6 md:px-12 py-12 relative selection:bg-white selection:text-black">
+        <p className="font-mono text-[10px] tracking-[0.3em] uppercase text-neutral-500 animate-pulse">
+          [ LOADING ARTIST ARCHIVE... ]
         </p>
       </main>
     );
@@ -74,110 +79,110 @@ const ArtistDetail = () => {
 
   if (notFound) {
     return (
-      <main className="min-h-screen bg-white text-black font-serif px-12 py-8 relative selection:bg-neutral-200">
-        <p className="mb-8 text-[12px] text-neutral-500 tracking-wide">
-          Artist not found.
+      <main className="min-h-screen bg-black text-white px-6 md:px-12 py-12 relative selection:bg-white selection:text-black">
+        <p className="font-mono text-[10px] tracking-[0.3em] uppercase text-neutral-500 mb-8">
+          [ ARTIST NOT FOUND ]
         </p>
         <button
           onClick={() => navigate("/artists")}
-          className="text-black underline underline-offset-4 hover:text-red-600 transition-colors"
+          className="font-mono text-xs text-white underline underline-offset-4 hover:text-neutral-400 uppercase tracking-widest transition-colors"
         >
-          Back to all artists
+          &larr; BACK TO ALL ARTISTS
         </button>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-white text-black font-serif px-12 py-8 relative selection:bg-neutral-200 overflow-x-hidden">
-      {/* Top Navigation Links */}
-      <nav className="flex justify-between items-center text-sm font-sans mb-16">
-        <div className="flex gap-8">
-          <button
-            onClick={() => navigate("/artists")}
-            className="text-black hover:opacity-60 transition-opacity"
-          >
-            Artists
-          </button>
-          <span className="text-neutral-400">/</span>
-          <span className="text-red-600">{artist.name}</span>
-        </div>
-        <button
-          onClick={() => navigate("/")}
-          className="text-black hover:opacity-60 transition-opacity"
-        >
-          Home
-        </button>
-      </nav>
+    <main className="min-h-screen bg-black text-white px-6 md:px-12 lg:px-20 py-10 relative selection:bg-white selection:text-black overflow-x-hidden antialiased">
+      
+      
 
-      {/* Artist Header */}
-      <section className="grid grid-cols-12 gap-6 items-start mb-16">
-        <div className="col-span-2">
-          <h1 className="text-2xl font-bold font-sans tracking-tight leading-none text-black">
-            {artist.name}
-          </h1>
-          {artist.role && (
-            <p className="mt-2 text-[12px] font-sans text-neutral-500 tracking-wide">
-              {artist.role}
-            </p>
-          )}
-        </div>
+      {/* Artist Profile Header */}
+      <section className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-start pt-24 sm:pt-28 md:pt-32 mb-16 md:mb-20">
+      {/* Artist Name & Role */}
+      <div className="md:col-span-4 flex flex-col space-y-2">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extralight uppercase font-sans tracking-tight leading-none text-white">
+          {artist.name}
+        </h1>
+        {artist.role && (
+          <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-neutral-500 pt-2">
+            // {artist.role}
+          </p>
+        )}
+      </div>
 
-        <div className="col-span-6 col-start-4">
-          {artist.bio && (
-            <p className="max-w-xl text-[14px] leading-relaxed text-neutral-700">
-              {artist.bio}
-            </p>
-          )}
-          {(artist.website_url || artist.instagram_url) && (
-            <div className="mt-4 flex gap-6 font-sans text-[13px]">
-              {artist.website_url && (
-                <a
-                  href={artist.website_url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-black hover:text-red-600 transition-colors"
-                >
-                  Website
-                </a>
-              )}
-              {artist.instagram_url && (
-                <a
-                  href={artist.instagram_url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-black hover:text-red-600 transition-colors"
-                >
-                  Instagram
-                </a>
-              )}
-            </div>
-          )}
-        </div>
-      </section>
+      {/* Artist Bio & External Links */}
+      <div className="md:col-span-7 md:col-start-6 space-y-6">
+        {artist.bio && (
+          <p className="text-sm md:text-base font-light font-sans text-neutral-300 leading-relaxed max-w-2xl">
+            {artist.bio}
+          </p>
+        )}
 
-      {/* Works */}
+        {(artist.website_url || artist.instagram_url) && (
+          <div className="flex gap-6 font-mono text-[10px] tracking-widest uppercase pt-4 border-t border-neutral-900">
+            {artist.website_url && (
+              <a
+                href={artist.website_url}
+                target="_blank"
+                rel="noreferrer"
+                className="text-neutral-400 hover:text-white transition-colors underline underline-offset-4"
+              >
+                WEBSITE &rarr;
+              </a>
+            )}
+            {artist.instagram_url && (
+              <a
+                href={artist.instagram_url}
+                target="_blank"
+                rel="noreferrer"
+                className="text-neutral-400 hover:text-white transition-colors underline underline-offset-4"
+              >
+                INSTAGRAM &rarr;
+              </a>
+            )}
+          </div>
+        )}
+      </div>
+    </section>
+
+      {/* Selected Works Portfolio (Dynamic Aspect Ratios) */}
       <section>
+        <div className="w-full flex justify-between items-end border-b border-neutral-900 pb-3 mb-8 font-mono text-[9px] tracking-[0.3em] text-neutral-500 uppercase">
+          <span>[ ARCHIVE WORKS ]</span>
+          <span>UNITS // {String(works.length).padStart(2, "0")}</span>
+        </div>
+
         {works.length === 0 ? (
-          <p className="text-[12px] text-neutral-500 tracking-wide">
-            No works published yet.
+          <p className="font-mono text-[10px] text-neutral-600 uppercase tracking-widest py-12">
+            NO WORKS PUBLISHED YET.
           </p>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+          <div className="columns-1 sm:columns-2 lg:columns-3 gap-8 space-y-8">
             {works.map((work) => (
-              <figure key={work.id} className="bg-neutral-100">
-                <div className="aspect-square w-full overflow-hidden">
+              <figure
+                key={work.id}
+                className="break-inside-avoid group flex flex-col bg-neutral-950/80 border border-neutral-900 hover:border-neutral-700 transition-colors duration-500"
+              >
+                <div className="w-full overflow-hidden bg-black relative filter grayscale group-hover:grayscale-0 transition-all duration-700">
                   {renderMedia(work)}
+                  <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500 pointer-events-none" />
                 </div>
+
                 {(work.title || work.year) && (
-                  <figcaption className="flex items-baseline justify-between gap-3 px-1 pt-2 font-sans">
+                  <figcaption className="flex items-baseline justify-between gap-3 p-4 border-t border-neutral-900 font-sans">
                     {work.title ? (
-                      <span className="text-[13px] text-black">{work.title}</span>
+                      <span className="text-xs md:text-sm font-light uppercase tracking-tight text-white group-hover:text-neutral-200">
+                        {work.title}
+                      </span>
                     ) : (
                       <span />
                     )}
                     {work.year && (
-                      <span className="text-[11px] text-neutral-500">{work.year}</span>
+                      <span className="font-mono text-[9px] tracking-widest text-neutral-500">
+                        {work.year}
+                      </span>
                     )}
                   </figcaption>
                 )}
