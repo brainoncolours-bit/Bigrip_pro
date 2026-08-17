@@ -90,7 +90,8 @@ function SaturatedVideo({ mediaUrl, fallbackVideoId, opacity = "opacity-100" }) 
     </div>
   );
 }
-// WORKS COMPONENTS (NATURAL ASPECT RATIO + HOVER EFFECT)
+
+// WORKS COMPONENTS (FULL COLOR + NO INDEX BADGE OVERLAY)
 function WorkCard({ work, onOpen }) {
   return (
     <div className="group w-full mb-8 sm:mb-12 md:mb-24 lg:mb-32 flex flex-col">
@@ -104,7 +105,7 @@ function WorkCard({ work, onOpen }) {
         {work.mediaUrl &&
           (work.mediaType === "video" ? (
             <video
-              className="w-full h-auto block grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out will-change-transform"
+              className="w-full h-auto block opacity-100 group-hover:scale-105 transition-all duration-700 ease-out will-change-transform"
               src={work.mediaUrl}
               autoPlay
               muted
@@ -113,20 +114,12 @@ function WorkCard({ work, onOpen }) {
             />
           ) : (
             <img
-              className="w-full h-auto block grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out will-change-transform"
+              className="w-full h-auto block opacity-100 group-hover:scale-105 transition-all duration-700 ease-out will-change-transform"
               src={work.mediaUrl}
               alt={work.title}
               loading="lazy"
             />
           ))}
-
-        {/* Index Badge */}
-        <div className="absolute top-3 left-3 sm:top-4 sm:left-4 font-mono text-[9px] sm:text-[10px] bg-black/80 text-neutral-400 px-2 py-1 border border-neutral-800 backdrop-blur-sm pointer-events-none z-10">
-          INDEX_{work.id}
-        </div>
-
-        {/* Subtle Dark Overlay on idle, fades out on hover */}
-        <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500 pointer-events-none" />
       </button>
 
       <div className="mt-3 sm:mt-4 md:mt-6 flex flex-col md:flex-row md:justify-between md:items-baseline font-sans border-b border-neutral-900 pb-4 gap-2 md:gap-0">
@@ -298,7 +291,7 @@ function MediaViewer({ work, onClose }) {
   );
 }
 
-// SECTION 1: RESPONSIVE HERO
+// SECTION 1: RESPONSIVE HERO (TIGHT LEFT-ALIGNED LOGO)
 function Section1Hero({ mediaUrl, fallbackVideoId }) {
   const containerRef = useRef(null);
   const { scrollYProgress } = useScroll({
@@ -312,7 +305,7 @@ function Section1Hero({ mediaUrl, fallbackVideoId }) {
   return (
     <section
       ref={containerRef}
-      className="relative w-full h-[100svh] min-h-[520px] bg-black overflow-hidden flex flex-col justify-between p-4 sm:p-8 md:p-12 lg:p-16 border-b border-neutral-900"
+      className="relative w-full h-[100svh] min-h-[520px] bg-black overflow-hidden flex flex-col justify-end p-6 sm:p-10 md:p-14 lg:p-16 border-b border-neutral-900"
     >
       <SaturatedVideo
         mediaUrl={mediaUrl}
@@ -322,20 +315,27 @@ function Section1Hero({ mediaUrl, fallbackVideoId }) {
 
       <motion.div
         style={{ scale: textScale, opacity }}
-        className="z-10 flex flex-col items-start w-full max-w-7xl mt-auto pb-4 sm:pb-8"
+        className="z-10 flex flex-col items-start w-full max-w-5xl pb-2 sm:pb-4"
       >
-        <h1 className="text-[clamp(2.75rem,11vw,9.5rem)] font-extralight tracking-tighter leading-[0.88] text-white uppercase font-sans break-words w-full select-none drop-shadow-2xl">
-          SEKRICK
-        </h1>
+        {/* Logo with negative margins to compensate for image canvas padding */}
+        <div className="w-auto flex items-start -ml-4 sm:-ml-6 md:-ml-8 -mb-6 sm:-mb-10 md:-mb-14">
+          <img
+            src="/logo (2).png"
+            alt="Sekrick Logo"
+            className="h-[clamp(5.5rem,16vw,12rem)] w-auto max-w-[92vw] md:max-w-2xl object-contain object-left brightness-200 contrast-125 filter drop-shadow-2xl select-none block"
+          />
+        </div>
 
-        <div className="w-full flex flex-col md:flex-row md:items-center justify-between mt-3 sm:mt-6 md:mt-8 gap-2 sm:gap-4">
-          <p className="text-[9px] sm:text-[10px] md:text-xs tracking-[0.25em] sm:tracking-[0.4em] text-neutral-300 font-light uppercase leading-relaxed">
+        {/* Sub-Header */}
+        <div className="w-full mt-0">
+          <p className="text-[9px] sm:text-[10px] md:text-xs tracking-[0.25em] sm:tracking-[0.4em] text-neutral-300 font-light uppercase leading-tight">
             SECRETS OF CREATIVE CULTURE.
           </p>
         </div>
 
-        <div className="mt-2 sm:mt-3 max-w-2xl">
-          <p className="text-[8px] sm:text-[10px] md:text-[11px] tracking-[0.18em] sm:tracking-[0.25em] text-neutral-400 font-light uppercase leading-relaxed">
+        {/* Subtitle Description */}
+        <div className="mt-2 max-w-xl">
+          <p className="text-[8px] sm:text-[10px] md:text-[11px] tracking-[0.16em] sm:tracking-[0.22em] text-neutral-400 font-light uppercase leading-relaxed">
             A creative production house and agency working across fashion, film, brands and culture.
           </p>
         </div>

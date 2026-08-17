@@ -1,9 +1,8 @@
 import { useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-// Order of your navbar routes
 const NAV_SEQUENCE = [
-  "/",            // Home (Sekrick)
+  "/",            // Home
   "/production",
   "/agency",
   "/community",
@@ -15,62 +14,121 @@ const NAV_SEQUENCE = [
 export default function AutoScrollNavigator() {
   const location = useLocation();
   const navigate = useNavigate();
+  
   const isNavigating = useRef(false);
   const touchStartY = useRef(0);
+  const routeCooldown = useRef(true);
+  const overscrollDeltaY = useRef(0);
+  const boundaryEnterTime = useRef(0);
 
   useEffect(() => {
-    // Reset navigating flag and scroll to top on route change
     isNavigating.current = false;
-    window.scrollTo(0, 0);
+    overscrollDeltaY.current = 0;
+    boundaryEnterTime.current = 0;
+    
+    // Prevent inertia/coasting from previous page from immediately triggering on new route
+    routeCooldown.current = true;
+    const cooldownTimer = setTimeout(() => {
+      routeCooldown.current = false;
+    }, 700);
 
     const currentPath = location.pathname;
     const currentIndex = NAV_SEQUENCE.indexOf(currentPath);
 
-    // If on the last route or an admin/detail route, don't auto-navigate
-    if (currentIndex === -1 || currentIndex === NAV_SEQUENCE.length - 1) {
-      return;
-    }
+    if (currentIndex === -1) return;
 
-    const nextRoute = NAV_SEQUENCE[currentIndex + 1];
-
-    const triggerNextPage = () => {
-      if (isNavigating.current) return;
+    const triggerNavigation = (targetRoute, scrollToBottom = false) => {
+      if (isNavigating.current || !targetRoute) return;
       isNavigating.current = true;
 
-      // Small delay for smooth visual cue before transition
       setTimeout(() => {
-        navigate(nextRoute);
-      }, 400);
+        navigate(targetRoute);
+        if (scrollToBottom) {
+          setTimeout(() => {
+            window.scrollTo({
+              top: document.documentElement.scrollHeight,
+              behavior: "instant"
+            });
+          }, 50);
+        } else {
+          window.scrollTo({ top: 0, behavior: "instant" });
+        }
+      }, 250);
     };
 
-    // 1. Wheel / Trackpad Scroll Detection at Bottom
+    // 1. Mouse Wheel / Trackpad Scroll Detection
     const handleWheel = (e) => {
-      const isAtBottom =
-        window.innerHeight + window.scrollY >=
-        document.documentElement.scrollHeight - 15;
+      if (routeCooldown.current || isNavigating.current) return;
 
-      // User scrolls downward while already at the bottom
-      if (isAtBottom && e.deltaY > 30) {
-        triggerNextPage();
+      const scrollY = window.scrollY;
+      const scrollHeight = document.documentElement.scrollHeight;
+      const innerHeight = window.innerHeight;
+
+      const isAtBottom = innerHeight + scrollY >= scrollHeight - 8;
+      const isAtTop = scrollY <= 5;
+
+      const now = Date.now();
+
+      // Check Bottom Boundary Overscroll
+      if (isAtBottom && e.deltaY > 0 && currentIndex < NAV_SEQUENCE.length - 1) {
+        if (!boundaryEnterTime.current) {
+          boundaryEnterTime.current = now;
+        }
+
+        // Must stay at boundary for at least 300ms, and accumulate deliberate overscroll intent
+        if (now - boundaryEnterTime.current > 300) {
+          overscrollDeltaY.current += e.deltaY;
+          if (overscrollDeltaY.current > 180) {
+            triggerNavigation(NAV_SEQUENCE[currentIndex + 1], false);
+          }
+        }
+      } 
+      // Check Top Boundary Overscroll
+      else if (isAtTop && e.deltaY < 0 && currentIndex > 0) {
+        if (!boundaryEnterTime.current) {
+          boundaryEnterTime.current = now;
+        }
+
+        if (now - boundaryEnterTime.current > 300) {
+          overscrollDeltaY.current += Math.abs(e.deltaY);
+          if (overscrollDeltaY.current > 180) {
+            triggerNavigation(NAV_SEQUENCE[currentIndex - 1], true);
+          }
+        }
+      } 
+      // Reset if user is scrolling normally within content
+      else {
+        overscrollDeltaY.current = 0;
+        boundaryEnterTime.current = 0;
       }
     };
 
-    // 2. Mobile Touch Swipe Detection at Bottom
+    // 2. Mobile Touch Swipe Detection
     const handleTouchStart = (e) => {
       touchStartY.current = e.touches[0].clientY;
     };
 
     const handleTouchMove = (e) => {
-      const isAtBottom =
-        window.innerHeight + window.scrollY >=
-        document.documentElement.scrollHeight - 15;
+      if (routeCooldown.current || isNavigating.current) return;
+
+      const scrollY = window.scrollY;
+      const scrollHeight = document.documentElement.scrollHeight;
+      const innerHeight = window.innerHeight;
+
+      const isAtBottom = innerHeight + scrollY >= scrollHeight - 8;
+      const isAtTop = scrollY <= 5;
 
       const currentY = e.touches[0].clientY;
-      const swipeDistance = touchStartY.current - currentY;
+      const swipeDistance = touchStartY.current - currentY; // positive = swipe up (scroll down)
 
-      // User swipes up while at the bottom
-      if (isAtBottom && swipeDistance > 60) {
-        triggerNextPage();
+      // Swipe Up at Bottom (requires a solid, deliberate pull > 120px)
+      if (isAtBottom && swipeDistance > 120 && currentIndex < NAV_SEQUENCE.length - 1) {
+        triggerNavigation(NAV_SEQUENCE[currentIndex + 1], false);
+      }
+
+      // Swipe Down at Top (pull down > 120px)
+      if (isAtTop && swipeDistance < -120 && currentIndex > 0) {
+        triggerNavigation(NAV_SEQUENCE[currentIndex - 1], true);
       }
     };
 
@@ -79,6 +137,7 @@ export default function AutoScrollNavigator() {
     window.addEventListener("touchmove", handleTouchMove, { passive: true });
 
     return () => {
+      clearTimeout(cooldownTimer);
       window.removeEventListener("wheel", handleWheel);
       window.removeEventListener("touchstart", handleTouchStart);
       window.removeEventListener("touchmove", handleTouchMove);
