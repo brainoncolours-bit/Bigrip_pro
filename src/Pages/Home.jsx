@@ -423,7 +423,7 @@ function Section4ChromaticMatte({
       className="w-full min-h-[auto] md:min-h-screen bg-black flex flex-col justify-center py-10 sm:py-16 md:py-24 px-4 sm:px-8 md:px-12 lg:px-24 border-b border-neutral-900 relative overflow-hidden"
     >
       <div className="w-full flex justify-between items-center font-mono text-[8px] sm:text-[9px] md:text-[10px] tracking-[0.3em] md:tracking-[0.5em] text-neutral-400 mb-4 sm:mb-6">
-        <span className="text-white text-right">MATTE REEL: ACTIVE</span>
+        <span className="text-white text-right">DUAL PERSPECTIVE | REEL STREAM</span>
       </div>
       <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-8 items-center relative">
         <div className="w-full aspect-[16/10] overflow-hidden bg-neutral-950 border border-neutral-800 relative">
