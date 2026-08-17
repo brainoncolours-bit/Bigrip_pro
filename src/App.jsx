@@ -20,6 +20,7 @@ import Production from "./Pages/Production";
 import Agency from "./Pages/Agency";
 import Community from "./Pages/Community";
 import Journal from "./Pages/Journal";
+import AutoScrollNavigator from "./Pages/AutoScrollNavigator";
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -34,6 +35,7 @@ function ScrollToTop() {
 function AppRoutes() {
   return (
     <Routes>
+      
       <Route path="/" element={<Home />} />
       <Route path="/production" element={<Production />} />
       <Route path="/agency" element={<Agency />} />
@@ -63,6 +65,7 @@ export default function App() {
   return (
     <>
       <ScrollToTop />
+      <AutoScrollNavigator />
       <Navbar />
       <AppRoutes />
       <Footer />

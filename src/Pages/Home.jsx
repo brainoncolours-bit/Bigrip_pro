@@ -46,23 +46,40 @@ function mapWorkRow(row, index) {
 
 function SaturatedVideo({ mediaUrl, fallbackVideoId, opacity = "opacity-100" }) {
   const [videoError, setVideoError] = useState(false);
-  const videoId = mediaUrl && !videoError ? null : fallbackVideoId;
+  const videoRef = useRef(null);
+
+  // Reset error state whenever mediaUrl updates
+  useEffect(() => {
+    setVideoError(false);
+  }, [mediaUrl]);
+
+  const handleVideoError = () => {
+    // Attempt a quick reload if it was a temporary network timeout
+    if (videoRef.current && mediaUrl) {
+      videoRef.current.load();
+    } else {
+      setVideoError(true);
+    }
+  };
+
+  const showFallback = !mediaUrl || videoError;
 
   return (
     <div className="absolute inset-0 w-full h-full overflow-hidden bg-black pointer-events-none">
       {mediaUrl && !videoError ? (
         <video
+          ref={videoRef}
           src={mediaUrl}
           autoPlay
           muted
           loop
           playsInline
-          onError={() => setVideoError(true)}
+          onError={handleVideoError}
           className={`absolute top-1/2 left-1/2 min-w-full min-h-full w-auto h-auto -translate-x-1/2 -translate-y-1/2 object-cover select-none transition-opacity duration-1000 ${opacity}`}
         />
-      ) : videoId ? (
+      ) : fallbackVideoId ? (
         <iframe
-          src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&playsinline=1`}
+          src={`https://www.youtube.com/embed/${fallbackVideoId}?autoplay=1&mute=1&loop=1&playlist=${fallbackVideoId}&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&playsinline=1`}
           title="Vivid Continuum Loop"
           className={`absolute top-1/2 left-1/2 w-[300vw] h-[300vh] sm:w-[150vw] sm:h-[150vh] -translate-x-1/2 -translate-y-1/2 object-cover select-none transition-opacity duration-1000 ${opacity}`}
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -73,22 +90,21 @@ function SaturatedVideo({ mediaUrl, fallbackVideoId, opacity = "opacity-100" }) 
     </div>
   );
 }
-
-// WORKS COMPONENTS
+// WORKS COMPONENTS (NATURAL ASPECT RATIO + HOVER EFFECT)
 function WorkCard({ work, onOpen }) {
   return (
     <div className="group w-full mb-8 sm:mb-12 md:mb-24 lg:mb-32 flex flex-col">
       <button
         type="button"
         onClick={() => work.mediaUrl && onOpen(work)}
-        className={`relative w-full aspect-[4/5] overflow-hidden bg-neutral-950 transition-all border border-neutral-900/60 ${
+        className={`relative w-full overflow-hidden bg-neutral-950 transition-all border border-neutral-900/60 block text-left ${
           work.mediaUrl ? "cursor-pointer" : "cursor-default"
         }`}
       >
         {work.mediaUrl &&
           (work.mediaType === "video" ? (
             <video
-              className="absolute inset-0 h-full w-full object-cover grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out will-change-transform"
+              className="w-full h-auto block grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out will-change-transform"
               src={work.mediaUrl}
               autoPlay
               muted
@@ -97,7 +113,7 @@ function WorkCard({ work, onOpen }) {
             />
           ) : (
             <img
-              className="absolute inset-0 h-full w-full object-cover grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out will-change-transform"
+              className="w-full h-auto block grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out will-change-transform"
               src={work.mediaUrl}
               alt={work.title}
               loading="lazy"
