@@ -10,6 +10,7 @@ const navItems = [
   { to: "/admin/artists", label: "Artists" },
   { to: "/admin/artist-works", label: "Artist Works" },
   { to: "/admin/works", label: "Works" },
+  { to: "/admin/journal-videos", label: "Journal-Videos" },
 ];
 
 export default function AdminLayout({ children }) {

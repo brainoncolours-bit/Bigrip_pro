@@ -21,6 +21,7 @@ import Agency from "./Pages/Agency";
 import Community from "./Pages/Community";
 import Journal from "./Pages/Journal";
 import AutoScrollNavigator from "./Pages/AutoScrollNavigator";
+import AdminJournalVideos from "./Pages/admin/AdminJournalVideos";
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -56,7 +57,9 @@ function AppRoutes() {
       <Route path="/admin/categories" element={<AdminCategories />} />
       <Route path="/admin/artists" element={<AdminArtists />} />
       <Route path="/admin/artist-works" element={<AdminArtistWorks />} />
+      <Route path="/admin/journal-videos" element={<AdminJournalVideos />} />
       <Route path="*" element={<Navigate to="/" replace />} />
+
     </Routes>
   );
 }

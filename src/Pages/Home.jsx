@@ -329,7 +329,7 @@ function Section1Hero({ mediaUrl, fallbackVideoId }) {
         {/* Sub-Header */}
         <div className="w-full mt-0">
           <p className="text-[9px] sm:text-[10px] md:text-xs tracking-[0.25em] sm:tracking-[0.4em] text-neutral-300 font-light uppercase leading-tight">
-            SECRETS OF CREATIVE CULTURE.
+            CREATIVE CULTURE.
           </p>
         </div>
 

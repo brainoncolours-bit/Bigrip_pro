@@ -83,7 +83,7 @@ function ProductionHero() {
         />
 
         {/* Subtle Dark Gradient Overlay */}
-        <div className="absolute inset-0 bg-black/40 mix-blend-multiply" />  
+        <div className="absolute inset-0 bg-black/5 mix-blend-multiply" />  
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/60" />  
       </div>
 

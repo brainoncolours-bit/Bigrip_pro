@@ -34,7 +34,7 @@ function CommunityHero() {
           alt="Community Hero Background"
           className="absolute top-1/2 left-1/2 min-w-full min-h-full w-auto h-auto -translate-x-1/2 -translate-y-1/2 object-cover select-none filter grayscale-[40%] contrast-110 brightness-90"
         />
-        <div className="absolute inset-0 bg-black/30 mix-blend-multiply" />
+        <div className="absolute inset-0 bg-black/5 mix-blend-multiply" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/60" />
       </div>
 
