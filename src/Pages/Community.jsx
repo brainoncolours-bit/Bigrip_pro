@@ -30,7 +30,7 @@ function CommunityHero() {
       {/* Background Video Layer */}
       <div className="absolute inset-0 z-0 pointer-events-none w-full h-full overflow-hidden">
         <img
-          src="/web banner 4.jpeg"
+          src="/web banner 6.jpeg"
           alt="Community Hero Background"
           className="absolute top-1/2 left-1/2 min-w-full min-h-full w-auto h-auto -translate-x-1/2 -translate-y-1/2 object-cover select-none filter grayscale-[40%] contrast-110 brightness-90"
         />
