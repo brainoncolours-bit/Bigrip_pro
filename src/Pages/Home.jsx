@@ -317,7 +317,7 @@ function Section1Hero({ mediaUrl, fallbackVideoId }) {
         {/* Logo with negative margins to compensate for image canvas padding */}
         <div className="w-auto flex items-start -ml-4 sm:-ml-6 md:-ml-8 -mb-6 sm:-mb-10 md:-mb-14">
           <img
-            src="/logo (2).png"
+            src="/white logo.png"
             alt="Sekrick Logo"
             className="h-[clamp(5.5rem,16vw,12rem)] w-auto max-w-[92vw] md:max-w-2xl object-contain object-left brightness-200 contrast-125 filter drop-shadow-2xl select-none block"
           />

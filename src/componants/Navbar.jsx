@@ -64,7 +64,7 @@ const Navbar = ({ mode = "dark" }) => {
           {/* Editorial Logo Image (Positioned absolutely so it doesn't affect nav height) */}
           <div className="select-none flex items-center h-full">
             <img 
-              src="/logo (2).png" 
+              src="/white logo.png" 
               alt="Sekrick Logo" 
               className="h-18 md:h-22 w-auto object-contain transition-all duration-500 max-w-none" 
             />

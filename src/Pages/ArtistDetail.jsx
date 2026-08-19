@@ -149,10 +149,7 @@ const ArtistDetail = () => {
 
       {/* Selected Works Portfolio (Dynamic Aspect Ratios) */}
       <section>
-        <div className="w-full flex justify-between items-end border-b border-neutral-900 pb-3 mb-8 font-mono text-[9px] tracking-[0.3em] text-neutral-500 uppercase">
-          <span>[ ARCHIVE WORKS ]</span>
-          <span>UNITS // {String(works.length).padStart(2, "0")}</span>
-        </div>
+      
 
         {works.length === 0 ? (
           <p className="font-mono text-[10px] text-neutral-600 uppercase tracking-widest py-12">
