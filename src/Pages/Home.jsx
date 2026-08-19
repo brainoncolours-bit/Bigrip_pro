@@ -127,9 +127,6 @@ function WorkCard({ work, onOpen }) {
           <h3 className="text-xl sm:text-2xl font-light tracking-tight text-white uppercase group-hover:text-neutral-300 transition-colors">
             {work.title}
           </h3>
-          <p className="text-neutral-500 text-[10px] sm:text-[11px] font-mono tracking-widest uppercase mt-1">
-            {work.category} // {work.year}
-          </p>
         </div>
         <button
           onClick={() => work.mediaUrl && onOpen(work)}
@@ -402,6 +399,36 @@ function Section2Threshold() {
   );
 }
 
+// SECTION 3: HERO BANNER (CLEAN VIDEO ONLY)
+function Section3HeroBanner({ mediaUrl, fallbackVideoId }) {
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"],
+  });
+
+  const scale = useTransform(scrollYProgress, [0, 1], [1.08, 1]);
+
+  return (
+    <section
+      ref={containerRef}
+      className="relative w-full h-[70svh] sm:h-[85svh] md:h-[100svh] min-h-[480px] bg-black overflow-hidden flex flex-col justify-end p-6 sm:p-10 md:p-14 lg:p-16 border-b border-neutral-900"
+    >
+      <motion.div style={{ scale }} className="absolute inset-0 w-full h-full">
+        <SaturatedVideo
+          mediaUrl={mediaUrl}
+          fallbackVideoId={fallbackVideoId}
+          opacity="opacity-100"
+        />
+      </motion.div>
+
+      {/* Overlay Vignette */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent pointer-events-none" />
+    </section>
+  );
+}
+
+
 // SECTION 4: CHROMATIC MATTE
 function Section4ChromaticMatte({
   slowMediaUrl,
@@ -599,6 +626,10 @@ export default function Home() {
         fallbackVideoId={ASSETS.heroVideo}
       />
       <Section2Threshold />
+      <Section3HeroBanner
+        mediaUrl={videos.hero_secondary}
+        fallbackVideoId={ASSETS.cinematicClip2}
+      />
       <Section4ChromaticMatte
         slowMediaUrl={videos.chromatic_matte_1}
         slowFallback={ASSETS.cinematicClip3}
