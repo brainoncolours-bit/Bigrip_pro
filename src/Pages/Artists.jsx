@@ -72,7 +72,7 @@ const Artists = () => {
       return (
         <video
           src={item.url}
-          className="h-full w-auto block max-w-none"
+          className="h-full w-auto block max-w-none object-cover"
           autoPlay
           muted
           loop
@@ -84,7 +84,7 @@ const Artists = () => {
       <img
         src={item.url}
         alt={`${artistName} work preview ${index + 1}`}
-        className="h-full w-auto block max-w-none"
+        className="h-full w-auto block max-w-none object-cover"
       />
     );
   };
@@ -144,19 +144,13 @@ const Artists = () => {
                         {artist.name}
                       </button>
 
-                      {isActive && artist.bio && (
-                        <p className="mt-1 text-[11px] font-sans text-neutral-400 line-clamp-2 leading-relaxed animate-fadeIn">
-                          {artist.bio}
-                        </p>
-                      )}
-
                       {/* LEFT SIDE WORKS ROW */}
                       {isActive && leftImages.length > 0 && (
-                        <div className="absolute top-0 right-[calc(100%+1.5rem)] flex gap-4 items-center pointer-events-none z-30">
+                        <div className="absolute top-0 right-[calc(100%+1.5rem)] flex gap-4 items-center pointer-events-none z-20">
                           {leftImages.map((item, idx) => (
                             <div
                               key={`left-preview-${artist.id}-${idx}`}
-                              className="shrink-0 h-44 w-auto bg-neutral-950 border border-neutral-800 shadow-xl overflow-hidden"
+                              className="relative shrink-0 h-44 w-auto bg-neutral-950 border border-neutral-800 shadow-2xl overflow-hidden"
                             >
                               {renderMedia(item, artist.name, idx)}
                             </div>
@@ -166,15 +160,25 @@ const Artists = () => {
 
                       {/* RIGHT SIDE WORKS ROW */}
                       {isActive && rightImages.length > 0 && (
-                        <div className="absolute top-0 left-[calc(100%+1.5rem)] flex gap-4 items-center pointer-events-none z-30">
+                        <div className="absolute top-0 left-[calc(100%+1.5rem)] flex gap-4 items-center pointer-events-none z-20">
                           {rightImages.map((item, idx) => (
                             <div
                               key={`right-preview-${artist.id}-${idx}`}
-                              className="shrink-0 h-44 w-auto bg-neutral-950 border border-neutral-800 shadow-xl overflow-hidden"
+                              className="relative shrink-0 h-44 w-auto bg-neutral-950 border border-neutral-800 shadow-2xl overflow-hidden"
                             >
                               {renderMedia(item, artist.name, idx + LEFT_COUNT)}
                             </div>
                           ))}
+                        </div>
+                      )}
+
+                      
+                      {/* FULL-SCREEN WIDTH BIO DIRECTLY BELOW THE NAME */}
+                      {isActive && artist.bio && (
+                        <div className="fixed left-0 right-0 top-[calc(7rem+2.2rem)] z-40 pointer-events-none px-6 md:px-12 lg:px-20">
+                          <p className="text-[10px] sm:text-[11px] md:text-xs font-sans font-light text-neutral-200 leading-relaxed tracking-wide w-full drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
+                            {artist.bio}
+                          </p>
                         </div>
                       )}
                     </li>
