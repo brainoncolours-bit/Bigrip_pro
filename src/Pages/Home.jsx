@@ -44,32 +44,36 @@ function mapWorkRow(row, index) {
   };
 }
 
-function SaturatedVideo({ mediaUrl, fallbackVideoId, opacity = "opacity-100" }) {
-  const [videoError, setVideoError] = useState(false);
+function SaturatedVideo({
+  mediaUrl,
+  localFallback,
+  fallbackVideoId,
+  opacity = "opacity-100",
+}) {
+  const [failedUrls, setFailedUrls] = useState({});
   const videoRef = useRef(null);
 
-  // Reset error state whenever mediaUrl updates
-  useEffect(() => {
-    setVideoError(false);
-  }, [mediaUrl]);
+  // Candidate video: mediaUrl first, then localFallback if available and not failed
+  const candidateUrl =
+    mediaUrl && !failedUrls[mediaUrl]
+      ? mediaUrl
+      : localFallback && !failedUrls[localFallback]
+      ? localFallback
+      : null;
 
   const handleVideoError = () => {
-    // Attempt a quick reload if it was a temporary network timeout
-    if (videoRef.current && mediaUrl) {
-      videoRef.current.load();
-    } else {
-      setVideoError(true);
+    if (candidateUrl) {
+      setFailedUrls((prev) => ({ ...prev, [candidateUrl]: true }));
     }
   };
 
-  const showFallback = !mediaUrl || videoError;
-
   return (
     <div className="absolute inset-0 w-full h-full overflow-hidden bg-black pointer-events-none">
-      {mediaUrl && !videoError ? (
+      {candidateUrl ? (
         <video
+          key={candidateUrl}
           ref={videoRef}
-          src={mediaUrl}
+          src={candidateUrl}
           autoPlay
           muted
           loop
@@ -90,6 +94,7 @@ function SaturatedVideo({ mediaUrl, fallbackVideoId, opacity = "opacity-100" }) 
     </div>
   );
 }
+
 
 // WORKS COMPONENTS (FULL COLOR + NO INDEX BADGE OVERLAY)
 function WorkCard({ work, onOpen }) {
@@ -289,7 +294,7 @@ function MediaViewer({ work, onClose }) {
 }
 
 // SECTION 1: RESPONSIVE HERO (TIGHT LEFT-ALIGNED LOGO)
-function Section1Hero({ mediaUrl, fallbackVideoId }) {
+function Section1Hero({ mediaUrl, localFallback, fallbackVideoId }) {
   const containerRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -306,9 +311,11 @@ function Section1Hero({ mediaUrl, fallbackVideoId }) {
     >
       <SaturatedVideo
         mediaUrl={mediaUrl}
+        localFallback={localFallback}
         fallbackVideoId={fallbackVideoId}
         opacity="opacity-100"
       />
+
 
       <motion.div
         style={{ scale: textScale, opacity }}
@@ -400,7 +407,7 @@ function Section2Threshold() {
 }
 
 // SECTION 3: HERO BANNER (CLEAN VIDEO ONLY)
-function Section3HeroBanner({ mediaUrl, fallbackVideoId }) {
+function Section3HeroBanner({ mediaUrl, localFallback, fallbackVideoId }) {
   const containerRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -417,6 +424,7 @@ function Section3HeroBanner({ mediaUrl, fallbackVideoId }) {
       <motion.div style={{ scale }} className="absolute inset-0 w-full h-full">
         <SaturatedVideo
           mediaUrl={mediaUrl}
+          localFallback={localFallback}
           fallbackVideoId={fallbackVideoId}
           opacity="opacity-100"
         />
@@ -432,8 +440,10 @@ function Section3HeroBanner({ mediaUrl, fallbackVideoId }) {
 // SECTION 4: CHROMATIC MATTE
 function Section4ChromaticMatte({
   slowMediaUrl,
+  slowLocalFallback,
   slowFallback,
   fastMediaUrl,
+  fastLocalFallback,
   fastFallback,
 }) {
   const triggerRef = useRef(null);
@@ -460,6 +470,7 @@ function Section4ChromaticMatte({
           >
             <SaturatedVideo
               mediaUrl={slowMediaUrl}
+              localFallback={slowLocalFallback}
               fallbackVideoId={slowFallback}
             />
           </motion.div>
@@ -471,6 +482,7 @@ function Section4ChromaticMatte({
           >
             <SaturatedVideo
               mediaUrl={fastMediaUrl}
+              localFallback={fastLocalFallback}
               fallbackVideoId={fastFallback}
             />
           </motion.div>
@@ -481,7 +493,7 @@ function Section4ChromaticMatte({
 }
 
 // SECTION 8: VIDEO INTERCEPT
-function Section8VideoIntercept({ mediaUrl, fallbackVideoId }) {
+function Section8VideoIntercept({ mediaUrl, localFallback, fallbackVideoId }) {
   const containerRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -500,6 +512,7 @@ function Section8VideoIntercept({ mediaUrl, fallbackVideoId }) {
       >
         <SaturatedVideo
           mediaUrl={mediaUrl}
+          localFallback={localFallback}
           fallbackVideoId={fallbackVideoId}
           opacity="opacity-100"
         />
@@ -513,7 +526,7 @@ function Section8VideoIntercept({ mediaUrl, fallbackVideoId }) {
 }
 
 // SECTION 10: ASYMMETRIC BLOCK
-function Section10AsymmetricBlock({ mediaUrl, fallbackVideoId }) {
+function Section10AsymmetricBlock({ mediaUrl, localFallback, fallbackVideoId }) {
   const blockRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: blockRef,
@@ -535,6 +548,7 @@ function Section10AsymmetricBlock({ mediaUrl, fallbackVideoId }) {
         <div className="w-full aspect-[16/10] overflow-hidden bg-neutral-950 border border-neutral-800 relative z-10">
           <SaturatedVideo
             mediaUrl={mediaUrl}
+            localFallback={localFallback}
             fallbackVideoId={fallbackVideoId}
           />
         </div>
@@ -570,13 +584,17 @@ export default function Home() {
   // Fetch Home Videos from Supabase
   useEffect(() => {
     async function loadVideos() {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("home_videos")
         .select("*")
         .eq("published", true)
         .order("sort_order", { ascending: true });
 
-      if (data) {
+      if (error) {
+        console.warn("Home videos could not be loaded from Supabase:", error.message);
+      }
+
+      if (data && data.length > 0) {
         const map = {};
         data.forEach((v) => {
           map[v.section_key] = v.media_url;
@@ -623,25 +641,31 @@ export default function Home() {
     <main className="bg-black text-white overflow-x-hidden selection:bg-white selection:text-black antialiased w-full">
       <Section1Hero
         mediaUrl={videos.hero}
+        localFallback="/web 31.mp4"
         fallbackVideoId={ASSETS.heroVideo}
       />
       <Section2Threshold />
       <Section3HeroBanner
         mediaUrl={videos.hero_secondary}
+        localFallback="/web 10.mp4"
         fallbackVideoId={ASSETS.cinematicClip2}
       />
       <Section4ChromaticMatte
         slowMediaUrl={videos.chromatic_matte_1}
+        slowLocalFallback="/web 26.mp4"
         slowFallback={ASSETS.cinematicClip3}
         fastMediaUrl={videos.fastMediaUrl || videos.chromatic_matte_2}
+        fastLocalFallback="/REEL 6 WEB.mp4"
         fastFallback={ASSETS.heroVideo}
       />
       <Section8VideoIntercept
         mediaUrl={videos.video_intercept}
+        localFallback="/web 10.mp4"
         fallbackVideoId={ASSETS.cinematicClip2}
       />
       <Section10AsymmetricBlock
         mediaUrl={videos.asymmetric_block}
+        localFallback="/web 31.mp4"
         fallbackVideoId={ASSETS.heroVideo}
       />
       <WorksGridSection

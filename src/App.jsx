@@ -50,6 +50,7 @@ function AppRoutes() {
       <Route path="/artists" element={<Artists />} />
       <Route path="/artists/:id" element={<ArtistDetail />} />
       <Route path="/admin" element={<AdminLogin />} />
+      <Route path="/admin/login" element={<AdminLogin />} />
       <Route path="/admin/dashboard" element={<AdminDashboard />} />
       <Route path="/admin/home-videos" element={<AdminHomeVideos />} />
       <Route path="/admin/services-videos" element={<AdminServicesVideos />} />
