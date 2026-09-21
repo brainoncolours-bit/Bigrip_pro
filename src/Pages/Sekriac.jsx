@@ -249,8 +249,17 @@ function ServicesContact() {
 /* ==========================================
    MAIN SERVICES PAGE COMPONENT EXPORT
    ========================================== */
+const STORAGE_KEY_SERVICES_VIDEOS = "sekrick_services_videos_cache";
+
 export default function Services() {
-  const [videos, setVideos] = useState({});
+  const [videos, setVideos] = useState(() => {
+    try {
+      const cached = localStorage.getItem(STORAGE_KEY_SERVICES_VIDEOS);
+      return cached ? JSON.parse(cached) : {};
+    } catch {
+      return {};
+    }
+  });
   const [serviceItems, setServiceItems] = useState(DEFAULT_SERVICES_CONTENT);
   const [ctaContent, setCtaContent] = useState(DEFAULT_CTA_CONTENT);
 
@@ -291,6 +300,9 @@ export default function Services() {
           }
         });
         setVideos(map);
+        try {
+          localStorage.setItem(STORAGE_KEY_SERVICES_VIDEOS, JSON.stringify(map));
+        } catch {}
         setCtaContent(cta);
         if (Object.keys(itemMap).length > 0) {
           setServiceItems(

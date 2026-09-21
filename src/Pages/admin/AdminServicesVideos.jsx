@@ -78,6 +78,10 @@ export default function AdminServicesVideos() {
 
       if (updateError) throw updateError;
 
+      try {
+        localStorage.removeItem("sekrick_services_videos_cache");
+      } catch {}
+
       await loadSections();
     } catch (err) {
       setError(err.message);
@@ -97,6 +101,11 @@ export default function AdminServicesVideos() {
         .eq("id", section.id);
 
       if (updateError) throw updateError;
+
+      try {
+        localStorage.removeItem("sekrick_services_videos_cache");
+      } catch {}
+
       await loadSections();
     } catch (err) {
       setError(err.message);
@@ -117,6 +126,10 @@ export default function AdminServicesVideos() {
       setError(updateError.message);
       return;
     }
+
+    try {
+      localStorage.removeItem("sekrick_services_videos_cache");
+    } catch {}
 
     await loadSections();
   }

@@ -135,6 +135,10 @@ export default function AdminWorks() {
       const { error: saveError } = await query;
       if (saveError) throw saveError;
 
+      try {
+        localStorage.removeItem("sekrick_home_works_cache");
+      } catch {}
+
       setStatus(editing ? "Work updated." : "Work uploaded.");
       setForm(emptyForm);
       setFile(null);
@@ -152,6 +156,10 @@ export default function AdminWorks() {
       setError(deleteError.message);
       return;
     }
+
+    try {
+      localStorage.removeItem("sekrick_home_works_cache");
+    } catch {}
 
     if (form.id === id) setForm(emptyForm);
     await loadWorks();

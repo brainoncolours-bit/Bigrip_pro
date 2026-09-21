@@ -68,7 +68,7 @@ function CommunityCategoriesGrid() {
     {
       num: "01",
       title: "EVENTS",
-      desc: "Bringing creative people together through conversations, gatherings and experiences.",
+      desc: "Bringing creative people together through conversations, gatherings, and experiences.",
     },
     {
       num: "02",

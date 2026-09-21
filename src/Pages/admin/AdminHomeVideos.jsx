@@ -119,6 +119,9 @@ export default function AdminHomeVideos() {
         .upsert(payload, { onConflict: "section_key" });
 
       if (saveError) throw saveError;
+      try {
+        localStorage.removeItem("sekrick_home_videos_cache");
+      } catch {}
       await loadSections();
     } catch (err) {
       setError(err.message);
@@ -175,6 +178,9 @@ export default function AdminHomeVideos() {
         .upsert(payload, { onConflict: "section_key" });
 
       if (updateError) throw updateError;
+      try {
+        localStorage.removeItem("sekrick_home_videos_cache");
+      } catch {}
       await loadSections();
     } catch (err) {
       setError(err.message);

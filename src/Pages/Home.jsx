@@ -49,15 +49,16 @@ function SaturatedVideo({
   localFallback,
   fallbackVideoId,
   opacity = "opacity-100",
+  isLoading = false,
 }) {
   const [failedUrls, setFailedUrls] = useState({});
   const videoRef = useRef(null);
 
-  // Candidate video: mediaUrl first, then localFallback if available and not failed
+  // Candidate video: mediaUrl first, then localFallback ONLY when not loading and available
   const candidateUrl =
     mediaUrl && !failedUrls[mediaUrl]
       ? mediaUrl
-      : localFallback && !failedUrls[localFallback]
+      : !isLoading && localFallback && !failedUrls[localFallback]
       ? localFallback
       : null;
 
@@ -66,6 +67,12 @@ function SaturatedVideo({
       setFailedUrls((prev) => ({ ...prev, [candidateUrl]: true }));
     }
   };
+
+  useEffect(() => {
+    if (videoRef.current && candidateUrl) {
+      videoRef.current.play().catch(() => {});
+    }
+  }, [candidateUrl]);
 
   return (
     <div className="absolute inset-0 w-full h-full overflow-hidden bg-black pointer-events-none">
@@ -81,7 +88,7 @@ function SaturatedVideo({
           onError={handleVideoError}
           className={`absolute top-1/2 left-1/2 min-w-full min-h-full w-auto h-auto -translate-x-1/2 -translate-y-1/2 object-cover select-none transition-opacity duration-1000 ${opacity}`}
         />
-      ) : fallbackVideoId ? (
+      ) : !isLoading && fallbackVideoId ? (
         <iframe
           src={`https://www.youtube.com/embed/${fallbackVideoId}?autoplay=1&mute=1&loop=1&playlist=${fallbackVideoId}&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&playsinline=1`}
           title="Vivid Continuum Loop"
@@ -294,7 +301,7 @@ function MediaViewer({ work, onClose }) {
 }
 
 // SECTION 1: RESPONSIVE HERO (TIGHT LEFT-ALIGNED LOGO)
-function Section1Hero({ mediaUrl, localFallback, fallbackVideoId }) {
+function Section1Hero({ mediaUrl, localFallback, fallbackVideoId, isLoading }) {
   const containerRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -313,6 +320,7 @@ function Section1Hero({ mediaUrl, localFallback, fallbackVideoId }) {
         mediaUrl={mediaUrl}
         localFallback={localFallback}
         fallbackVideoId={fallbackVideoId}
+        isLoading={isLoading}
         opacity="opacity-100"
       />
 
@@ -352,9 +360,9 @@ function Section1Hero({ mediaUrl, localFallback, fallbackVideoId }) {
 function Section2Threshold() {
   const containerRef = useRef(null);
   const lines = [
-    "MORE THAN A PRODUCTION HOUSE.",
-    "SEKRICK is an independent creative company built around production, ideas, people and culture.",
-    "We work across commercial production, creative direction, fashion, film and visual culture — collaborating with brands, artists and creative talent to develop ideas from concept to screen.",
+    "MORE THAN A PRODUCTION COMPANY.",
+    "SEKRICK is an independent creative company based on production, ideas, people and culture.",
+    "We work across commercial production, creative direction, fashion, film and visual culture – working with brands, artists and creative talent to develop ideas from concept to screen.",
   ];
 
   useEffect(() => {
@@ -407,7 +415,7 @@ function Section2Threshold() {
 }
 
 // SECTION 3: HERO BANNER (CLEAN VIDEO ONLY)
-function Section3HeroBanner({ mediaUrl, localFallback, fallbackVideoId }) {
+function Section3HeroBanner({ mediaUrl, localFallback, fallbackVideoId, isLoading }) {
   const containerRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -426,6 +434,7 @@ function Section3HeroBanner({ mediaUrl, localFallback, fallbackVideoId }) {
           mediaUrl={mediaUrl}
           localFallback={localFallback}
           fallbackVideoId={fallbackVideoId}
+          isLoading={isLoading}
           opacity="opacity-100"
         />
       </motion.div>
@@ -445,6 +454,7 @@ function Section4ChromaticMatte({
   fastMediaUrl,
   fastLocalFallback,
   fastFallback,
+  isLoading,
 }) {
   const triggerRef = useRef(null);
   const { scrollYProgress } = useScroll({
@@ -472,6 +482,7 @@ function Section4ChromaticMatte({
               mediaUrl={slowMediaUrl}
               localFallback={slowLocalFallback}
               fallbackVideoId={slowFallback}
+              isLoading={isLoading}
             />
           </motion.div>
         </div>
@@ -484,6 +495,7 @@ function Section4ChromaticMatte({
               mediaUrl={fastMediaUrl}
               localFallback={fastLocalFallback}
               fallbackVideoId={fastFallback}
+              isLoading={isLoading}
             />
           </motion.div>
         </div>
@@ -493,7 +505,7 @@ function Section4ChromaticMatte({
 }
 
 // SECTION 8: VIDEO INTERCEPT
-function Section8VideoIntercept({ mediaUrl, localFallback, fallbackVideoId }) {
+function Section8VideoIntercept({ mediaUrl, localFallback, fallbackVideoId, isLoading }) {
   const containerRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -514,6 +526,7 @@ function Section8VideoIntercept({ mediaUrl, localFallback, fallbackVideoId }) {
           mediaUrl={mediaUrl}
           localFallback={localFallback}
           fallbackVideoId={fallbackVideoId}
+          isLoading={isLoading}
           opacity="opacity-100"
         />
       </motion.div>
@@ -526,7 +539,7 @@ function Section8VideoIntercept({ mediaUrl, localFallback, fallbackVideoId }) {
 }
 
 // SECTION 10: ASYMMETRIC BLOCK
-function Section10AsymmetricBlock({ mediaUrl, localFallback, fallbackVideoId }) {
+function Section10AsymmetricBlock({ mediaUrl, localFallback, fallbackVideoId, isLoading }) {
   const blockRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: blockRef,
@@ -550,6 +563,7 @@ function Section10AsymmetricBlock({ mediaUrl, localFallback, fallbackVideoId }) 
             mediaUrl={mediaUrl}
             localFallback={localFallback}
             fallbackVideoId={fallbackVideoId}
+            isLoading={isLoading}
           />
         </div>
         <motion.div
@@ -564,10 +578,46 @@ function Section10AsymmetricBlock({ mediaUrl, localFallback, fallbackVideoId }) 
 /* ==========================================
    MAIN ROOT EXPORT ENTRY COMPONENT
    ========================================== */
+const STORAGE_KEY_VIDEOS = "sekrick_home_videos_cache";
+const STORAGE_KEY_WORKS = "sekrick_home_works_cache";
+
 export default function Home() {
-  const [videos, setVideos] = useState({});
-  const [works, setWorks] = useState([]);
-  const [loadingWorks, setLoadingWorks] = useState(true);
+  const [videos, setVideos] = useState(() => {
+    try {
+      const cached = localStorage.getItem(STORAGE_KEY_VIDEOS);
+      return cached ? JSON.parse(cached) : {};
+    } catch {
+      return {};
+    }
+  });
+
+  const [loadingVideos, setLoadingVideos] = useState(() => {
+    try {
+      const cached = localStorage.getItem(STORAGE_KEY_VIDEOS);
+      return !cached || Object.keys(JSON.parse(cached)).length === 0;
+    } catch {
+      return true;
+    }
+  });
+
+  const [works, setWorks] = useState(() => {
+    try {
+      const cached = localStorage.getItem(STORAGE_KEY_WORKS);
+      return cached ? JSON.parse(cached) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const [loadingWorks, setLoadingWorks] = useState(() => {
+    try {
+      const cached = localStorage.getItem(STORAGE_KEY_WORKS);
+      return !(cached && JSON.parse(cached).length > 0);
+    } catch {
+      return true;
+    }
+  });
+
   const [worksError, setWorksError] = useState(null);
 
   useEffect(() => {
@@ -583,26 +633,45 @@ export default function Home() {
 
   // Fetch Home Videos from Supabase
   useEffect(() => {
+    let mounted = true;
+
     async function loadVideos() {
-      const { data, error } = await supabase
-        .from("home_videos")
-        .select("*")
-        .eq("published", true)
-        .order("sort_order", { ascending: true });
+      try {
+        const { data, error } = await supabase
+          .from("home_videos")
+          .select("*")
+          .eq("published", true)
+          .order("sort_order", { ascending: true });
 
-      if (error) {
-        console.warn("Home videos could not be loaded from Supabase:", error.message);
-      }
+        if (!mounted) return;
 
-      if (data && data.length > 0) {
-        const map = {};
-        data.forEach((v) => {
-          map[v.section_key] = v.media_url;
-        });
-        setVideos(map);
+        if (error) {
+          console.warn("Home videos could not be loaded from Supabase:", error.message);
+        }
+
+        if (data && data.length > 0) {
+          const map = {};
+          data.forEach((v) => {
+            map[v.section_key] = v.media_url;
+          });
+          setVideos(map);
+          try {
+            localStorage.setItem(STORAGE_KEY_VIDEOS, JSON.stringify(map));
+          } catch (e) {
+            console.warn("Failed to cache home videos:", e);
+          }
+        }
+      } finally {
+        if (mounted) {
+          setLoadingVideos(false);
+        }
       }
     }
+
     loadVideos();
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   // Fetch Works from Supabase
@@ -610,25 +679,38 @@ export default function Home() {
     let mounted = true;
 
     async function loadWorks() {
-      const { data, error: fetchError } = await supabase
-        .from("works")
-        .select("*")
-        .eq("published", true)
-        .order("sort_order", { ascending: true });
+      try {
+        const { data, error: fetchError } = await supabase
+          .from("works")
+          .select("*")
+          .eq("published", true)
+          .order("sort_order", { ascending: true });
 
-      if (!mounted) return;
+        if (!mounted) return;
 
-      if (fetchError || !data || data.length === 0) {
-        const syntheticData = Array.from({ length: 4 }).map((_, idx) =>
-          mapWorkRow({}, idx)
-        );
-        setWorks(syntheticData);
-        setWorksError(null);
-      } else {
-        setWorksError(null);
-        setWorks(data.map(mapWorkRow));
+        if (fetchError || !data || data.length === 0) {
+          setWorks((prev) => {
+            if (prev && prev.length > 0) return prev;
+            return Array.from({ length: 4 }).map((_, idx) => mapWorkRow({}, idx));
+          });
+          setWorksError(null);
+        } else {
+          const mapped = data.map(mapWorkRow);
+          setWorksError(null);
+          setWorks(mapped);
+          try {
+            localStorage.setItem(STORAGE_KEY_WORKS, JSON.stringify(mapped));
+          } catch (e) {
+            console.warn("Failed to cache works:", e);
+          }
+        }
+      } catch (err) {
+        console.warn("Error fetching works:", err);
+      } finally {
+        if (mounted) {
+          setLoadingWorks(false);
+        }
       }
-      setLoadingWorks(false);
     }
 
     loadWorks();
@@ -643,12 +725,14 @@ export default function Home() {
         mediaUrl={videos.hero}
         localFallback="/web 31.mp4"
         fallbackVideoId={ASSETS.heroVideo}
+        isLoading={loadingVideos}
       />
       <Section2Threshold />
       <Section3HeroBanner
         mediaUrl={videos.hero_secondary}
         localFallback="/web 10.mp4"
         fallbackVideoId={ASSETS.cinematicClip2}
+        isLoading={loadingVideos}
       />
       <Section4ChromaticMatte
         slowMediaUrl={videos.chromatic_matte_1}
@@ -657,16 +741,19 @@ export default function Home() {
         fastMediaUrl={videos.fastMediaUrl || videos.chromatic_matte_2}
         fastLocalFallback="/REEL 6 WEB.mp4"
         fastFallback={ASSETS.heroVideo}
+        isLoading={loadingVideos}
       />
       <Section8VideoIntercept
         mediaUrl={videos.video_intercept}
         localFallback="/web 10.mp4"
         fallbackVideoId={ASSETS.cinematicClip2}
+        isLoading={loadingVideos}
       />
       <Section10AsymmetricBlock
         mediaUrl={videos.asymmetric_block}
         localFallback="/web 31.mp4"
         fallbackVideoId={ASSETS.heroVideo}
+        isLoading={loadingVideos}
       />
       <WorksGridSection
         works={works}
