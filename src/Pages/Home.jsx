@@ -21,7 +21,24 @@ const FALLBACK_ASSETS = [
   "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=1200&q=80",
 ];
 
+const DEFAULT_WORK_FALLBACKS = [
+  "/admin_works/work_01.mp4",
+  "/admin_works/work_02.mp4",
+  "/admin_works/work_03_1.jpg",
+  "/admin_works/work_04.jpg",
+  "/admin_works/work_05.jpg",
+  "/admin_works/work_06.jpg",
+  "/admin_works/work_07.jpg",
+  "/admin_works/work_08.jpg",
+];
+
 function mapWorkRow(row, index) {
+  const defaultAsset = DEFAULT_WORK_FALLBACKS[index % DEFAULT_WORK_FALLBACKS.length];
+  const rawUrl = row.media_url || defaultAsset;
+  const isVideo =
+    row.media_type === "video" ||
+    Boolean(rawUrl && rawUrl.match(/\.(mp4|mov|webm|m4v)(\?|$)/i));
+
   return {
     id: row.display_id || String(index + 1).padStart(2, "0"),
     title:
@@ -36,8 +53,9 @@ function mapWorkRow(row, index) {
     category: row.category || "Creative Direction",
     year: row.year || "2026",
     tag: row.tag || "Campaign Asset",
-    mediaType: row.media_type || "image",
-    mediaUrl: row.media_url || FALLBACK_ASSETS[index % FALLBACK_ASSETS.length],
+    mediaType: isVideo ? "video" : "image",
+    mediaUrl: rawUrl,
+    localFallback: defaultAsset,
     desc:
       row.desc ||
       "Commercial production overview and spatial execution details aligned with high-fashion client rosters.",
@@ -140,33 +158,53 @@ function SaturatedVideo({
 
 // WORKS COMPONENTS (FULL COLOR + NO INDEX BADGE OVERLAY)
 function WorkCard({ work, onOpen }) {
+  const [currentSrc, setCurrentSrc] = useState(work.mediaUrl);
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    setCurrentSrc(work.mediaUrl);
+    setHasError(false);
+  }, [work.mediaUrl]);
+
+  const handleMediaError = () => {
+    if (!hasError && work.localFallback && currentSrc !== work.localFallback) {
+      setCurrentSrc(work.localFallback);
+      setHasError(true);
+    }
+  };
+
+  const isVideo = work.mediaType === "video";
+
   return (
     <div className="group w-full mb-8 sm:mb-12 md:mb-24 lg:mb-32 flex flex-col">
       <button
         type="button"
-        onClick={() => work.mediaUrl && onOpen(work)}
-        className={`relative w-full overflow-hidden bg-neutral-950 transition-all border border-neutral-900/60 block text-left ${
-          work.mediaUrl ? "cursor-pointer" : "cursor-default"
-        }`}
+        onClick={() => (currentSrc || work.mediaUrl) && onOpen({ ...work, mediaUrl: currentSrc || work.mediaUrl })}
+        className="relative w-full aspect-[4/5] sm:aspect-[3/4] md:aspect-[4/5] overflow-hidden bg-neutral-950 transition-all border border-neutral-900/80 block text-left cursor-pointer group-hover:border-neutral-700"
       >
-        {work.mediaUrl &&
-          (work.mediaType === "video" ? (
-            <video
-              className="w-full h-auto block opacity-100 group-hover:scale-105 transition-all duration-700 ease-out will-change-transform"
-              src={work.mediaUrl}
-              autoPlay
-              muted
-              loop
-              playsInline
-            />
-          ) : (
-            <img
-              className="w-full h-auto block opacity-100 group-hover:scale-105 transition-all duration-700 ease-out will-change-transform"
-              src={work.mediaUrl}
-              alt={work.title}
-              loading="lazy"
-            />
-          ))}
+        {isVideo ? (
+          <video
+            key={currentSrc}
+            className="w-full h-full object-cover block opacity-100 group-hover:scale-105 transition-all duration-700 ease-out will-change-transform"
+            src={currentSrc}
+            autoPlay
+            muted
+            loop
+            playsInline
+            webkit-playsinline="true"
+            preload="auto"
+            onError={handleMediaError}
+          />
+        ) : (
+          <img
+            key={currentSrc}
+            className="w-full h-full object-cover block opacity-100 group-hover:scale-105 transition-all duration-700 ease-out will-change-transform"
+            src={currentSrc}
+            alt={work.title}
+            decoding="async"
+            onError={handleMediaError}
+          />
+        )}
       </button>
 
       <div className="mt-3 sm:mt-4 md:mt-6 flex flex-col md:flex-row md:justify-between md:items-baseline font-sans border-b border-neutral-900 pb-4 gap-2 md:gap-0">
@@ -176,7 +214,7 @@ function WorkCard({ work, onOpen }) {
           </h3>
         </div>
         <button
-          onClick={() => work.mediaUrl && onOpen(work)}
+          onClick={() => (currentSrc || work.mediaUrl) && onOpen({ ...work, mediaUrl: currentSrc || work.mediaUrl })}
           className="mt-2 md:mt-0 font-mono text-[8px] sm:text-[9px] tracking-widest uppercase border border-neutral-800 hover:border-white px-3 sm:px-4 py-1.5 sm:py-2 text-neutral-400 hover:text-white transition-all self-start md:self-auto"
         >
           VIEW_REEL_DATA &rarr;
@@ -281,12 +319,23 @@ function MediaViewer({ work, onClose }) {
                     controls
                     autoPlay
                     playsInline
+                    webkit-playsinline="true"
+                    onError={(e) => {
+                      if (work.localFallback && e.target.src !== work.localFallback) {
+                        e.target.src = work.localFallback;
+                      }
+                    }}
                   />
                 ) : (
                   <img
                     className="max-h-[55vh] sm:max-h-[70vh] lg:max-h-[80vh] w-full object-contain"
                     src={work.mediaUrl}
                     alt={work.title}
+                    onError={(e) => {
+                      if (work.localFallback && e.target.src !== work.localFallback) {
+                        e.target.src = work.localFallback;
+                      }
+                    }}
                   />
                 )}
               </div>

@@ -12,15 +12,33 @@ const FALLBACK_ASSETS = [
   "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=1200&q=80"
 ];
 
+const DEFAULT_WORK_FALLBACKS = [
+  "/admin_works/work_01.mp4",
+  "/admin_works/work_02.mp4",
+  "/admin_works/work_03_1.jpg",
+  "/admin_works/work_04.jpg",
+  "/admin_works/work_05.jpg",
+  "/admin_works/work_06.jpg",
+  "/admin_works/work_07.jpg",
+  "/admin_works/work_08.jpg",
+];
+
 function mapWorkRow(row, index) {
+  const defaultAsset = DEFAULT_WORK_FALLBACKS[index % DEFAULT_WORK_FALLBACKS.length];
+  const rawUrl = row.media_url || defaultAsset;
+  const isVideo =
+    row.media_type === "video" ||
+    Boolean(rawUrl && rawUrl.match(/\.(mp4|mov|webm|m4v)(\?|$)/i));
+
   return {
     id: row.display_id || String(index + 1).padStart(2, "0"),
     title: row.title || (index === 0 ? "PHOTOGRAPHERS" : index === 1 ? "STYLISTS" : index === 2 ? "DIRECTORS" : "GUEST DIRECTORS"),
     category: row.category || "Creative Direction",
     year: row.year || "2026",
     tag: row.tag || "Campaign Asset",
-    mediaType: row.media_type || "image",
-    mediaUrl: row.media_url || FALLBACK_ASSETS[index % FALLBACK_ASSETS.length],
+    mediaType: isVideo ? "video" : "image",
+    mediaUrl: rawUrl,
+    localFallback: defaultAsset,
     desc: row.desc || "Commercial production overview and spatial execution details aligned with high-fashion client rosters.",
   };
 }
@@ -96,21 +114,54 @@ function EditorialIntroSection() {
 
 // REDESIGNED: WORKS GRID (NOW FEATURING A HIGH-IMPACT STAGGERED COLUMN LAYOUT)
 function WorkCard({ work, onOpen }) {
+  const [currentSrc, setCurrentSrc] = useState(work.mediaUrl);
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    setCurrentSrc(work.mediaUrl);
+    setHasError(false);
+  }, [work.mediaUrl]);
+
+  const handleMediaError = () => {
+    if (!hasError && work.localFallback && currentSrc !== work.localFallback) {
+      setCurrentSrc(work.localFallback);
+      setHasError(true);
+    }
+  };
+
+  const isVideo = work.mediaType === "video";
+
   return (
     <div className="group w-full mb-10 md:mb-32 flex flex-col">
       <button
         type="button"
-        onClick={() => work.mediaUrl && onOpen(work)}
+        onClick={() => (currentSrc || work.mediaUrl) && onOpen({ ...work, mediaUrl: currentSrc || work.mediaUrl })}
         className={`relative w-full aspect-[4/5] overflow-hidden bg-neutral-950 transition-all border border-neutral-900/60 ${
           work.mediaUrl ? "cursor-pointer" : "cursor-default"
         }`}
       >
-        {work.mediaUrl && (
-          work.mediaType === "video" ? (
-            <video className="absolute inset-0 h-full w-full object-cover opacity-100 md:grayscale md:opacity-60 md:group-hover:scale-105 md:group-hover:opacity-100 md:group-hover:grayscale-0 transition-all duration-1000 ease-out" src={work.mediaUrl} autoPlay muted loop playsInline />
-          ) : (
-            <img className="absolute inset-0 h-full w-full object-cover opacity-100 md:grayscale md:opacity-60 md:group-hover:scale-105 md:group-hover:opacity-100 md:group-hover:grayscale-0 transition-all duration-1000 ease-out" src={work.mediaUrl} alt={work.title} loading="lazy" />
-          )
+        {isVideo ? (
+          <video
+            key={currentSrc}
+            className="absolute inset-0 h-full w-full object-cover opacity-100 md:grayscale md:opacity-60 md:group-hover:scale-105 md:group-hover:opacity-100 md:group-hover:grayscale-0 transition-all duration-1000 ease-out"
+            src={currentSrc}
+            autoPlay
+            muted
+            loop
+            playsInline
+            webkit-playsinline="true"
+            preload="auto"
+            onError={handleMediaError}
+          />
+        ) : (
+          <img
+            key={currentSrc}
+            className="absolute inset-0 h-full w-full object-cover opacity-100 md:grayscale md:opacity-60 md:group-hover:scale-105 md:group-hover:opacity-100 md:group-hover:grayscale-0 transition-all duration-1000 ease-out"
+            src={currentSrc}
+            alt={work.title}
+            decoding="async"
+            onError={handleMediaError}
+          />
         )}
         <div className="absolute top-4 left-4 font-mono text-[10px] bg-black/80 text-neutral-400 px-2 py-1 border border-neutral-800">
           INDEX_{work.id}
