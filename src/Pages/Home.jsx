@@ -44,6 +44,16 @@ function mapWorkRow(row, index) {
   };
 }
 
+function canPlayWebm() {
+  if (typeof document === "undefined") return true;
+  try {
+    const v = document.createElement("video");
+    return Boolean(v.canPlayType && v.canPlayType("video/webm").replace(/no/, ""));
+  } catch {
+    return true;
+  }
+}
+
 function SaturatedVideo({
   mediaUrl,
   localFallback,
@@ -54,10 +64,18 @@ function SaturatedVideo({
   const [failedUrls, setFailedUrls] = useState({});
   const videoRef = useRef(null);
 
-  // Candidate video: mediaUrl first, then localFallback ONLY when not loading and available
+  const supportsWebm = useRef(canPlayWebm()).current;
+
+  // If browser (like iOS Safari) cannot play WebM and mediaUrl is WebM, prefer localFallback MP4
+  const isWebmMedia = mediaUrl && mediaUrl.toLowerCase().includes(".webm");
+  const preferredUrl =
+    isWebmMedia && !supportsWebm && localFallback
+      ? localFallback
+      : mediaUrl;
+
   const candidateUrl =
-    mediaUrl && !failedUrls[mediaUrl]
-      ? mediaUrl
+    preferredUrl && !failedUrls[preferredUrl]
+      ? preferredUrl
       : !isLoading && localFallback && !failedUrls[localFallback]
       ? localFallback
       : null;
@@ -69,25 +87,42 @@ function SaturatedVideo({
   };
 
   useEffect(() => {
-    if (videoRef.current && candidateUrl) {
-      videoRef.current.play().catch(() => {});
+    if (videoRef.current) {
+      videoRef.current.defaultMuted = true;
+      videoRef.current.muted = true;
+      videoRef.current.playsInline = true;
+      const playPromise = videoRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {});
+      }
     }
-  }, [candidateUrl]);
+  }, [candidateUrl, localFallback]);
 
   return (
     <div className="absolute inset-0 w-full h-full overflow-hidden bg-black pointer-events-none">
       {candidateUrl ? (
         <video
-          key={candidateUrl}
+          key={`${candidateUrl}-${localFallback || ""}`}
           ref={videoRef}
-          src={candidateUrl}
           autoPlay
           muted
           loop
           playsInline
+          webkit-playsinline="true"
+          preload="auto"
           onError={handleVideoError}
           className={`absolute top-1/2 left-1/2 min-w-full min-h-full w-auto h-auto -translate-x-1/2 -translate-y-1/2 object-cover select-none transition-opacity duration-1000 ${opacity}`}
-        />
+        >
+          {candidateUrl && (
+            <source
+              src={candidateUrl}
+              type={candidateUrl.toLowerCase().includes(".webm") ? "video/webm" : "video/mp4"}
+            />
+          )}
+          {localFallback && localFallback !== candidateUrl && (
+            <source src={localFallback} type="video/mp4" />
+          )}
+        </video>
       ) : !isLoading && fallbackVideoId ? (
         <iframe
           src={`https://www.youtube.com/embed/${fallbackVideoId}?autoplay=1&mute=1&loop=1&playlist=${fallbackVideoId}&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&playsinline=1`}
@@ -723,35 +758,35 @@ export default function Home() {
     <main className="bg-black text-white overflow-x-hidden selection:bg-white selection:text-black antialiased w-full">
       <Section1Hero
         mediaUrl={videos.hero}
-        localFallback="/web 31.mp4"
+        localFallback="/admin_videos/hero.mp4"
         fallbackVideoId={ASSETS.heroVideo}
         isLoading={loadingVideos}
       />
       <Section2Threshold />
       <Section3HeroBanner
         mediaUrl={videos.hero_secondary}
-        localFallback="/web 10.mp4"
+        localFallback="/admin_videos/hero_secondary.mp4"
         fallbackVideoId={ASSETS.cinematicClip2}
         isLoading={loadingVideos}
       />
       <Section4ChromaticMatte
         slowMediaUrl={videos.chromatic_matte_1}
-        slowLocalFallback="/web 26.mp4"
+        slowLocalFallback="/admin_videos/chromatic_matte_1.mp4"
         slowFallback={ASSETS.cinematicClip3}
         fastMediaUrl={videos.fastMediaUrl || videos.chromatic_matte_2}
-        fastLocalFallback="/REEL 6 WEB.mp4"
+        fastLocalFallback="/admin_videos/chromatic_matte_2.mp4"
         fastFallback={ASSETS.heroVideo}
         isLoading={loadingVideos}
       />
       <Section8VideoIntercept
         mediaUrl={videos.video_intercept}
-        localFallback="/web 10.mp4"
+        localFallback="/admin_videos/video_intercept.mp4"
         fallbackVideoId={ASSETS.cinematicClip2}
         isLoading={loadingVideos}
       />
       <Section10AsymmetricBlock
         mediaUrl={videos.asymmetric_block}
-        localFallback="/web 31.mp4"
+        localFallback="/admin_videos/asymmetric_block.mp4"
         fallbackVideoId={ASSETS.heroVideo}
         isLoading={loadingVideos}
       />

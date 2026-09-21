@@ -8,42 +8,42 @@ const ACTIVE_HOME_SECTIONS = [
     label: "Hero Background (Section 1)",
     description: "Main fullscreen hero video at the very top of the homepage.",
     sort_order: 1,
-    defaultFallback: "/web 31.mp4",
+    defaultFallback: "/admin_videos/hero.mp4",
   },
   {
     key: "hero_secondary",
     label: "Hero Secondary Banner (Section 3)",
     description: "Cinematic full-width parallax video banner below the manifesto.",
     sort_order: 2,
-    defaultFallback: "/web 10.mp4",
+    defaultFallback: "/admin_videos/hero_secondary.mp4",
   },
   {
     key: "chromatic_matte_1",
     label: "Chromatic Matte — Left (Section 4)",
     description: "Left video panel in the Dual Perspective reel stream.",
     sort_order: 3,
-    defaultFallback: "/web 26.mp4",
+    defaultFallback: "/admin_videos/chromatic_matte_1.mp4",
   },
   {
     key: "chromatic_matte_2",
     label: "Chromatic Matte — Right (Section 4)",
     description: "Right video panel in the Dual Perspective reel stream.",
     sort_order: 4,
-    defaultFallback: "/REEL 6 WEB.mp4",
+    defaultFallback: "/admin_videos/chromatic_matte_2.mp4",
   },
   {
     key: "video_intercept",
     label: "Full-bleed Intercept (Section 8)",
     description: "Saturated runtime feed intercept video banner.",
     sort_order: 5,
-    defaultFallback: "/web 10.mp4",
+    defaultFallback: "/admin_videos/video_intercept.mp4",
   },
   {
     key: "asymmetric_block",
     label: "Asymmetric Block (Section 10)",
     description: "Video display next to 'Where ideas find their visual voice'.",
     sort_order: 6,
-    defaultFallback: "/web 31.mp4",
+    defaultFallback: "/admin_videos/asymmetric_block.mp4",
   },
 ];
 
@@ -333,38 +333,43 @@ export default function AdminHomeVideos() {
                 </div>
 
                 {/* Upload or Remove File */}
-                <div className="flex items-center gap-2 pt-1 border-t border-[#f5f5f0]/5">
-                  <input
-                    ref={(el) => {
-                      fileInputs.current[section.section_key] = el;
-                    }}
-                    type="file"
-                    accept="video/*"
-                    className="hidden"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) handleFileSelect(section, file);
-                      e.target.value = "";
-                    }}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => fileInputs.current[section.section_key]?.click()}
-                    disabled={isSaving}
-                    className="flex-1 bg-[#ff3d1a] px-3 py-2 text-[9px] font-bold uppercase tracking-[0.18em] text-[#0a0a0a] disabled:opacity-50 rounded"
-                  >
-                    Upload Video File
-                  </button>
-                  {section.media_url && (
+                <div className="flex flex-col gap-1.5 pt-1 border-t border-[#f5f5f0]/5">
+                  <div className="flex items-center gap-2">
+                    <input
+                      ref={(el) => {
+                        fileInputs.current[section.section_key] = el;
+                      }}
+                      type="file"
+                      accept="video/mp4,video/quicktime,video/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) handleFileSelect(section, file);
+                        e.target.value = "";
+                      }}
+                    />
                     <button
                       type="button"
-                      onClick={() => handleRemove(section)}
+                      onClick={() => fileInputs.current[section.section_key]?.click()}
                       disabled={isSaving}
-                      className="border border-[#f5f5f0]/15 px-3 py-2 text-[9px] uppercase tracking-[0.16em] text-[#f5f5f0]/50 hover:text-[#ff7a55] hover:border-[#ff3d1a]/30 disabled:opacity-50 rounded"
+                      className="flex-1 bg-[#ff3d1a] px-3 py-2 text-[9px] font-bold uppercase tracking-[0.18em] text-[#0a0a0a] disabled:opacity-50 rounded"
                     >
-                      Clear
+                      Upload Video File
                     </button>
-                  )}
+                    {section.media_url && (
+                      <button
+                        type="button"
+                        onClick={() => handleRemove(section)}
+                        disabled={isSaving}
+                        className="border border-[#f5f5f0]/15 px-3 py-2 text-[9px] uppercase tracking-[0.16em] text-[#f5f5f0]/50 hover:text-[#ff7a55] hover:border-[#ff3d1a]/30 disabled:opacity-50 rounded"
+                      >
+                        Clear
+                      </button>
+                    )}
+                  </div>
+                  <p className="text-[8px] font-mono text-[#f5f5f0]/30 tracking-wider">
+                    Format: MP4 (H.264) recommended for iPhone, Android & Web
+                  </p>
                 </div>
               </div>
             </div>
